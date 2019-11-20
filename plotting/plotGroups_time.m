@@ -1,4 +1,6 @@
 function groupFigure = plotGroups_time(tc, groupLabels, groupMu, groupS)
+
+% Alexandra Yakovleva, Stanford University 2012-2020
 %% Function will plot multiple first components against each other   
 %% INPUT:
     % tc -- timecourse (samplePoints x 1)

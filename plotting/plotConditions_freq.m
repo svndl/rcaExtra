@@ -1,5 +1,5 @@
 function [cnd_Bars, cnd_Lolliplots] = plotConditions_freq(f, cndLabels, cndData, colorOrder)
-
+% Alexandra Yakovleva, Stanford University 2012-2020
 %% INPUT:
     % varargin -- proj groups + labels: {group1, group2, groupLabels, conditionLabels, componentLabels}
     % Each group is a structure with following elements: 

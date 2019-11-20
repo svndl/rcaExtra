@@ -1,4 +1,8 @@
 function [mu, s] = run_RCAnalysis(dataIn, freq, resultsDir, datasetName, channel)
+% Alexandra Yakovleva, Stanford University 2012-2020
+
+% runs/loads RC weights, projects, averages data for plotting (mean and std), extracts channel waveforms 
+
     % resample data
     NS_DAR = 420;
     sampling_rate = round(NS_DAR/freq);    

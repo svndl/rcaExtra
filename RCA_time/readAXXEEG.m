@@ -1,5 +1,8 @@
 function rcaDataOut = readAXXEEG(rca_path)
 
+% Alexandra Yakovleva, Stanford University 2012-2020
+% Loads AXX data (similar to readRawEEGData)
+
 
     eegSrc = fullfile(rca_path.srcEEG);
 

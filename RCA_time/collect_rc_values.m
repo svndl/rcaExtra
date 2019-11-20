@@ -1,5 +1,8 @@
 function [out_rc, out_oz]= collect_rc_values(cellGroup, rcIndex)
-    
+% Alexandra Yakovleva, Stanford University 2012-2020
+
+% collecting together RC components with component ID selection (rcIndex)
+
     nStructs = numel(cellGroup);
     out_rc.inc = zeros(size(cellGroup{1}.inc.rc, 1), nStructs);
     out_rc.dec = out_rc.inc;

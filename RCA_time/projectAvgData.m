@@ -1,4 +1,8 @@
 function [muData, semData] = projectAvgData(data, weights)
+% Alexandra Yakovleva, Stanford University 2012-2020
+
+% projects datset thru weights and computes mean/std
+
     nSensors = size(weights, 1);
     nRcs = size(weights, 2);
     avgData = cellfun(@(x) nanmean(x, 3), data, 'uni', false);

@@ -1,5 +1,6 @@
 function subj = projectSubjData(amp, phase, eAP)
-% Alexandra Yakovleva, Stanford University 2012-2020.
+% Alexandra Yakovleva, Stanford University 2012-2020
+% part of averageFrequencyData toolbox
 
     nCnd = size(amp, 1);    
     for c = 1:nCnd

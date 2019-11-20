@@ -1,6 +1,8 @@
 function [subjs, sensorData, sensorData_avg, indF, indB, ...
     cellNoiseData1, cellNoiseData1_avg, cellNoiseData2, cellNoiseData2_avg, ...
     freqLabels, binLabels, chanIncluded] = readDFTData(varargin)
+% Alexandra Yakovleva, Stanford University 2012-2020
+% reads frequency data similar to time domain data
 
     eegSrc = varargin{1};
     

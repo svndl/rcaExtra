@@ -1,5 +1,9 @@
 function [rcaData, W, A] = rcaRunOnly(eegSrc, settings, varargin)
 
+% Alexandra Yakovleva, Stanford University 2012-2020
+
+% Runs RC analysis and saves weights/projected data into settings.datset matfile  
+
     % RC parameters
     nReg = 7;
     % number of components to extract/plot

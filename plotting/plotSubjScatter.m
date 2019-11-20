@@ -1,4 +1,8 @@
 function plotSubjScatter(amp, errAmp, labels)
+% Alexandra Yakovleva, Stanford University 2012-2020
+
+% displays subject's amplitude/phase as * (similar to lolliplot)
+
     % frequencies x components  x subjects x conditions
     load('colors.mat');
     nFreq = size(amp, 1);

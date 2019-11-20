@@ -1,5 +1,7 @@
 function [amp, amp_err, phase, phase_err] = extractAmpPhase(inputData, nB, nF, W)
 
+    % Alexandra Yakovleva, Stanford University 2012-2020
+    % part of averageFrequencyData toolbox
 
     % Arguments
     % inputData -- cell-organized source data (nCnd by nSubj, each subj is 2*nBins*nFreq x nChannels x nTotalTrials)

@@ -1,4 +1,5 @@
 function [group_Bars, group_Lolliplots] = plotGroups_freq(f, groupLabels, varargin)
+% Alexandra Yakovleva, Stanford University 2012-2020
 
 %% INPUT:
     % varargin -- proj groups + labels: {group1, group2, groupLabels, conditionLabels, componentLabels}

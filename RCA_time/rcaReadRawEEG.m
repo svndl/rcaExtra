@@ -1,5 +1,7 @@
 function rcaData = rcaReadRawEEG(data_path)
-% Processes subjects rawEEG. Generates and rca-ready matfile   
+% Alexandra Yakovleva, Stanford University 2012-2020
+
+% Processes subjects rawEEG within data_path directory, generates and rca-ready matfile   
     
     loadedDir = fullfile(data_path.loadedEEG);
     eegSrc = fullfile(data_path.srcEEG);

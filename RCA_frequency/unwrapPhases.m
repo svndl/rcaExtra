@@ -1,4 +1,7 @@
 function out = unwrapPhases(values)
+% Alexandra Yakovleva, Stanford University 2012-2020
+% Unwraps phase angles for plotting
+
     out = values;
     for c = 1:size(values, 2)
         %2f

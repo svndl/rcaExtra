@@ -1,4 +1,8 @@
 function subplots2figures
+% Alexandra Yakovleva, Stanford University 2012-2020
+
+% copies subplots into new figures
+
     hAx = findobj('type', 'axes');
     for iAx = 1:length(hAx)
         fNew = figure;

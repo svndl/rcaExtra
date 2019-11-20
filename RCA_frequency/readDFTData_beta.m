@@ -1,6 +1,8 @@
 function varargout = readDFTData_beta(varargin)
 % Alexandra Yakovleva, Stanford University 2012-2020.
 
+% loads up project's frequency data in a single sell matrix nSubjecs x nConditions
+
     eegSrcDir = varargin{1}.srcEEG;
     eegMatDir = varargin{1}.loadedEEG;
     dataType = 'RLS';

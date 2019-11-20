@@ -1,4 +1,6 @@
 function dataOut = readRawData(dataPath, removeEyes, nanArtifacts)
+% Alexandra Yakovleva, Stanford University 2012-2020
+
 
 %This function reorganizes the data for 1 subject. By default, we analyze by
 %subjects. CellData will be 1Xncondition cell array, within each cell, you

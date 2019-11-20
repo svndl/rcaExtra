@@ -1,0 +1,110 @@
+function analysis_ControlsStudents_rc_oz(varargin)
+
+    [curr_path, ~, ~] = fileparts(mfilename('fullpath'));
+    path.rootFolder = curr_path;
+    srcEEGDir = 'Your_directory';
+    experiment = 'Your_experiment';
+    group = 'Your_subgroup';
+    domain = 'Time';
+    groupLabels = {'Group1', 'Group2'};
+    
+    plotString = [experiment '_' group '_' domain '_'];
+
+    
+    if (isempty(varargin))
+        saveDir = fullfile(srcEEGDir, experiment, group, 'results', 'Figures');
+    else
+        saveDir = varargin{1};
+    end
+        
+    path.results_Figures = fullfile(path.rootFolder, saveDir);
+    
+    stu_results = fullfile(path.rootFolder, srcEEGDir, experiment, groupLabels{2}, 'results');
+    cnt_results = fullfile(path.rootFolder, srcEEGDir, experiment, groupLabels{1}, 'results');
+    
+    pooled_results = fullfile(path.rootFolder, srcEEGDir, experiment, [groupLabels{2} groupLabels{1}], 'results');
+    
+    if ~exist(path.results_Figures, 'dir')
+        mkdir(path.results_Figures);
+    end
+    
+    
+    %% Load experiment Info
+   
+    info = getExperimentInfo(experiment);
+    
+    %% load/project students data
+    cnt_EEG = getRawData(groupLabels{1}, domain, experiment);       
+    [mu_cnt, s_cnt] = run_RCAnalysis(cnt_EEG, info.frequency, cnt_results, experiment, info.Channels);        
+    
+    %% load/project controls data
+    stu_EEG = getRawData(groupLabels{2}, domain, experiment);           
+    [mu_stu, s_stu] = run_RCAnalysis(stu_EEG, info.frequency, stu_results, experiment, info.Channels);        
+    
+    %% run pooled analysis 
+    [mu_pooled, s_pooled] = run_RCAnalysis(cat(1, cnt_EEG, stu_EEG), info.frequency, ...
+        pooled_results, [info.conditionLabels{:}], info.Channels);   
+    
+    %% collect values for plotting
+    [mu_rc, ~] = collect_rc_values({mu_cnt, mu_stu}, [1, 1]);    
+    [s_rc, ~] = collect_rc_values({s_cnt, s_stu}, [1, 1]);
+    
+    ns = round(1000./info.frequency);    
+    tc = linspace(0, ns, size(mu_rc.inc, 1));
+        
+    [h1_rc, h2_rc] = plotGroupsConditions_time({tc, tc}, ...
+         info.conditionLabels, groupLabels, ...
+        {mu_rc.inc, s_rc.inc}, ...
+        {mu_rc.dec, s_rc.dec});
+     
+    %% between conditions within group
+    pValue_cnt_OnOff = ttest_paired(mu_cnt.source);
+    pValue_stu_OnOff = ttest_paired(mu_stu.source);
+    
+    %% between groups within conditon 
+    pvalue_cntstu_On = ttest_unpaired(mu_cnt.source(:, 1), mu_stu.source(:, 1));
+    pvalue_cntstu_Off = ttest_unpaired(mu_cnt.source(:, 2), mu_stu.source(:, 2));
+    
+    %% add plots to axis
+    allaxes_1 = findall(h1_rc, 'type', 'axes'); %%Off On
+    plot_addStatsBar_time(pvalue_cntstu_Off, allaxes_1(1), tc)    
+    plot_addStatsBar_time(pvalue_cntstu_On, allaxes_1(2), tc);        
+    
+    allaxes_2 = findall(h2_rc, 'type', 'axes');%% Students Controls
+    plot_addStatsBar_time(pValue_stu_OnOff, allaxes_2(1), tc)    
+    plot_addStatsBar_time(pValue_cnt_OnOff, allaxes_2(2), tc);    
+    
+    saveas(h1_rc, fullfile(path.results_Figures, [plotString 'all_byGroup.fig']));
+    saveas(h2_rc, fullfile(path.results_Figures, [plotString 'allbyCondition.fig'])); 
+
+    saveas(h1_rc, fullfile(path.results_Figures, [plotString 'all_byGroup.png']));
+    saveas(h2_rc, fullfile(path.results_Figures, [plotString 'allbyCondition.png']));
+    
+    export_fig(h1_rc, fullfile(path.results_Figures, [plotString 'all_byGroup.eps']));
+    export_fig(h2_rc, fullfile(path.results_Figures, [plotString 'allbyCondition.eps']));    
+    
+    
+    %% Groups
+    gf = plotGroups_time(tc, groupLabels, mu_rc.pol, s_rc.pol);    
+    %% pooled groups and conditions
+    pooled_controls = cellfun(@(x, y) cat(3, x, y), mu_cnt.source(:, 1), mu_cnt.source(:, 2), 'uni', false);
+    pooled_students = cellfun(@(x, y) cat(3, x, y), mu_stu.source(:, 1), mu_stu.source(:, 2), 'uni', false);
+    
+    pooled_groups = ttest_unpaired(pooled_controls(:, 1), pooled_students(:, 1));
+    group_axes = findall(gf, 'type', 'axes'); %%Off On
+    plot_addStatsBar_time(pooled_groups, group_axes, tc)    
+    
+    saveas(gf, fullfile(path.results_Figures, [plotString 'Groups_pooled_over_polarity.fig']));
+    export_fig(gf, fullfile(path.results_Figures, [plotString 'Groups_pooled_over_polarity.eps']));
+    
+    
+    %% Conditions
+    cf = plotConditions_time(tc, info.conditionLabels, cat(2, mu_pooled.inc.rc(:, 1), mu_pooled.dec.rc(:, 1)), ...
+        cat(2, s_pooled.inc.rc(:, 1), s_pooled.dec.rc(:, 1)));
+    pooled_OnOff = ttest_paired(cat(1, mu_cnt.source, mu_stu.source));
+    onoff_axes = findall(cf, 'type', 'axes'); %%Off On
+    plot_addStatsBar_time(pooled_OnOff, onoff_axes, tc);    
+    
+    saveas(cf, fullfile(path.results_Figures, [plotString 'Polarity_pooled_over_groups.fig']));
+    export_fig(cf, fullfile(path.results_Figures, [plotString 'Polarity_pooled_over_groups.eps']));    
+end

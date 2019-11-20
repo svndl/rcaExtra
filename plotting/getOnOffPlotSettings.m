@@ -1,4 +1,7 @@
 function plotSettings = getOnOffPlotSettings(type, domain)
+
+% Stores plot settiongs
+% Alexandra Yakovleva, Stanford University 2012-2020 
     
     plotSettings.linestyles = {'-', '-', '-', '-', '-', '-', '-', '-'};
     fontSize = 25;
@@ -11,12 +14,12 @@ function plotSettings = getOnOffPlotSettings(type, domain)
         case 'Time'
                       
             showlegends = false;
-            plotSettings.xl = 'Time msec';
-            plotSettings.yl = 'Amplitude \muV';          
+            plotSettings.xl = 'Time (msec)';
+            plotSettings.yl = 'Amplitude (\muV)';          
             axessettings = [defaultaxesprops, 'XMinorTick', 'on', 'XAxisLocation', 'bottom', 'TickLength', [.05 .01]];
         case 'Frequency'           
             plotSettings.xl = 'Freq';
-            plotSettings.yl = 'Amplitude \muV';
+            plotSettings.yl = 'Amplitude (\muV)';
             showlegends = true;
             axessettings = defaultaxesprops;
         otherwise

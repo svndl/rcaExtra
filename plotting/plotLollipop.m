@@ -1,5 +1,7 @@
 function p = plotLollipop(ax, amp, ph, ellipse, color, style)
+% Alexandra Yakovleva, Stanford University 2012-2020
 
+% Function for plotting lolliplot style analysis amplitude and phase data
     axes(ax)
     x = amp.*cos(ph);
     y = amp.*sin(ph);

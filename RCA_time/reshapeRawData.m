@@ -1,7 +1,9 @@
 function [sensorData, settings] = reshapeRawData(experiment, groupLabels, subtype)
+% Alexandra Yakovleva, Stanford University 2012-2020
 
-    % function loads and groups _subtype_ (axx, raw, freq) data from _experiment_/_groupLabels_ 
-    % 
+% reshapes raw data into subgroups (On-Off specific)
+% function loads and groups _subtype_ (axx, raw, freq) data from _experiment_/_groupLabels_ 
+     
     [curr_path, ~, ~] = fileparts(mfilename('fullpath'));
     
     if (isempty(subtype))

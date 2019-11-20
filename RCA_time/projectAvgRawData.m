@@ -1,5 +1,9 @@
  function out = projectAvgRawData(dataIn, rcWeights)
-    
+ % Alexandra Yakovleva, Stanford University 2012-2020
+
+ % projects groups, conditions, groups x conditions thru various corresponding weights
+ 
+ 
     nGroups = size(dataIn.rawData, 1);
     nConditions = size(dataIn.rawData{1}, 2);
     nSamples =  size(dataIn.eegGrouped{1}, 4);

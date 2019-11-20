@@ -1,5 +1,7 @@
 function [subjs, sensorData, cellNoiseData1, cellNoiseData2, info] = readselectiveDFTData(subjDirPath, settings)
-% Copyright 2019 Alexabdra Yakovleva Stanford University
+% Copyright 2019 Alexandra Yakovleva Stanford University
+% Reads selective frequency domain data for a a project
+
        
      dataType = 'RLS';
      listDir = subjDirPath;

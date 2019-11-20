@@ -1,6 +1,7 @@
 function avgBinPerTrialPerFeq = averageBinsPerTrials(dataIn)
-% Alexandra Yakovleva, Stanford University 2012-1020
-    
+% Alexandra Yakovleva, Stanford University 2012-2020
+% part of averageFrequencyData toolbox
+
     % nBins x nF x nChannels x nTrials
     nChannels = size(dataIn, 3);
     nF = size(dataIn, 2);

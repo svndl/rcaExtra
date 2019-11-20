@@ -1,4 +1,9 @@
 function plotRCWaveformsStats(plotHandle, tc, data_mu, data_s, labels1, labels2, dataType, pval)
+% Alexandra Yakovleva, Stanford University 2012-2020
+
+% same as plotRCWaveforms with stat bars on top
+
+
     load('colorbrewer');    
     fontSize = 25;    
     % specify palette depending on grouptype

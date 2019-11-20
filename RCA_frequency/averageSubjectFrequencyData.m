@@ -1,5 +1,6 @@
 function [avgSubj_Re, avgSubj_Im] = averageSubjectFrequencyData(inputData, nBs, nFs, W)
-
+% Alexandra Yakovleva, Stanford University 2012-2020
+% part of averageFrequencyData toolbox
 
     nComps = size(W, 2);
     

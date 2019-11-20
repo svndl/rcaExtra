@@ -1,5 +1,6 @@
 function rcPlot(rcaDataIn, tc, A)
-
+% Alexandra Yakovleva, Stanford University 2012-2020
+% plots RC components
     nComp = size(A, 2);
 
     catData = cat(3, rcaDataIn{:});

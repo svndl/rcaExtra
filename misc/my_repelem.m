@@ -1,4 +1,7 @@
 function A = my_repelem(A, varargin)
+% Alexandra Yakovleva, Stanford University 2012-2020
+
+% duplicates the functionality of Matlab's repelem
 
   index = cell(1, nargin-1);
   for iDim = 1:nargin-1

@@ -1,4 +1,9 @@
 function [subj_names, DataOut] = rcaReadRawEEG_Custom(varargin)
+% Alexandra Yakovleva, Stanford University 2012-2020
+
+% loads project's EEG data with the option of loading from default export directory 'Exp_MATL_HCN_128_Avg'
+% possible to load directories with specific flag 
+
     rca_path = varargin{1};
     
     loadedDir = rca_path.loadedEEG;

@@ -1,7 +1,7 @@
 function plot_addStatsBar_time(pValue, currAxisHandle, tc)
+% Alexandra Yakovleva, Stanford University 2012-2020
 
-    %nIters = 5000;
-    %[sig_cnd, p_cond, crit_cnd, alpha_cnd, s_cnd] = ttest_permute(conditionDiff', nIters);
+% adds pValue-colored bar to provided axis
 
    %% ADD STATS
     % sigPos is the lower and upper bound of the part of the plot        

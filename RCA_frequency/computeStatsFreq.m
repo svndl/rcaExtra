@@ -1,5 +1,6 @@
 function [sig, pVal, stat] = computeStatsFreq(subjAvgReal, subjAvgImag)
-
+% Alexandra Yakovleva, Stanford University 2012-2020
+% designed to work with averageFrequencyData toolbox
 
     nFreqs  = size(subjAvgReal, 1);
     nCnd = size(subjAvgReal, 2);

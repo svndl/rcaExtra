@@ -1,5 +1,7 @@
 function [ampDiff, phaseDiff, ellipse] = computeErrorProj(dataRe, dataIm)
-% Alexandra Yakovleva, Stanford University 2012-1020
+% Alexandra Yakovleva, Stanford University 2012-2020
+% part of averageFrequencyData toolbox
+
     nCnd = size(dataRe, 1);
     ampDiff = cell(nCnd, 1);
     phaseDiff = cell(nCnd, 1);

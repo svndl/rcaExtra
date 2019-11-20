@@ -1,4 +1,5 @@
 function cndFigure = plotConditions_time(tc, conditionLabels, cndMu, cndS)
+% Alexandra Yakovleva, Stanford University 2012-2020
 %% Function will plot multiple first components against each other   
 %% INPUT:
     % tc -- timecourse (samplePoints x 1)

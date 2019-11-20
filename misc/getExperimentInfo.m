@@ -1,4 +1,7 @@
 function dataInfo = getExperimentInfo(experiment)
+% Alexandra Yakovleva, Stanford University 2012-2020
+
+% database for On-Off experiments
     switch experiment
         case 'HexagonsSquares'
             dataInfo.frequency = 3;

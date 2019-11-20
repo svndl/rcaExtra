@@ -1,6 +1,7 @@
-%% plot individual components
-
 function plotRCAResults_tc(rcaDataIn, tc, A)
+% Alexandra Yakovleva, Stanford University 2012-2020
+
+% RC components with correct timecourse
 
     nComp = size(A, 2);
 

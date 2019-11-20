@@ -1,4 +1,6 @@
 function plotIndividualSubjectFrequency(varargin)
+% Alexandra Yakovleva, Stanford University 2012-2020
+
 % plot individual subject's amplitude/phase and error bar
 % subj's data is a structure with subfields subj.amp, subj.phase, subj.err
 % Dimensions are nFreqs x nComponents x nSubjects xnConditions

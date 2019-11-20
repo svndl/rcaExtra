@@ -78,8 +78,8 @@ function analysis_example_Freq_rc_oz(varargin)
     c1Data = sensorData_f1(:, 1)';
     c5Data = sensorData_f1(:, 5)';
     
-    rcaStrct_c1 = rcaSweep_beta(c1Data, cellNoiseData1(:, 1)', cellNoiseData2(:, 1)', rcaSettings_c1);   
-    rcaStrct_c5 = rcaSweep_beta(c5Data, cellNoiseData1(:, 5)', cellNoiseData2(:, 5)', rcaSettings_c5);   
+    rcaStrct_c1 = rcaRun_frequency(c1Data, cellNoiseData1(:, 1)', cellNoiseData2(:, 1)', rcaSettings_c1);   
+    rcaStrct_c5 = rcaRun_frequency(c5Data, cellNoiseData1(:, 5)', cellNoiseData2(:, 5)', rcaSettings_c5);   
    
     %% avg amplitude and phase
     W_OZ = zeros(128, 1);

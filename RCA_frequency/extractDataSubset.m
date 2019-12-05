@@ -24,6 +24,7 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
         freqsToUse = settings.useFrequencies;        
     end
     
+    
     if (~isfield(settings, 'useTrials'))
         trialsToUse = [];
     else
@@ -35,10 +36,22 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
         condsToUse = 1:size(signalData, 1);
     end
     
+    
     nConds = length(condsToUse);
     signalDataSel = cell(nConds, 1);
     noise1Sel = cell(nConds, 1);
     noise2Sel = cell(nConds, 1);
+    
+    % compatibility with the old data format
+    
+    if (exist('info', 'var'))
+        indB = info.indB;
+        indF = info.indF;
+        freqLabels = info.freqLabels;
+        binLabels = info.binLabels;
+        chanIncluded = info.chanIncluded;
+    end
+   
     
     for c = 1:nConds
         if condsToUse(c) > size(signalData, 1) || isempty(signalData{condsToUse(c)})
@@ -58,9 +71,9 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
                 % (note: cannot differ across conditions)
                 freqsToUse = unique(indF{condsToUse(c)});
             else
-                [~, freqsToUse] = ismember(settings.useFrequencies, freqLabels{c});
+                [~, freqsToUse] = ismember(settings.useFrequencies, freqLabels{condsToUse(c)});
             end
-            selRowIx = ismember(indB{condsToUse(c)},binsToUse) & ismember(indF{condsToUse(c)}, freqsToUse);
+            selRowIx = ismember(indB{condsToUse(c)}, binsToUse) & ismember(indF{condsToUse(c)}, freqsToUse);
             if isempty(trialsToUse)
                 % use all available trials 
                 % (note: can differ across conditions)

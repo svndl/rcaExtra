@@ -1,12 +1,12 @@
-function [subjs, sensorData, cellNoiseData1, cellNoiseData2, info] = readselectiveDFTData(subjDirPath, settings)
-% Copyright 2019 Alexandra Yakovleva Stanford University
-% Reads selective frequency domain data for a a project
-
+function [subjs, sensorData, cellNoiseData1, cellNoiseData2, info] = readselectiveDFTData(pathStruct, settings)
+% Copyright 2019 Alexabdra Yakovleva Stanford University
        
      dataType = 'RLS';
-     listDir = subjDirPath;
+     sourceData = pathStruct.srcEEG;
+     loadedData = pathStruct.loadedEEG;     
+     
      %% list subjects
-     list_subj = list_folder(fullfile(listDir, [settings.subjTag '*']));
+     list_subj = list_folder(fullfile(sourceData, [settings.subjTag '*']));
      nsubj = numel(list_subj);
      
      %% pre-allocate
@@ -21,25 +21,33 @@ function [subjs, sensorData, cellNoiseData1, cellNoiseData2, info] = readselecti
     if (nsubj > 0)
         for s = 1:nsubj
             if (list_subj(s).isdir)
-                subjDir = fullfile(subjDirPath,  list_subj(s).name);
+                subjSrcDir = fullfile(sourceData, list_subj(s).name);
                 try
                     display(['Loading  ' list_subj(s).name]);
-                    sourceDataFileName = sprintf('%s/%s %s.mat',subjDir, list_subj(s).name, dataType);
+                    processedDataFileName = sprintf('%s_%s.mat', list_subj(s).name, dataType);
                     
-                    if (~exist(sourceDataFileName, 'file'))                        
+                    if (~exist(fullfile(loadedData, processedDataFileName), 'file'))                        
                         try
-                            [signalData, indF, indB, noise1, noise2, freqLabels, binLabels, chanIncluded] = textExportToRca(subjDir, dataType);        
+                            [signalData, info.indF, info.indB, noise1, noise2, ...
+                                info.freqLabels, info.binLabels, info.chanIncluded] = textExportToRca(subjSrcDir, dataType);        
                         catch err
-                            [signalData, indF, indB, noise1, noise2, freqLabels, binLabels, chanIncluded] = textExportToRca(subjDir, 'DFT');        
+                            [signalData, info.indF, info.indB, noise1, noise2, ...
+                                info.freqLabels, info.binLabels, info.chanIncluded] = textExportToRca(subjSrcDir, 'DFT');        
                         end
-                        save(sourceDataFileName, 'signalData', 'indF','indB','noise1','noise2','freqLabels','binLabels','chanIncluded');
+                        save(fullfile(loadedData, processedDataFileName), 'signalData', 'noise1','noise2', 'info');
                     end                
                     try
-                        [signalData, noise1, noise2, info] = extractDataSubset(sourceDataFileName, settings); 
+                        [signalData, noise1, noise2, info] = extractDataSubset(fullfile(loadedData, processedDataFileName), settings); 
                         
                         sensorData(s, :) = signalData;
                         cellNoiseData1(s, :) = noise1;
                         cellNoiseData2(s, :) = noise2;
+                        
+                        if (isfield(settings, 'saveAsNewMatFile'))
+                            sourceDataFileName_new = sprintf('%s_%s_%s.mat', list_subj(s).name, dataType, settings.saveAsNewMatFile);
+                            save(fullfile(loadedData, sourceDataFileName_new), 'signalData', 'noise1', 'noise2', 'info');                           
+                        end
+                       
                     catch err
                         display(['Warning, could not process data from: ' list_subj(s).name]);                      
                     end

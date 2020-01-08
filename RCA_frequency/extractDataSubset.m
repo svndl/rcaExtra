@@ -15,7 +15,7 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
     if (~isfield(settings, 'useBins'))
         binsToUse = [];
     else
-        binsToUse = settings.useBins;        
+        binsToUse = settings.useBins;
     end
     
     if (~isfield(settings, 'useFrequencies'))
@@ -69,6 +69,7 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
             if isempty(freqsToUse)
                 % use all available frequencies
                 % (note: cannot differ across conditions)
+                settings.useFrequencies = unique(freqLabels{condsToUse(c)});
                 freqsToUse = unique(indF{condsToUse(c)});
             else
                 [~, freqsToUse] = ismember(settings.useFrequencies, freqLabels{condsToUse(c)});
@@ -115,7 +116,7 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
 %             end  
 %             % grap frequency labels
               freqLabelsSel{c}  = freqLabels{condsToUse(c)}(freqsToUse);
-              binLabelsSel{c}  = binLabels{condsToUse(c)}(binsToUse); % add one, because bin level 0 = average              
+              binLabelsSel{c}  = binLabels{condsToUse(c)}(binsToUse + 1); % add one, because bin level 0 = average              
 %             % grap frequency labels
 %             trialsSel{c}  = curTrials;
         end

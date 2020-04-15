@@ -58,4 +58,5 @@ function plotSettings = getOnOffPlotSettings(type, domain)
     plotSettings.showlegends = showlegends;
     plotSettings.fontsize = fontSize;
     plotSettings.axesprops = axessettings;
+    plotSettings.statssettings = statssettings;    
 end

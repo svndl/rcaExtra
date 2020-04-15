@@ -11,20 +11,21 @@ function plotSettings = getOnOffPlotSettings(type, domain)
     load('colorbrewer');
    
     switch domain
-        case 'Time'
-                      
+        case 'Time'                    
             showlegends = false;
             plotSettings.xl = 'Time (msec)';
             plotSettings.yl = 'Amplitude (\muV)';          
             axessettings = [defaultaxesprops, 'XMinorTick', 'on', 'XAxisLocation', 'bottom', 'TickLength', [.05 .01]];
+            statssettings = {};
         case 'Frequency'           
             plotSettings.xl = 'Freq';
             plotSettings.yl = 'Amplitude (\muV)';
             showlegends = true;
             axessettings = defaultaxesprops;
+            statssettings = {'HorizontalAlignment', 'center','VerticalAlignment','top', 'FontSize', 20};  
         otherwise
-            
     end
+
 
     switch type
         case 'groups'

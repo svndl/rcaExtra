@@ -1,5 +1,4 @@
 function [group_Bars, group_Lolliplots] = plotGroups_freq(f, groupLabels, varargin)
-% Alexandra Yakovleva, Stanford University 2012-2020
 
 %% INPUT:
     % varargin -- proj groups + labels: {group1, group2, groupLabels, conditionLabels, componentLabels}
@@ -16,13 +15,16 @@ function [group_Bars, group_Lolliplots] = plotGroups_freq(f, groupLabels, vararg
     groups = varargin(1 : nGroups);
     plotSettings = getOnOffPlotSettings('groups', 'Frequency');    
             
-    close all;
+    %close all;
     
     nComp = 1; % drop the OZ component
+    if (nargin > nGroups + 2)
+        nComp = varargin{end};
+    end
 
     % amplitude and frequency
     nSubplots_Col = 2;
-    nSubplots_Row = nComp;
+    nSubplots_Row = 1;
     
     group_Bars = figure;
     set(group_Bars, 'units', 'normalized', 'outerposition', [0 0 1 1]);
@@ -33,7 +35,7 @@ function [group_Bars, group_Lolliplots] = plotGroups_freq(f, groupLabels, vararg
     group_Lolliplots = figure;
     set(group_Lolliplots, 'units', 'normalized', 'outerposition', [0 0 1 1]);
 
-    cp = 1; %RC's
+    cp = nComp; %RC's
  
     %% concat bars for amplitude plot   
     groupAmp_cell = cellfun(@(x) squeeze(x.amp(:, cp, :)), groups, 'uni', false);
@@ -45,7 +47,22 @@ function [group_Bars, group_Lolliplots] = plotGroups_freq(f, groupLabels, vararg
     freqplotBar(amplitudes, groupAmp, permute(groupAmpErrs, [1 3 2]), plotSettings.colors, groupLabels);
     set(amplitudes, plotSettings.axesprops{:});
     pbaspect(amplitudes, [1 1 1]);    
-
+    
+%     asterisk = repmat('*', size(groupAmp, 1), 1);   
+%     if (isfield(groupData, 'stats'))
+%         currRC_sig = groupData.stats.sig(:, comp);
+%         currPValue = groupData.stats.pValues(:, comp);
+%         % pValues text Y position
+%         text_maxY = 0.5*groupAmp ;
+%         text_sigAsterick = asterisk(currRC_sig > 0);
+%         
+%         text(amplitudes, 1:length(currPValue), ...
+%             text_maxY, num2str(currPValue, '%0.2f'), plotSettings.statssettings{:});
+%         
+%         text(amplitudes, find(currRC_sig > 0), ...
+%             groupAmp(currRC_sig > 0), text_sigAsterick, plotSettings.statssettings{:});
+%         
+%     end
     
     %% concat frequency for latency plot
     groupLat_cell = cellfun(@(x) squeeze(x.phase(:, cp, :)), groups, 'uni', false);
@@ -114,4 +131,3 @@ function [group_Bars, group_Lolliplots] = plotGroups_freq(f, groupLabels, vararg
         title(descr, 'Interpreter', 'none');
     end
 end
-

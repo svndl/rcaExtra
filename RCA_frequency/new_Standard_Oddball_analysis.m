@@ -121,6 +121,6 @@ function new_Standard_Oddball_analysis
     saveFigStr_bars_rcs = arrayfun(@(x) strcat(saveFigsStr_bars, num2str(x), '.fig'), 1:rcaSettings_f1.nComp, 'uni', false);
     saveFigStr_loli_rcs = arrayfun(@(x) strcat(saveFigsStr_loli, num2str(x), '.fig'), 1:rcaSettings_f1.nComp, 'uni', false);
     
-    cellfun(@(x, y) saveas(x, fullfile(info.destDataDir_FIG, y)), bars_all, saveFigStr_bars_rcs', 'uni', false);
-    cellfun(@(x, y) saveas(x, fullfile(info.destDataDir_FIG, y)), lolli_all, saveFigStr_loli_rcs', 'uni', false);
+    cellfun(@(x, y) saveas(x, fullfile(info.destDataDir_FIG, y)), bars_all, saveFigStr_bars_rcs, 'uni', false);
+    cellfun(@(x, y) saveas(x, fullfile(info.destDataDir_FIG, y)), lolli_all, saveFigStr_loli_rcs, 'uni', false);
 end

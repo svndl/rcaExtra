@@ -1,4 +1,4 @@
-function fHandle = plotConditionSummaryGroup_freq(f, groupData)
+function fHandles = plotConditionSummaryGroup_freq(f, groupData)
 
 %% INPUT:
     % groupData is a structure with following elements: 
@@ -15,21 +15,22 @@ function fHandle = plotConditionSummaryGroup_freq(f, groupData)
     close all;
     
     nComp = size(groupData.A, 2);
-    nSubplots_Row = nComp;
+    nSubplots_Row = 1;
 
     % topo, amplitude and frequency
     nSubplots_Col = 3;
     
-    fHandle = figure;
-    set(fHandle, 'units', 'normalized', 'outerposition', [0 0 1 1]);
+    fHandles = cell(nComp, 1);
     
     colorbarLimits = [min(groupData.A(:)), max(groupData.A(:))];
     for comp = 1:nComp
-        compID = 3*(comp - 1) + 1 ;
+        fHandles{comp} = figure;
+        set(fHandles{comp}, 'units', 'normalized', 'outerposition', [0 0 1 1]);
+        
         plotLabel = strcat(groupData.label, ' RC #', num2str(comp));
-        topographies = subplot(nSubplots_Row, nSubplots_Col, compID, 'Parent', fHandle);
-        amplitudes = subplot(nSubplots_Row, nSubplots_Col, compID + 1, 'Parent', fHandle);
-        latencies = subplot(nSubplots_Row, nSubplots_Col, compID + 2, 'Parent', fHandle);
+        topographies = subplot(nSubplots_Row, nSubplots_Col, 1, 'Parent', fHandles{comp});
+        amplitudes = subplot(nSubplots_Row, nSubplots_Col, 2, 'Parent', fHandles{comp});
+        latencies = subplot(nSubplots_Row, nSubplots_Col, 3, 'Parent', fHandles{comp});
     
         %% topo plot
         axes(topographies);
@@ -54,13 +55,13 @@ function fHandle = plotConditionSummaryGroup_freq(f, groupData)
             currRC_sig = groupData.stats.sig(:, comp);
             currPValue = groupData.stats.pValues(:, comp);
             % pValues text Y position
-            text_maxY = 1.2*(groupAmp + squeeze(groupAmpErrs(:, :, :, 2)));
+            text_maxY = 0.5*groupAmp ;
             text_sigAsterick = asterisk(currRC_sig > 0);
             
             text(amplitudes, 1:length(currPValue), ...
-                text_maxY, num2str(currPValue,'%0.2f'), plotSettings.statssettings{:});
+                text_maxY, num2str(currPValue, '%0.2f'), plotSettings.statssettings{:});
             
-            text(amplitudes, 1:sum(currRC_sig), ...
+            text(amplitudes, find(currRC_sig > 0), ...
                 groupAmp(currRC_sig > 0), text_sigAsterick, plotSettings.statssettings{:});
             
         end
@@ -82,4 +83,3 @@ function fHandle = plotConditionSummaryGroup_freq(f, groupData)
         
     end
 end
-

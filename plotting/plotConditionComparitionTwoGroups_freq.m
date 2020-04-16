@@ -1,4 +1,4 @@
-function fHandle = plotConditionComparitionTwoGroups_freq(f, groupData, groupStats)
+function fHandles = plotConditionComparitionTwoGroups_freq(f, groupData, groupStats)
 
 %% INPUT:
     % groupData is a structure with following elements: 
@@ -15,20 +15,18 @@ function fHandle = plotConditionComparitionTwoGroups_freq(f, groupData, groupSta
     close all;
     
     nComp = size(groupData{1}.amp, 2);
-    
-    nSubplots_Row = nComp;
-    
-    % topo, amplitude and frequency
+    fHandles = cell(nComp, 1);
+    % amplitude and frequency
+    nSubplots_Row = 1;    
     nSubplots_Col = 2;
     
-    fHandle = figure;
-    set(fHandle, 'units', 'normalized', 'outerposition', [0 0 1 1]);
     asterisk = repmat('*', size(groupData{1}.amp, 1), 1) ;  
     for cp = 1:nComp
-        compID = nSubplots_Col*(cp - 1) + 1 ;
+        fHandles{cp} = figure;
+        set(fHandles{cp}, 'units', 'normalized', 'outerposition', [0 0 1 1]);
         groupLabels = {groupData{1}.label, groupData{2}.label};
-        amplitudes = subplot(nSubplots_Row, nSubplots_Col, compID, 'Parent', fHandle);
-        latencies = subplot(nSubplots_Row, nSubplots_Col, compID + 1, 'Parent', fHandle);
+        amplitudes = subplot(nSubplots_Row, nSubplots_Col, 1, 'Parent', fHandles{cp});
+        latencies = subplot(nSubplots_Row, nSubplots_Col, 2, 'Parent', fHandles{cp});
     
         %% concat bars for amplitude plot
         groupAmp_cell = cellfun(@(x) squeeze(x.amp(:, cp, :)), groupData, 'uni', false);
@@ -46,13 +44,13 @@ function fHandle = plotConditionComparitionTwoGroups_freq(f, groupData, groupSta
         % pValues text Y position
         currRC_sig = groupStats.sig(:, cp);
         currRC_pV = groupStats.pValues(:, cp);
-        text_maxY = 1.2*max((groupAmp + squeeze(groupAmpErrs(:, :, 2))), [], 2);
+        text_maxY = 0.5*max(groupAmp, [], 2);
         text_sigAsterick = asterisk(currRC_sig > 0);
         
         text(amplitudes, 1:length(currRC_pV), ...
             text_maxY, num2str(currRC_pV,'%0.2f'), plotSettings.statssettings{:});
         
-        text(amplitudes, 1:sum(currRC_sig), ...
+        text(amplitudes, find(currRC_sig>0), ...
             groupAmp(currRC_sig > 0), text_sigAsterick, plotSettings.statssettings{:});
                
         
@@ -72,4 +70,3 @@ function fHandle = plotConditionComparitionTwoGroups_freq(f, groupData, groupSta
     
     end
 end
-

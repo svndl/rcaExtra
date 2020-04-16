@@ -2,7 +2,6 @@ function new_Standard_Oddball_analysis
 
     %% define experimentInfo
     
-    
     experimentName = 'Exports_6Hz';
     try
         info = feval(['loadExperimentInfo_' experimentName]);
@@ -53,7 +52,7 @@ function new_Standard_Oddball_analysis
     rcaSettings_f1.freqsToUse = freqs_to_use_c1_f1; % train on 1f1, 2f1
     rcaSettings_f1.trialsToUse = [];
     rcaSettings_f1.nReg = 7;
-    rcaSettings_f1.nComp = 6;
+    rcaSettings_f1.nComp = 4;
     rcaSettings_f1.chanToCompare = 76;
     rcaSettings_f1.freqLabels = info_f1.freqLabels(freqs_to_use_c1_f1);
     rcaSettings_f1.computeComparison = 0;
@@ -68,6 +67,8 @@ function new_Standard_Oddball_analysis
     nConditions = numel(info.conditionLabels);
     rcaStrct = cell(nConditions, 1);
     projected_Conditions_rc = cell(nConditions, 1);
+    projected_Conditions_Subj_rc = cell(nConditions, 1);
+    
     chOZ = 75;
     W_OZ = zeros(128, 1);
     W_OZ(chOZ, 1) = 1;
@@ -82,16 +83,20 @@ function new_Standard_Oddball_analysis
         cNoise2 = cellNoiseData2_f1(:, nc)';
         rcaStrct{nc} = rcaRun_frequency(cData, cNoise1, cNoise2, rcaSettings_cnd_f1);
         cRawData = sensorData_f1_raw(:, nc);
-        [projected_Conditions_rc{nc}, ~] = averageFrequencyData(cRawData', numel(info.bins), numel(freqs_to_use_c1_f1), rcaStrct{nc}.W);
+        [projected_Conditions_rc{nc}, projected_Conditions_Subj_rc{nc}] = ...
+            averageFrequencyData(cRawData', numel(info.bins), numel(freqs_to_use_c1_f1), rcaStrct{nc}.W);
         projected_Conditions_rc{nc}.A = rcaStrct{nc}.A;
         projected_Conditions_rc{nc}.label = info.conditionLabels{nc};
         %% t2 against zero
         stats_info = getBetweenConditionsStats(cRawData', numel(info.bins), numel(freqs_to_use_c1_f1), rcaStrct{nc}.W); 
         projected_Conditions_rc{nc}.stats = stats_info;
-        %% plot summary for each condition: RC topo, amplitude, frequency, significance     
-        gcf_cnd = plotConditionSummaryGroup_freq(info.frequencies(1), projected_Conditions_rc{nc});        
-        saveFigStr = strcat('rca_summary_Condition_', num2str(nc), '_', info.conditionLabels{nc}, '.fig');
-        saveas(gcf_cnd, fullfile(info.destDataDir_FIG, saveFigStr)); 
+        
+        %% plot summary for each condition/RC topo, amplitude, frequency, significance     
+        
+        gcf_cnd_rcs = plotConditionSummaryGroup_freq(info.frequencies(1), projected_Conditions_rc{nc});
+        saveFigsStr = strcat('rca_summary_Condition_', info.conditionLabels{nc}, '_RC_');
+        saveFigStr_rcs = arrayfun(@(x) strcat(saveFigsStr, num2str(x), '.fig'), 1:rcaSettings_f1.nComp, 'uni', false);
+        cellfun(@(x, y) saveas(x, fullfile(info.destDataDir_FIG, y)), gcf_cnd_rcs, saveFigStr_rcs', 'uni', false); 
     end
     
     %% comparing conditions
@@ -100,17 +105,22 @@ function new_Standard_Oddball_analysis
         %% t2 against zero
         stats_info_c1 = getBetweenConditionsStats(sensorData_f1_raw(:, [cmpCnd nc])', numel(info.bins), numel(freqs_to_use_c1_f1), rcaStrct{nc}.W);
         %% plot summary for each condition: RC topo, amplitude, frequency, significance
-        gcf_cnds = plotConditionComparitionTwoGroups_freq(info.frequencies(1), ...
+        gcf_cnd_rcs = plotConditionComparitionTwoGroups_freq(info.frequencies(1), ...
             {projected_Conditions_rc{cmpCnd}, projected_Conditions_rc{nc}}, stats_info_c1);
-        saveFigStr = strcat('rca_summary_CompConditions_', num2str(cmpCnd), '_', num2str(nc), '_', info.conditionLabels{nc}, '.fig');
-        saveas(gcf_cnds, fullfile(info.destDataDir_FIG, saveFigStr));
+        saveFigsStr = strcat('rca_summary_ConditionCMP_', info.conditionLabels{cmpCnd}, '_', info.conditionLabels{nc}, '_RC_');
+        saveFigStr_rcs = arrayfun(@(x) strcat(saveFigsStr, num2str(x), '.fig'), 1:rcaSettings_f1.nComp, 'uni', false);
+        cellfun(@(x, y) saveas(x, fullfile(info.destDataDir_FIG, y)), gcf_cnd_rcs, saveFigStr_rcs', 'uni', false);         
     end
     
     %% plot all conditions
     
-    gcf_all =  plotGroups_freq(info.frequencies(1), info.conditionLabels, projected_Conditions_rc{:});
-    saveFigStr = strcat('rca_summary_ALLConditions_', '.fig');
-    saveas(gcf_all, fullfile(info.destDataDir_FIG, saveFigStr));
+    [bars_all, lolli_all] =  arrayfun(@(x) plotGroups_freq(info.frequencies(1), info.conditionLabels, projected_Conditions_rc{:}, x), ...
+        1:rcaSettings_f1.nComp, 'uni', false);
+    saveFigsStr_bars = strcat('rca_summary_Conditions_ALL_bars', info.conditionLabels{cmpCnd}, '_', info.conditionLabels{nc}, '_RC_');
+    saveFigsStr_loli = strcat('rca_summary_Conditions_ALL_bars', info.conditionLabels{cmpCnd}, '_', info.conditionLabels{nc}, '_RC_');
+    saveFigStr_bars_rcs = arrayfun(@(x) strcat(saveFigsStr_bars, num2str(x), '.fig'), 1:rcaSettings_f1.nComp, 'uni', false);
+    saveFigStr_loli_rcs = arrayfun(@(x) strcat(saveFigsStr_loli, num2str(x), '.fig'), 1:rcaSettings_f1.nComp, 'uni', false);
     
-    
+    cellfun(@(x, y) saveas(x, fullfile(info.destDataDir_FIG, y)), bars_all, saveFigStr_bars_rcs', 'uni', false);
+    cellfun(@(x, y) saveas(x, fullfile(info.destDataDir_FIG, y)), lolli_all, saveFigStr_loli_rcs', 'uni', false);
 end

@@ -1,6 +1,5 @@
 function [weightedAvgPerBinPerFreq, ValidTrialsPerBinPerFreq] = averageBinsTrials(dataIn)
-% Alexandra Yakovleva, Stanford University 2012-2020
-% part of averageFrequencyData toolbox
+% Alexandra Yakovleva, Stanford University 2012-1020
 
     nFreq = size(dataIn, 2);
     nCh = size(dataIn, 3);

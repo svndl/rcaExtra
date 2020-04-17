@@ -1,7 +1,5 @@
 function dE = computeErrorSubj(dataRe, dataIm)
-% Alexandra Yakovleva, Stanford University 2012-2020
-% part of averageFrequencyData toolbox
-
+% Alexandra Yakovleva, Stanford University 2012-1020
 
     nSubj = size(dataRe, 2);
     nCnd = size(dataRe, 1);

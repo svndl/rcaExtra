@@ -1,7 +1,4 @@
 function dataInfo = getExperimentInfo(experiment)
-% Alexandra Yakovleva, Stanford University 2012-2020
-
-% database for On-Off experiments
     switch experiment
         case 'HexagonsSquares'
             dataInfo.frequency = 3;
@@ -53,13 +50,30 @@ function dataInfo = getExperimentInfo(experiment)
             dataInfo.nBins = 10;
             dataInfo.Freqs = {'F1', 'F2'};
             %convention channel(1) frequency(1) and channel(2) frequency(2)
-            dataInfo.Channels = [75, 80];
+            dataInfo.Channels = [75, 81];       
+        case '1f2f'          
+            dataInfo.frequency = [2.73, 3, 3.75];
+            dataInfo.subcndLabels = {'ON', 'OFF'}; 
+            dataInfo.subgroupsLabels = {'2.73hz', 'Upper 3.75hz', 'Lower 3hz'};            
+            dataInfo.specialLoader = 1;
+            dataInfo.conditionLabels = {'2.73hz ON', '2.73hz OFF', ...
+                '2.73hz ON', '2.73hz OFF', ...
+                'Upper 3hz/Lower 3.75hz ON', 'Upper 3hz/Lower 3.75hz OFF', ...
+                'Upper 375hz/Lower 3hz ON', 'Upper 3.75hz/Lower 3hz OFF', ...
+                'Upper 3hz/Lower 3.75hz ON', 'Upper 3hz/Lower 3.75hz OFF', ...
+                'Upper 375hz/Lower 3hz ON', 'Upper 3.75hz/Lower 3hz OFF', ...                
+                };
+            dataInfo.FreqMultipliers = 4;
+            dataInfo.nBins = 10;
+            dataInfo.Freqs = {'F1', 'F2'};
+            %convention channel(1) frequency(1) and channel(2) frequency(2)
+            dataInfo.Channels = [75, 81];         
         case '2FContrast'
-            dataInfo.frequency = [3.75, 3];                        
+            dataInfo.frequency = [3.75, 3];
             dataInfo.subcndLabels = {'ON', 'OFF'};
             dataInfo.subgroupsLabels = {'Upper 5%', 'Upper 10%', 'Upper 20%', 'Upper 40%', 'Upper 80%', ...
-                'Lower 5%', 'Lower 10%', 'Lower 20%', 'Lower 40%', 'Lower 80%'};            
-            dataInfo.specialLoader = 1; 
+                'Lower 5%', 'Lower 10%', 'Lower 20%', 'Lower 40%', 'Lower 80%'};
+            dataInfo.specialLoader = 1;
             dataInfo.conditionLabels = {'Upper 5% ON', 'Upper 5% OFF', ...
                 'Upper 10 ON%', 'Upper 10% OFF', ...
                 'Upper 20% ON', 'Upper 20% OFF', ...
@@ -70,10 +84,23 @@ function dataInfo = getExperimentInfo(experiment)
                 'Lower 20% ON', 'Lower 20% OFF', ...
                 'Lower 40% ON', 'Lower 40% ON', ...
                 'Lower 80% ON', 'Lower 80% OFF'};
-            dataInfo.Channels = [75, 80];            
+            dataInfo.Channels = [75, 80];
             dataInfo.FreqMultipliers = 4;
             dataInfo.nBins = 10;
-            dataInfo.Freqs = {'F1', 'F2'};                                        
+            dataInfo.Freqs = {'F1', 'F2'};
+        case '2FSizes'
+            dataInfo.frequency = [3.75, 3];
+            dataInfo.subcndLabels = {'ON', 'OFF'};
+            dataInfo.conditionLabels = {'Hex 28 amin ON', 'Hex 28 amin OFF', ...
+                'Hex 40 amin ON', 'Hex 40 amin OFF', ...
+                'Hex 56 amin ON', 'Hex 56 amin OFF', ...
+                'Hex 80 amin ON', 'Hex 80 amin OFF'};
+            dataInfo.specialLoader = 0;
+            dataInfo.subgroupsLabels = {'Hex 28 amin', 'Hex 40 amin', 'Hex 56 amin', 'Hex 80 amin'};
+            dataInfo.Channels = [75, 81];
+            dataInfo.FreqMultipliers = 4;
+            dataInfo.nBins = 10;
+            dataInfo.Freqs = {'F1', 'F2'};
     end
 end
            

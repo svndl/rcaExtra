@@ -1,7 +1,5 @@
+%% reshaping the data
 function dataOut = reshapeDataForStats(dataIn)
-% Alexandra Yakovleva, Stanford University 2012-2020
-% Reshapes projected frequency data for stats
-
     nCnd = size(dataIn, 2);
     nSubj = size(dataIn, 1);
     

@@ -1,13 +1,10 @@
-function plot_addStatsBar_time(pValue, currAxisHandle, tc)
-% Alexandra Yakovleva, Stanford University 2012-2020
-
-% adds pValue-colored bar to provided axis
+function plot_addStatsBar_time(pValue, h0, currAxisHandle, tc)
 
    %% ADD STATS
     % sigPos is the lower and upper bound of the part of the plot        
-    yLims_curr = ylim;
-    ylim([1.1*yLims_curr(1) yLims_curr(2)]); 
-    yLims = ylim;
+    yLims_curr = ylim(currAxisHandle);
+    ylim(currAxisHandle, [1.1*yLims_curr(1) yLims_curr(2)]); 
+    yLims = ylim(currAxisHandle);
     sigPos = min(yLims) + diff(yLims).*[0 .1];
 
     % coloring in the uncorrected t-values
@@ -16,7 +13,7 @@ function plot_addStatsBar_time(pValue, currAxisHandle, tc)
     
     pixWidth = 20;
     pBar = repmat( pValue', pixWidth, 1);
-    hImg = image([min(tc), max(tc)],[sigPos(1), sigPos(2)], pBar, ...
+    hImg = image([min(tc)+ 1, max(tc)],[sigPos(1), sigPos(2)], pBar, ...
         'CDataMapping', 'scaled', 'Parent', currAxisHandle, 'AlphaData', 0.7);
     
     colormap(currAxisHandle, tHotColMap);
@@ -24,6 +21,16 @@ function plot_addStatsBar_time(pValue, currAxisHandle, tc)
     set(currAxisHandle, 'CLim', [ 0 cMapMax ] ); % set range for color scale
     uistack(hImg, 'bottom'); hold on;
     pos = get(currAxisHandle, 'position');
-    cb = colorbar;
-    set(cb,'position',[pos(1) + pos(3) 2*pos(2) .02 .1]) 
+    cb = colorbar(currAxisHandle);
+    set(cb, 'position',[pos(1) + pos(3) 2*pos(2) .02 .1])
+    
+    % mark significant regions
+    
+    %identify contiguous ones
+    regionIdx = bwlabel(h0);
+    for m = 1:max(regionIdx)
+        tmp = regionprops(regionIdx == m, 'centroid');
+        idx = round(tmp.Centroid(2));
+        text(currAxisHandle, tc(idx), sigPos(2), '*', 'fontsize', 50, 'fontname', 'helvetica', 'horizontalalignment','center','verticalalignment','top');
+    end
  end

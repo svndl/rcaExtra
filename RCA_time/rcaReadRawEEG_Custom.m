@@ -1,9 +1,4 @@
 function [subj_names, DataOut] = rcaReadRawEEG_Custom(varargin)
-% Alexandra Yakovleva, Stanford University 2012-2020
-
-% loads project's EEG data with the option of loading from default export directory 'Exp_MATL_HCN_128_Avg'
-% possible to load directories with specific flag 
-
     rca_path = varargin{1};
     
     loadedDir = rca_path.loadedEEG;
@@ -64,5 +59,13 @@ function [subj_names, DataOut] = rcaReadRawEEG_Custom(varargin)
             end
         end
     end
-    DataOut = reshape(rcaData(~cellfun('isempty', rcaData)), size(rcaData));
+    validEntries = ~cellfun('isempty', rcaData);
+    if (~isempty(validEntries))
+        
+        numValiedEntries = sum(validEntries(:, 1));
+        nCnd = size(validEntries, 2);  
+        DataOut = reshape(rcaData(validEntries), [numValiedEntries, nCnd]);
+    else
+        DataOut = {};
+    end
 end

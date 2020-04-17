@@ -1,8 +1,4 @@
 function dataOut = resampleData(dataIn, cycleDurtaionSamples)
-% Alexandra Yakovleva, Stanford University 2012-2020
-
-% resamples entire trial data into bin by bin data 
-
     dataOut = cell(size(dataIn));
     nRows = size(dataIn, 1);
     nCols = size(dataIn, 2);

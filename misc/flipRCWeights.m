@@ -2,7 +2,8 @@ function flipRCWeights(experiment, group, curr_path)
 
     %% load and plot all weights
     if (isempty(curr_path))
-        [curr_path, ~, ~] = fileparts(mfilename('fullpath'));    
+        [whereami, ~, ~] = fileparts(mfilename('fullpath'));  
+        curr_path = uigetdir(whereami, 'Select the EEG raw data folder');
     end
     savedResultsDir = fullfile(curr_path, 'EEG_DATA', experiment);
     dataInfo = getExperimentInfo(experiment);

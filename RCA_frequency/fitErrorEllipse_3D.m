@@ -1,9 +1,7 @@
 function [dA, dF, ellipse] = fitErrorEllipse_3D(dataRe, dataIm)
 % will fit error ellipse for multidimentional data
 % dataRe, dataIm are nFx nComp xnSamples
-% Alexandra Yakovleva, Stanford University 2012-2020
-
-
+% Alexandra Yakovleva, Stanford University 2012-1020
     nF = size(dataRe, 1);
     nC = size(dataRe, 2);
     

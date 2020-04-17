@@ -1,6 +1,4 @@
 function t1 = freqPlotLatency(h, angles, errors, colors, labels, f)
-    % creates Amplitude and Phase plots 
-    % Alexandra Yakovleva, Stanford University 2012-2020 
     
     axes(h);
     

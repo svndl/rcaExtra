@@ -97,9 +97,9 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
             nonEmpty = min(nonEmpty(ismember(nonEmpty,condsToUse)));
             % check if indices are unequal
             if any ( indF{nonEmpty} ~= indF{condsToUse(c)} )
-                error('frequency indices are not matched across conditions');
+                disp('frequency indices are not matched across conditions');
             elseif any ( indB{nonEmpty} ~= indB{condsToUse(c)} )
-                error('bin indices are not matched across conditions');
+                disp('bin indices are not matched across conditions');
             else
             end
 

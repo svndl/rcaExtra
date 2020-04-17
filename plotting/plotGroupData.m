@@ -1,6 +1,4 @@
 function plotGroupData(groupProj, groupStyle, groupColors, btwnGroupHandles_lolliplot, btwnGroupHandles_ampphase)
-% Alexandra Yakovleva, Stanford University 2012-2020
-% Function will generate frequency plots of group data  
 
     nFreq = size(groupProj.amp, 1);
     nCnd = size(groupProj.amp, 3);

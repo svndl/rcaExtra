@@ -131,3 +131,4 @@ function [group_Bars, group_Lolliplots] = plotGroups_freq(f, groupLabels, vararg
         title(descr, 'Interpreter', 'none');
     end
 end
+

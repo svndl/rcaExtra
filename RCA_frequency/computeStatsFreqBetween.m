@@ -1,6 +1,5 @@
 function [sig, pVal, stat] = computeStatsFreqBetween(subjAvgReal1, subjAvgImag1, subjAvgReal2, subjAvgImag2)
-% Alexandra Yakovleva, Stanford University 2012-2020
-% Computes statistics for 2 independent samples
+% Alexandra Yakovleva, Stanford University 2012-2020.
 
     nFreqs  = size(subjAvgReal1, 1);  
     nCnd = size(subjAvgReal1, 2);

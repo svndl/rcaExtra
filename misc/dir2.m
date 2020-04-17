@@ -1,7 +1,4 @@
 function listing = dir2(varargin)
-% Alexandra Yakovleva, Stanford University 2012-2020
-
-% list relevant directory content excluding hidden directories
 
 if nargin == 0
     name = '.';

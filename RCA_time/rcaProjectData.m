@@ -1,8 +1,4 @@
 function [muData, semData] = rcaProjectData(data, weights)
-% Alexandra Yakovleva, Stanford University 2012-2020
-
-% project and baseline data thru RC weights
-
     dataOut = rcaProject(data, weights);
     catData = cat(3, dataOut{:});
     muData = nanmean(catData, 3);

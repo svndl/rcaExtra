@@ -1,8 +1,7 @@
 function displayStatistics(axisPtr, pval, t_orig, timeScaleMs)
     
-    % plots corrected t-values and p-value on top of given plot
-    % Alexandra Yakovleva, Stanford University 2012-2020 
-
+    %% plots corrected t-values and p-value on top of given plot
+    
     % sigPos is the lower and upper bound of the part of the plot        
     yLims = ylim;
     sigPos = min(yLims) + diff(yLims).*[0 .1];

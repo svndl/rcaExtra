@@ -1,14 +1,13 @@
 function rcPlot(rcaDataIn, tc, A)
-% Alexandra Yakovleva, Stanford University 2012-2020
-% plots RC components
-    nComp = size(A, 2);
 
-    catData = cat(3, rcaDataIn{:});
+    nComp = size(A, 2);
+    rcaDataMean = cellfun(@(x) nanmean(x, 3), rcaDataIn, 'uni', false);
+    catData = cat(3, rcaDataMean{:});
     muData = nanmean(catData, 3);
     muData = muData - repmat(muData(1, :), [size(muData, 1) 1]);
     semData = nanstd(catData, [], 3)/(sqrt(size(catData, 3)));
 
-    colorbarLimits = [min(A(:)),max(A(:))];
+    colorbarLimits = [min(A(:)), max(A(:))];
 
     extremeVals = [min(A); max(A)];
 
@@ -30,26 +29,40 @@ function rcPlot(rcaDataIn, tc, A)
     end
 
     try
-        for c=1:nComp
-            subplot(3,nComp,c);
-            plotOnEgi(s(c).*A(:,c),colorbarLimits);
-            title(['RC' num2str(c)]);
-            axis off;
+        for c = 1:nComp
+            subplot(2, nComp, c);
+            ax = gca;
+            outerpos = ax.OuterPosition;
+            ti = ax.TightInset;
+            left = outerpos(1) + ti(1);
+            bottom = outerpos(2) + ti(2);
+            ax_width = outerpos(3) - ti(1) - ti(3);
+            ax_height = outerpos(4) - ti(2) - ti(4);
+            ax.Position = [left bottom ax_width ax_height];           
+            plotOnEgi(s(c).*A(:, c), colorbarLimits);
+            title(['RC' num2str(c)], 'FontSize', 25);
+            if (c == nComp)
+                % display colorbar
+                colorbar;
+            end
         end
     catch
         fprintf('call to plotOnEgi() failed. Plotting electrode values in a 1D style instead.\n');
-        for c=1:nComp, subplot(3,nComp,c); plot(A(:,c),'*k-'); end
+        for c = 1:nComp, subplot(3, nComp, c); plot(A(:, c), '*k-'); end
         title(['RC' num2str(c)]);
     end
-
+    AxesHandle = cell(nComp, 1);
     try
-        for c=1:nComp
-            subplot(3,nComp,c+nComp);
-            shadedErrorBar(tc,s(c).*muData(:,c),semData(:,c),'k');
-            title(['RC' num2str(c) ' time course']);
-            axis tight;
+        for c = 1:nComp
+            AxesHandle{c} = subplot(2, nComp, c + nComp);
+            shadedErrorBar(tc, s(c).*muData(:, c),semData(:, c), 'k');
+            %axis square;
+            set(gca, 'FontSize', 20);
+            xlabel('\sl Time (msec)');
+            ylabel('\sl Amplitude (\muV)');            
         end
-    catch
+        linkaxes([AxesHandle{:}], 'xy');
+    catch err
         fprintf('unable to plot rc means and sems. \n');
     end
     % no access to these values outside of RCA run code

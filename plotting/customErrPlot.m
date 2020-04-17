@@ -1,10 +1,10 @@
 function legend_handle = customErrPlot(currAxisHandle, timecourse, muVar, ...
     errVar, clr, descr, lineSpec)
-% calls shadedErrorBar plotting (timde domain) for provided axes handle
-% Alexandra Yakovleva, Stanford University 2012-2020 
+
+% 
     axes(currAxisHandle);
     
-    title(descr, 'FontSize', 30);
+    title(descr, 'FontSize', 30, 'Interpreter', 'none');
     muVar = muVar*1e06;
     errVar = errVar*1e06;
     h = shadedErrorBar(timecourse, muVar, errVar, ...

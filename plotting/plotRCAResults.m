@@ -1,8 +1,4 @@
 function plotRCAResults(rcaDataIn, tc, A)
-% Alexandra Yakovleva, Stanford University 2012-2020
-
-
-%Visualize the RC components time domain 
 
     nComp = size(A, 2);
 

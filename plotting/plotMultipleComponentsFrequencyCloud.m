@@ -1,5 +1,4 @@
 function groups = plotMultipleComponentsFrequencyCloud(varargin)
-% Alexandra Yakovleva, Stanford University 2012-2020
 %% Function will lolliplot multiple components
 %% INPUT:
     % varargin -- groups + labels: {group1, group2,..., groupN, groupLabels}

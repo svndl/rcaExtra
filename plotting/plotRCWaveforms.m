@@ -1,8 +1,4 @@
 function axHandles = plotRCWaveforms(plotHandle, tc, data_mu, data_s, labels1, labels2, dataType)
-% Alexandra Yakovleva, Stanford University 2012-2020
-
-%Creating and interleaving color palletes for various plotting 
-
     load('colorbrewer');    
         
     % specify palette depending on grouptype

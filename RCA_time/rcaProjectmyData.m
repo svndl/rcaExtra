@@ -1,8 +1,4 @@
 function [muData, semData] = rcaProjectmyData(data, weights)
- % Alexandra Yakovleva, Stanford University 2012-2020
-
- % another data projection routine
- 
     nSensors = size(weights, 1);
     nRcs = size(weights, 2);
     

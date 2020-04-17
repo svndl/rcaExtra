@@ -1,7 +1,4 @@
 function [muData, semData] = prepData(rcaDataIn)
-% Alexandra Yakovleva, Stanford University 2012-2020
-
-% average and compute mean/std values for a dataset
 
     rcaDataMean = cellfun(@(x) nanmean(x, 3), rcaDataIn, 'uni', false);
     catData = cat(3, rcaDataMean{:});

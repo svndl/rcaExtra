@@ -1,7 +1,4 @@
 function groups = plotGroupsConditions_freq(conditionLabels, groupLabels, varargin)
-
-% Alexandra Yakovleva, Stanford University 2012-2020
-
 %% Function will lolliplot multiple components pairwise
 %% INPUT:
     % varargin -- groups + labels: {group1, group2,..., groupN, groupLabels}

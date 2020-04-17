@@ -1,6 +1,4 @@
 function groupFigure = plotGroups_time(tc, groupLabels, groupMu, groupS)
-
-% Alexandra Yakovleva, Stanford University 2012-2020
 %% Function will plot multiple first components against each other   
 %% INPUT:
     % tc -- timecourse (samplePoints x 1)
@@ -34,11 +32,11 @@ function groupFigure = plotGroups_time(tc, groupLabels, groupMu, groupS)
     if (plotSettings.showlegends)
         
         allLabels = groupLabels;
-        legend(gca, [legendALL_patch{:}], allLabels(:));
+        legend(gca, [legendALL_patch{:}], allLabels(:), 'Interpreter', 'none');
     end
     
-    xlabel('Time, msec') % x-axis label
-    ylabel('Amplitude, \muV') % y-axis label
+    xlabel('Time (msec)') % x-axis label
+    ylabel('Amplitude (\muV)') % y-axis label
     
     set(gca, plotSettings.axesprops{:});
     pbaspect(gca, [1 1 1]);    

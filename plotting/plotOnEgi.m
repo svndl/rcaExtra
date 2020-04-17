@@ -26,9 +26,11 @@ else
 end
 if nargin<6
     if doText
-        markerProps = {'facecolor','none','edgecolor','none','markersize',15,'marker','o','markerfacecolor','w','MarkerEdgeColor','k','LineWidth',.5};
+        markerProps = {'facecolor','none','edgecolor','none',...
+            'markersize',15,'marker','o','markerfacecolor','w','MarkerEdgeColor','k','LineWidth',.5};
     else
-        markerProps = {'facecolor','none','edgecolor','none','markersize',6,'marker','o','markerfacecolor','none','MarkerEdgeColor','k','LineWidth',1};
+        markerProps = {'facecolor','none','edgecolor','none',...
+            'markersize',6,'marker','o','markerfacecolor','none','MarkerEdgeColor','k','LineWidth',1};
     end
 else
 end

@@ -1,8 +1,4 @@
 function setAxisAtTheOrigin(gc)
-% Alexandra Yakovleva, Stanford University 2012-2020
-
-% Centers axis for lolliplot style analysis 
-
     axes(gc);
     xl = get(gc, 'XLim');
     yl = get(gc, 'YLim');

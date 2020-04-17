@@ -1,7 +1,5 @@
 function [amp, phase] = computeAmpPhase(dataRe, dataIm)
-% Alexandra Yakovleva, Stanford University 2012-2020
-% part of averageFrequencyData toolbox
-
+% Alexandra Yakovleva, Stanford University 2012-1020
     nCnd = size(dataRe, 1);
     nSubj = size(dataRe, 2);
     amp = cell(nCnd, nSubj);

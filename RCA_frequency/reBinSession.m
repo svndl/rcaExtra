@@ -1,7 +1,4 @@
 function out = reBinSession(sessionData, nFreq, nBins_new)
-% Alexandra Yakovleva, Stanford University 2012-2020
-% creates subset of sessionData with same order of nFreqNbin real/imag components for further averaging
-% useful for modifying the outliers's source data within a project (example, all data 5 bins, some subjects did 8 bins) 
 
     %half of bins
     [nBinSamples, ~, ~] = size(sessionData);

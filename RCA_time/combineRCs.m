@@ -1,5 +1,4 @@
 function combineRCs(A, rcData, plotName)
-% Alexandra Yakovleva, Stanford University 2012-2020
 % function will plot heatmaps of all possible rc combinations (to figure out sign/polarity)
 
     close all;

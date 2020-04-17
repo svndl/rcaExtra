@@ -1,5 +1,5 @@
 function [groupcondition_Bars, groupcondition_Lolliplots] = plotGroupsConditions_freq(f, cndLabels, groupLabels, varargin)
-% Alexandra Yakovleva, Stanford University 2012-2020
+
 %% INPUT:
     % varargin -- proj groups + labels: {group1, group2, groupLabels, conditionLabels, componentLabels}
     % Each group is a structure with following elements: 

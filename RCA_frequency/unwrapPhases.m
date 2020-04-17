@@ -1,25 +1,23 @@
 function out = unwrapPhases(values)
-% Alexandra Yakovleva, Stanford University 2012-2020
-% Unwraps phase angles for plotting
-
     out = values;
     for c = 1:size(values, 2)
         %2f
-        while (values(2, c)<values(1, c))
-            values(2, c) = values(2, c) + 2*pi;
+        while (out(2, c)<out(1, c))
+            out(2, c) = out(2, c) + 2*pi;
         end
         % 3f
-        while (values(3, c)<values(2, c))
-            values(3, c) = values(3, c) + 2*pi;
+        while (out(3, c)<out(2, c))
+            out(3, c) = out(3, c) + 2*pi;
         end
         %4f    
-        while (values(4, c) < values(3, c))
-            values(4, c) = values(4, c) + 2*pi;
+        while (out(4, c) < out(3, c))
+            out(4, c) = out(4, c) + 2*pi;
         end
 
-        if(values(4, c) - values(3, c) < pi/2)
-            values(4, c) = values(4, c) + 2*pi;
+        if(out(4, c) - out(3, c) < pi/2)
+            out(4, c) = out(4, c) + 2*pi;
         end
     end
+    
 end
 

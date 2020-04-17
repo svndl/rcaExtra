@@ -1,7 +1,6 @@
 function rcaStrct = rcaRun_frequency(sensorData, cellNoiseData1, cellNoiseData2, ...
     rcaSettings)
 % Alexandra Yakovleva, Stanford University 2012-2020.
-% fork of rcaSweep that works with fixed dataset in time-domain similar format (NsubjxNconditions cell array)
 
     fprintf('Running RCA...\n');
     if (~exist(rcaSettings.savedFile, 'file'))

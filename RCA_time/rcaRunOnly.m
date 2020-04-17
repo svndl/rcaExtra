@@ -1,13 +1,14 @@
 function [rcaData, W, A] = rcaRunOnly(eegSrc, settings, varargin)
 
-% Alexandra Yakovleva, Stanford University 2012-2020
-
-% Runs RC analysis and saves weights/projected data into settings.datset matfile  
-
     % RC parameters
-    nReg = 7;
+    nReg = 8;
     % number of components to extract/plot
-    nComp = 3;
+    nComp = 8;
+    
+    % baseline all electrodes
+    
+    %baselinedEEG = cellfun(@(x) x - repmat(x(1, :, :), [size(x, 1) 1 1]), eegSrc, 'uni', false);
+    baselinedEEG = eegSrc;
     
     dirResData = settings.resultsDir;
     if (iscell(dirResData))
@@ -16,7 +17,7 @@ function [rcaData, W, A] = rcaRunOnly(eegSrc, settings, varargin)
     fileRCA = fullfile(dirResData, ['RCA_' settings.dataset '.mat']);
     % run RCA
     if(~exist(fileRCA, 'file'))
-        [rcaData, W, A, ~, ~, ~, ~] = rcaRun(eegSrc', nReg, nComp);
+        [rcaData, W, A, ~, ~, ~, ~] = rcaRun(baselinedEEG', nReg, nComp);
         save(fileRCA, 'rcaData', 'W', 'A');
         saveas(gcf, fullfile(dirResData, ['RCA_' settings.dataset '.fig']));
         saveas(gcf, fullfile(dirResData, ['RCA_' settings.dataset '.png']));        
@@ -25,11 +26,11 @@ function [rcaData, W, A] = rcaRunOnly(eegSrc, settings, varargin)
         load(fileRCA);
         if (~exist('rcaData', 'var'))
             try
-                rcaData = rcaProject(eegSrc, W);
+                rcaData = rcaProject(baselinedEEG, W);
                 save(fileRCA, 'rcaData', 'W', 'A');
             catch err
                 disp('could not project Subjects, results not modified');
-                rcaData = eegSrc;
+                rcaData = baselinedEEG;
         end
     end
 end

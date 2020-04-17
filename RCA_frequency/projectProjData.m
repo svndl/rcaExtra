@@ -1,7 +1,6 @@
 function proj = projectProjData(amp, phase, errA, errP)
-% frequencies x channels (components) x conditions
-% Alexandra Yakovleva, Stanford University 2012-2020
-% part of averageFrequencyData toolbox
+    % frequencies x channels (components) x conditions
+% Alexandra Yakovleva, Stanford University 2012-1020
     
     proj.amp = cat(3, amp{:});    
     proj.phase = cat(3, phase{:});

@@ -1,6 +1,4 @@
 function bh = freqplotBar(h, values, errors, colors, labels)
-% Plot amplitude bars 
-% Alexandra Yakovleva, Stanford University 2012-2020 
     
     axes(h);
     nCnd = size(values, 2);    

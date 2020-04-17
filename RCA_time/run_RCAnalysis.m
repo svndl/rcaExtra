@@ -1,12 +1,11 @@
 function [mu, s] = run_RCAnalysis(dataIn, freq, resultsDir, datasetName, channel)
-% Alexandra Yakovleva, Stanford University 2012-2020
-
-% runs/loads RC weights, projects, averages data for plotting (mean and std), extracts channel waveforms 
-
     % resample data
     NS_DAR = 420;
-    sampling_rate = round(NS_DAR/freq);    
-    resampled_data = resampleData(dataIn, sampling_rate);
+    sampling_rate = round(NS_DAR/freq);
+    resampled_data = dataIn;
+    if (size(dataIn{1, 1}, 1) ~= sampling_rate)
+        resampled_data = resampleData(dataIn, sampling_rate);
+    end
     settings.resultsDir = resultsDir;
     settings.dataset = datasetName;
     
@@ -21,6 +20,7 @@ function [mu, s] = run_RCAnalysis(dataIn, freq, resultsDir, datasetName, channel
     
     [mu_inc, s_inc] = prepData(rcaProject(resampled_data(:, 1), W));
     [mu_dec, s_dec] = prepData(rcaProject(resampled_data(:, 2), W));
+    avgIncDecData = cellfun(@(x, y) cat(3, x, y), resampled_data(:, 1), resampled_data(:, 2), 'uni', false);
 
     % oz
     W_oz = zeros(128, 1);
@@ -29,7 +29,6 @@ function [mu, s] = run_RCAnalysis(dataIn, freq, resultsDir, datasetName, channel
     [oz_mu_inc, oz_s_inc] = prepData(rcaProject(resampled_data(:, 1), W_oz));
     [oz_mu_dec, oz_s_dec] = prepData(rcaProject(resampled_data(:, 2), W_oz));
     [oz_mu_pol, oz_s_pol] = prepData(rcaProject(resampled_data, W_oz));
-    
     
     mu.inc.rc = mu_inc;
     mu.inc.oz = oz_mu_inc;
@@ -43,5 +42,5 @@ function [mu, s] = run_RCAnalysis(dataIn, freq, resultsDir, datasetName, channel
     s.dec.rc = s_dec;
     s.dec.oz = oz_s_dec;
     s.pol.rc = s_pol;
-    s.pol.oz = oz_s_pol;   
+    s.pol.oz = oz_s_pol;
 end

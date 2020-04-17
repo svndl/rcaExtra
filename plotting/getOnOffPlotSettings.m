@@ -1,7 +1,4 @@
 function plotSettings = getOnOffPlotSettings(type, domain)
-
-% Stores plot settiongs
-% Alexandra Yakovleva, Stanford University 2012-2020 
     
     plotSettings.linestyles = {'-', '-', '-', '-', '-', '-', '-', '-'};
     fontSize = 25;
@@ -26,9 +23,9 @@ function plotSettings = getOnOffPlotSettings(type, domain)
         otherwise
     end
 
-
     switch type
         case 'groups'
+            showlegends = true;
             
             colors = [colorbrewer.qual.Dark2{8}; colorbrewer.qual.Accent{4}]/255;
             
@@ -58,5 +55,5 @@ function plotSettings = getOnOffPlotSettings(type, domain)
     plotSettings.showlegends = showlegends;
     plotSettings.fontsize = fontSize;
     plotSettings.axesprops = axessettings;
-    plotSettings.statssettings = statssettings;    
+    plotSettings.statssettings = statssettings;
 end

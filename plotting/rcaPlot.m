@@ -1,8 +1,4 @@
 function rcaPlot(A, muData, semData, tc)
-% Alexandra Yakovleva, Stanford University 2012-2020
-
-% plots topomap and RC1 as shadedErrorBar
-
     figure;
     colorbarLimits = [min(A(:, 1)),max(A(:, 1))];
 

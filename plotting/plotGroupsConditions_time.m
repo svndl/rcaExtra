@@ -1,6 +1,4 @@
 function [regGCF, grGCF] = plotGroupsConditions_time(tcg, conditionLabels, groupLabels, varargin)
-% Alexandra Yakovleva, Stanford University 2012-2020
-
 %% Function will plot multiple first components against each other   
 %% INPUT:
     % tc -- timecourse (samplePoints x 1)
@@ -99,5 +97,7 @@ function [regGCF, grGCF] = plotGroupsConditions_time(tcg, conditionLabels, group
     for a2 = 1:numel(axesHandles_c)
         pbaspect(axesHandles_c(a2), [1 1 1]);    
     end
-    
+    % unlink for stats plotting later
+    linkaxes([ax_gr{:}],'off');
+    linkaxes([ax_rg{:}],'off');
 end

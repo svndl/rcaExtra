@@ -9,7 +9,7 @@ function plotSettings = getOnOffPlotSettings(type, domain)
    
     switch domain
         case 'Time'                    
-            showlegends = false;
+            showlegends = true;
             plotSettings.xl = 'Time (msec)';
             plotSettings.yl = 'Amplitude (\muV)';          
             axessettings = [defaultaxesprops, 'XMinorTick', 'on', 'XAxisLocation', 'bottom', 'TickLength', [.05 .01]];

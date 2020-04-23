@@ -51,11 +51,10 @@ function main_Standard_Oddball_analysis_time
         [mu_cnd{nc}, s_cnd{nc}] = run_RCAnalysis(DataOut(:, nc), rcaSettings_cnd{nc});
     end
     
-     
+    
     ns_f1 = round(1000./info.frequencies(1));
     tc1 = linspace(0, ns_f1, size(mu_cnd{1}.pol.rc, 1));
-    
-    
+        
     % compare two conditions
     cndToCompare = 1;
     for nc = 2:2
@@ -67,7 +66,7 @@ function main_Standard_Oddball_analysis_time
             
             mu = cat(2, data_1, data_2);
             s = cat(2, s_cnd{cndToCompare}.pol.rc(:, ncomp), s_cnd{nc}.pol.rc(:, ncomp));
-            labels = info.conditionLabels{[cndToCompare, nc]};
+            labels = info.conditionLabels([cndToCompare, nc]);
             gcf_cmp = plotConditions_time(tc1, labels, mu, s);
             
             % run paired test
@@ -86,5 +85,5 @@ function main_Standard_Oddball_analysis_time
             saveas(gcf_cmp, fullfile(info.destDataDir_FIG, saveFigsStr));
              
         end
-    end
+    end    
 end

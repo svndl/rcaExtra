@@ -1,19 +1,11 @@
-function [subj_names, DataOut] = rcaReadRawEEG_Custom(varargin)
-    rca_path = varargin{1};
+function [subj_names, DataOut] = rcaReadRawEEG_Custom(info)
     
-    loadedDir = rca_path.loadedEEG;
-    eegSrc = rca_path.srcEEG;
-    listDir = eegSrc;
+    loadedDir = info.destDataDir_MAT;
+    eegSrc = info.sourceEEG;
+    
+    listDir = fullfile(eegSrc, info.subjTag);
+    subdir = info.subDirMat;
 
-    if (nargin >1)
-        listDir = fullfile(eegSrc, varargin{2});
-    end
-    
-    subdir = '';
-    
-    if (nargin > 2)
-        subdir = 'Exp_MATL_HCN_128_Avg';
-    end
     % data processing args
     how.nScenes = 1;
     removeEyes = 0;

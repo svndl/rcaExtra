@@ -1,29 +1,32 @@
-function [rcaData, W, A] = rcaRunOnly(eegSrc, settings, varargin)
+function [rcaData, W, A, runSettings] = rcaRunOnly(eegSrc, settings)
 
-    % RC parameters
-    nReg = 8;
-    % number of components to extract/plot
-    nComp = 8;
-    
     % baseline all electrodes
-    
     %baselinedEEG = cellfun(@(x) x - repmat(x(1, :, :), [size(x, 1) 1 1]), eegSrc, 'uni', false);
+    
+    
     baselinedEEG = eegSrc;
     
     dirResData = settings.resultsDir;
     if (iscell(dirResData))
         dirResData = [dirResData{:}];
     end
-    fileRCA = fullfile(dirResData, ['RCA_' settings.dataset '.mat']);
+    dirResFigures = settings.figureDir;
+    if (iscell(dirResFigures))
+        dirResFigures = [dirResFigures{:}];
+    end
+    
+    fileRCA = fullfile(dirResData, ['rcaResults_Time_' settings.label '.mat']);
     % run RCA
     if(~exist(fileRCA, 'file'))
-        [rcaData, W, A, ~, ~, ~, ~] = rcaRun(baselinedEEG', nReg, nComp);
-        save(fileRCA, 'rcaData', 'W', 'A');
-        saveas(gcf, fullfile(dirResData, ['RCA_' settings.dataset '.fig']));
-        saveas(gcf, fullfile(dirResData, ['RCA_' settings.dataset '.png']));        
+        [rcaData, W, A, ~, ~, ~, ~] = rcaRun(baselinedEEG', settings.nReg, settings.nComp);
+        runSettings = settings;
+        save(fileRCA, 'rcaData', 'W', 'A', 'runSettings');
+        saveas(gcf, fullfile(dirResFigures, ['RCA_' settings.label '.fig']));
+        saveas(gcf, fullfile(dirResFigures, ['RCA_' settings.label '.png']));        
     else
         disp(['Loading weights from ' fileRCA]);
         load(fileRCA);
+        % add projected data
         if (~exist('rcaData', 'var'))
             try
                 rcaData = rcaProject(baselinedEEG, W);
@@ -31,6 +34,19 @@ function [rcaData, W, A] = rcaRunOnly(eegSrc, settings, varargin)
             catch err
                 disp('could not project Subjects, results not modified');
                 rcaData = baselinedEEG;
+            end
+        end
+        % add settings
+        if (~exist('runSettings', 'var'))
+            % implement proper storage/loading: if there are no settings,
+            % re-run and store
+            runSettings = settings;
+            try
+                save(fileRCA, 'rcaData', 'W', 'A', 'runSettings');
+            catch err
+                disp('could not add settings, results not modified');
+                rcaData = baselinedEEG;
+            end
         end
     end
 end

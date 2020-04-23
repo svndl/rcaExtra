@@ -3,7 +3,6 @@ function [rcaData, W, A, runSettings] = rcaRunOnly(eegSrc, settings)
     % baseline all electrodes
     %baselinedEEG = cellfun(@(x) x - repmat(x(1, :, :), [size(x, 1) 1 1]), eegSrc, 'uni', false);
     
-    
     baselinedEEG = eegSrc;
     
     dirResData = settings.resultsDir;
@@ -16,7 +15,10 @@ function [rcaData, W, A, runSettings] = rcaRunOnly(eegSrc, settings)
     end
     
     fileRCA = fullfile(dirResData, ['rcaResults_Time_' settings.label '.mat']);
+    
     % run RCA
+    delete(gcp('nocreate'));
+    
     if(~exist(fileRCA, 'file'))
         [rcaData, W, A, ~, ~, ~, ~] = rcaRun(baselinedEEG', settings.nReg, settings.nComp);
         runSettings = settings;
@@ -26,6 +28,14 @@ function [rcaData, W, A, runSettings] = rcaRunOnly(eegSrc, settings)
     else
         disp(['Loading weights from ' fileRCA]);
         load(fileRCA);
+        if (~cmpRCARunSettings(settings, runSettings))
+            disp('New settings don''t match previous instance, re-running RCA ...'); 
+            fileRCA_old = fullfile(dirResData, ['previous_rcaResults_Time_' settings.label '.mat']);
+
+            movefile(fileRCA ,fileRCA_old, 'f')
+            [rcaData, W, A, runSettings] = rcaRunOnly(eegSrc, settings);       
+        end
+            
         % add projected data
         if (~exist('rcaData', 'var'))
             try

@@ -20,11 +20,16 @@ function fHandles = plotConditionComparitionTwoGroups_freq(f, groupData, groupSt
     nSubplots_Row = 1;    
     nSubplots_Col = 2;
     
-    asterisk = repmat('*', size(groupData{1}.amp, 1), 1) ;  
+    asterisk = repmat('*', size(groupData{1}.amp, 1), 1) ;
+    asterick_plotSettings = {'HorizontalAlignment', 'center', 'VerticalAlignment', 'top', ...
+                'FontSize', 50, 'fontname', 'helvetica'};
+    
     for cp = 1:nComp
         fHandles{cp} = figure;
         set(fHandles{cp}, 'units', 'normalized', 'outerposition', [0 0 1 1]);
-        groupLabels = {groupData{1}.label, groupData{2}.label};
+        g1_Label = [groupData{1}.label ' ' groupData{1}.compLabels{cp}];
+        g2_label = [groupData{2}.label ' ' groupData{2}.compLabels{cp}];
+        groupLabels = {g1_Label, g2_label};
         amplitudes = subplot(nSubplots_Row, nSubplots_Col, 1, 'Parent', fHandles{cp});
         latencies = subplot(nSubplots_Row, nSubplots_Col, 2, 'Parent', fHandles{cp});
     
@@ -51,7 +56,7 @@ function fHandles = plotConditionComparitionTwoGroups_freq(f, groupData, groupSt
             text_maxY, num2str(currRC_pV,'%0.2f'), plotSettings.statssettings{:});
         
         text(amplitudes, find(currRC_sig>0), ...
-            groupAmp(currRC_sig > 0), text_sigAsterick, plotSettings.statssettings{:});
+            groupAmp(currRC_sig > 0), text_sigAsterick, asterick_plotSettings{:});
                
         
         %% concat frequency for latency plot

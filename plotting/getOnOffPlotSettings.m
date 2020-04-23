@@ -19,7 +19,8 @@ function plotSettings = getOnOffPlotSettings(type, domain)
             plotSettings.yl = 'Amplitude (\muV)';
             showlegends = true;
             axessettings = defaultaxesprops;
-            statssettings = {'HorizontalAlignment', 'center','VerticalAlignment','top', 'FontSize', 20};  
+            statssettings = {'HorizontalAlignment', 'center','VerticalAlignment','top', ...
+                'FontSize',  fontSize + 5, 'fontname', 'helvetica', 'fontangle', 'italic' };  
         otherwise
     end
 

@@ -71,8 +71,10 @@ function main_Standard_Oddball_analysis_time
             gcf_cmp = plotConditions_time(tc1, labels, mu, s);
             
             % run paired test
-            [pValue, h0] = ttest_paired(mu_cnd{cndToCompare}.source(:, ncomp), ...
-                mu_cnd{nc}.source(:, ncomp));
+            data1_raw = mu_cnd{cndToCompare}.source;
+            data2_raw = mu_cnd{nc}.source;
+            
+            [pValue, h0] = ttest_paired(data1_raw, data2_raw, ncomp);
             % add colorbar
             
             allaxes = findall(gcf_cmp, 'type', 'axes'); 

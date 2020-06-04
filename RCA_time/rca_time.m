@@ -1,4 +1,4 @@
-function [rcaData, W, A, runSettings] = rcRun_time(eegSrc, settings)
+function rcResult = rca_time(eegSrc, settings)
 
     % baseline all electrodes
     %baselinedEEG = cellfun(@(x) x - repmat(x(1, :, :), [size(x, 1) 1 1]), eegSrc, 'uni', false);
@@ -35,7 +35,7 @@ function [rcaData, W, A, runSettings] = rcRun_time(eegSrc, settings)
             fileRCA_old = fullfile(dirResData, ['previous_rcaResults_Time_' settings.label '.mat']);
 
             movefile(fileRCA ,fileRCA_old, 'f')
-            [rcaData, W, A, runSettings] = rcRun_time(eegSrc, settings);       
+            [rcaData, W, A, runSettings] = rca_time(eegSrc, settings);       
         end
             
         % add projected data
@@ -61,5 +61,9 @@ function [rcaData, W, A, runSettings] = rcRun_time(eegSrc, settings)
             end
         end
     end
+    rcResult.projectedData = rcaData;
+    rcResult.W = W;
+    rcResult.A = A;
+    rcResult.runSettings = rcResult;
 end
 

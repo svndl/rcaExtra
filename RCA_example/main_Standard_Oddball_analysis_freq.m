@@ -8,78 +8,79 @@ function main_Standard_Oddball_analysis_freq
     % matlab file
     
     try
-        info = feval(['loadExperimentInfo_' experimentName]);
+        analysisStruct = feval(['loadExperimentInfo_' experimentName]);
     catch err
         % in case unable to load the designated file, load default file
         % (not implemented atm)
         disp('Unable to load specific expriment settings, loading default');
-        info = loadExperimentInfo_Default;
+        analysisStruct = loadExperimentInfo_Default;
     end
     
     % specified for general data loader and plotting, currently not used
-    domain = 'freq';   
+    analysisStruct.domain = 'freq';
+    loadSettings = rcaExtra_getDataLoadingSettings(analysisStruct);
     
-    %% RCA training settings
-    
-    settings_f1_raw.useFrequencies = info.frequencyLabels{1};
-    settings_f1_raw.subjTag = info.subjTag;
-    settings_f1_raw.useBins = info.bins;
-    
-    
-    settings_f1_rca = settings_f1_raw;
-    settings_f1_rca.useBins = 0;
-    settings_f1_rca.useFrequencies = info.frequencyLabels{1};
-
-    % example specifying F2 frequencies
-    
-%     settings_f2_rca.useFrequencies = info.frequencyLabels{2};
-%     settings_f2_rca.subjTag = info.subjTag; 
-%     
-%     settings_f2_raw.useFrequencies = info.frequencyLabels{2};
-%     settings_f2_raw.subjTag = info.subjTag;
-%     settings_f2_raw.useBins = info.bins;
+    % read raw data 
+    [subjList, EEGData] = getRawData(loadSettings);
+    rcSettings = rcaExtra_getRCARunSettings(analysisStruct);
+    rcSettings.subjList = subjList;
     
     %% reading source data for training and projecting
     
+    settings_f_all_rca = info;
+    settings_f_all_rca.useBins = 0;
+    settings_f_all_rca.useFrequencies = cat(2, info.frequencyLabels{:});
+    
+    settings_f_all_raw = info;
+    settings_f_all_raw.useBins = info.bins;
+    settings_f_all_raw.useFrequencies = cat(2, info.frequencyLabels{:});
+   
     % read avg bin (0) for RC training F1 
-    [subjList, sensorData_f1_rc, cellNoiseData1_f1, cellNoiseData2_f1, info_f1] = readselectiveDFTData(info, settings_f1_rca);
+    % [subjList, sensorData_f1_rc, cellNoiseData1_f1, cellNoiseData2_f1, info_f1] = readRawEEG_freq(settings_f1_rca);
+    
+     % read avg bin (0) for RC training F1, F2 
+    [subjList, sensorData_f_rc, cellNoiseData1_f, cellNoiseData2_f, info_f] = readRawEEG_freq(settings_f_all_rca);
+    [~, sensorData_f_raw, ~, ~, ~] = readRawEEG_freq(settings_f_all_raw);
     
     % example reading F2 avg data 
-%    [~, sensorData_f2_rc, cellNoiseData1_f2, cellNoiseData2_f2, info_f2] = readselectiveDFTData(info, settings_f2_rca);    
+    % [~, sensorData_f2_rc, cellNoiseData1_f2, cellNoiseData2_f2, info_f2] = readRawEEG_freq(info, settings_f2_rca);    
     
     % read raw data for averaging F1 (don't need noise/info)
-    [~, sensorData_f1_raw, ~, ~, info_f1_raw] = readselectiveDFTData(info, settings_f1_raw);    
+    % [~, sensorData_f1_raw, ~, ~, info_f1_raw] = readRawEEG_freq(settings_f1_raw);    
      
     % example reading F2 raw data 
-    %     [~, sensorData_f2_raw, ~, ~, info_f2_raw] = readselectiveDFTData(info, settings_f2_raw);
-    %     [~, sensorData_f2_rc, cellNoiseData1_f2, cellNoiseData2_f2, info_f2] = readselectiveDFTData(info, settings_f2_rca);
-    %     [~, sensorData_f2_raw, ~, ~, info_f2_raw] = readselectiveDFTData(info, settings_f2_raw);
+    %     [~, sensorData_f2_raw, ~, ~, info_f2_raw] = readRawEEG_freq(info, settings_f2_raw);
+    %     [~, sensorData_f2_rc, cellNoiseData1_f2, cellNoiseData2_f2, info_f2] = readRawEEG_freq(info, settings_f2_rca);
+    %     [~, sensorData_f2_raw, ~, ~, info_f2_raw] = readRawEEG_freq(info, settings_f2_raw);
         
-    %% Setting up RC analysis 
-    
-%    freqs_to_use_c1_f2 = [1 2];
-    
-    % specifying template settings structure for f1 RCA 
-    freqs_to_use_c1_f1 = [1 2 3 4]; % freq multiples to use for training
-    
-    rcaSettings_f1.subjList = subjList; % store subjects
-    rcaSettings_f1.freqIndices = info_f1.indF(freqs_to_use_c1_f1); % available frequencies
-    rcaSettings_f1.binIndices = info_f1.indB; % available bins
-    rcaSettings_f1.binsToUse = 0; % bins used for training
-    rcaSettings_f1.freqsToUse = freqs_to_use_c1_f1; % frequencies used for traiing
-    rcaSettings_f1.trialsToUse = []; % use all trials
-    rcaSettings_f1.nReg = 7; 
-    rcaSettings_f1.nComp = 4;
-    rcaSettings_f1.chanToCompare = 75; % oz channel to include in plotting (can be defined as a vector of channels)
-    rcaSettings_f1.freqLabels = info_f1.freqLabels(freqs_to_use_c1_f1); % labels for frequencies
-    rcaSettings_f1.computeComparison = 0; % outdated
-    rcaSettings_f1.binLevels = info_f1.binLabels; % labels for bins
-    rcaSettings_f1.dataType = 'RLS'; 
-    rcaSettings_f1.rcPlotStyle =  'matchMaxSignsToRc1'; 
+    %% Setting up RC analysis, common variables 
+    rcaSettings.subjList = subjList; % store subjects
+    rcaSettings.binIndices = info_f.indB; % available bins
+    rcaSettings.binsToUse = 0; % bins used for training
+    rcaSettings.trialsToUse = []; % use all trials
+    rcaSettings.nReg = 7; 
+    rcaSettings.nComp = 6;
+    rcaSettings.chanToCompare = 75; % oz channel to include in plotting (can be defined as a vector of channels)
+    rcaSettings.computeComparison = 0; % outdated
+    rcaSettings.binLevels = info_f.binLabels; % labels for bins
+    rcaSettings.dataType = 'RLS'; 
+    rcaSettings.rcPlotStyle =  'matchMaxSignsToRc1'; 
     runDate = datestr(clock,26); 
     runDate(strfind(runDate,'/')) ='';
-    rcaSettings_f1.runDate = runDate; % runtime info
+    rcaSettings.runDate = runDate; % runtime info
     
+    % customize options
+    rcaSettings_all = rcaSettings;
+    freqs_to_use_c1_f = [1 2 3 4 5 6];
+    rcaSettings_all.freqIndices = info_f.indF(freqs_to_use_c1_f); % available frequencies
+    rcaSettings_all.freqsToUse = freqs_to_use_c1_f; % frequencies used for traiing
+    rcaSettings_all.freqLabels = info_f.freqLabels(freqs_to_use_c1_f); % labels for frequencies
+
+    
+    % specifying template settings structure for f1 or f2 RCA 
+    % freqs_to_use_c1_f1 = [1 2 3 4]; % freq multiples to use for training
+    % freqs_to_use_c1_f2 = [1 2];
+        
     % allocating space for rcAnalysis
     nConditions = numel(info.conditionLabels);
     rcaStrct = cell(nConditions, 1);
@@ -94,39 +95,39 @@ function main_Standard_Oddball_analysis_freq
     for nc = 1:nConditions
         % copy RC template settings for each condition and modify if needed
         
-        rcaSettings_cnd_f1 = rcaSettings_f1;
-        rcaSettings_cnd_f1.condsToUse = 1;
+        rcaSettings_cnd_f = rcaSettings_all;
+        rcaSettings_cnd_f.condsToUse = 1;
         
         % specify electrdode channels to extract for comparision
-        rcaSettings_cnd_f1.chanToCompare = rcaSettings_f1.chanToCompare;
+        rcaSettings_cnd_f.chanToCompare = rcaSettings_all.chanToCompare;
         
         % total number of plots (RCs + additional channels), can be
         % different for each condition
-        nTotalComp = rcaSettings_f1.nComp + numel(rcaSettings_f1.chanToCompare);
+        nTotalComp = rcaSettings_all.nComp + numel(rcaSettings_all.chanToCompare);
         
         % specify save file
-        rcaSettings_cnd_f1.savedFile = [info.destDataDir_RCA filesep 'rcaResults_Frequency_c' num2str(nc) '_f1.mat'];
+        rcaSettings_cnd_f.savedFile = [info.destDataDir_RCA filesep 'rcaResults_Frequency_c' num2str(nc) '_f1f2.mat'];
         
         % select condition data from avg bin data subset
-        cData = sensorData_f1_rc(:, nc)';
-        cNoise1 = cellNoiseData1_f1(:, nc)';
-        cNoise2 = cellNoiseData2_f1(:, nc)';
+        cData = sensorData_f_rc(:, nc)';
+        cNoise1 = cellNoiseData1_f(:, nc)';
+        cNoise2 = cellNoiseData2_f(:, nc)';
         
         % run RCA
-        rcaStrct{nc} = rcaRun_frequency(cData, cNoise1, cNoise2, rcaSettings_cnd_f1);
+        rcaStrct{nc} = rcaRun_frequency(cData, cNoise1, cNoise2, rcaSettings_cnd_f);
         
         % select raw data (all bins) subset 
-        cRawData = sensorData_f1_raw(:, nc);
+        cRawData = sensorData_f_raw(:, nc);
         
         % concat RC and channel(s) weights for plotting/comparision
         % create weight matrix for additional electrode channels to plot
-        W_ch = zeros(128, numel(rcaSettings_cnd_f1.chanToCompare));    
-        W_ch(rcaSettings_f1.chanToCompare, 1) = 1;
+        W_ch = zeros(128, numel(rcaSettings_cnd_f.chanToCompare));    
+        W_ch(rcaSettings_cnd_f.chanToCompare, 1) = 1;
         W_rc_ch{nc} = cat(2, rcaStrct{nc}.W, W_ch);
         
         % run weighted averaging 
         [projected_Conditions_rc{nc}, projected_Conditions_Subj_rc{nc}] = ...
-            averageFrequencyData(cRawData', numel(info.bins), numel(freqs_to_use_c1_f1), W_rc_ch{nc});
+            averageFrequencyData(cRawData', numel(info.bins), numel(freqs_to_use_c1_f), W_rc_ch{nc});
         
         % add topographies for plotting 
         projected_Conditions_rc{nc}.A = rcaStrct{nc}.A;

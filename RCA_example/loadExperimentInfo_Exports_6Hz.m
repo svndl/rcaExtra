@@ -1,51 +1,38 @@
-function info = loadExperimentInfo_Exports_6Hz
+function adults6HzInfo = loadExperimentInfo_Exports_6Hz
     
     %% info is a structure describing experiment parameters
-    
+    adults6HzInfo = rcaExtra_genStructureTemplate;
     [curr_path, ~, ~] = fileparts(mfilename('fullpath'));
-    info.rootFolder = curr_path;
-    info.srcDataDir = '';
-    %% source EEG data
-    srcDirPath = uigetdir(info.rootFolder, 'Select EEG SOURCE directory');
+    adults6HzInfo.path.rootFolder = curr_path;
+    
+    % source EEG data
+    srcDirPath = uigetdir(curr_path, 'Select EEG SOURCE directory');
     if (~isempty(srcDirPath))
-        info.sourceEEG = srcDirPath;
+        adults6HzInfo.path.sourceEEGDir = srcDirPath;
     end
         
-    %% destination EEG directory
-    info.destDataDir = curr_path;
-    destDirPath = uigetdir(info.rootFolder, 'Select EEG destination directory');
+    % destination EEG directory
+    adults6HzInfo.path.destDataDir = uigetdir(curr_path, 'Select analysis results directory');
     
-    if (~isempty(destDirPath))
-        info.destDataDir = destDirPath;
-    end
-    
-    %% create subdirectories
-    
-    info.destDataDir_MAT = fullfile(info.destDataDir, 'MAT');
-    if (~exist(info.destDataDir_MAT, 'dir'))
-        mkdir(info.destDataDir_MAT);
-    end
-    
-    info.destDataDir_RCA = fullfile(info.destDataDir, 'RCA');
-    if (~exist(info.destDataDir_RCA, 'dir'))
-        mkdir(info.destDataDir_RCA);
-    end
 
-    info.destDataDir_FIG = fullfile(info.destDataDir, 'FIG');
-    if (~exist(info.destDataDir_FIG, 'dir'))
-        mkdir(info.destDataDir_FIG);
-    end
+    %% create subdirectories
+    dirNames = {'MAT', 'FIG', 'RCA'};
+    dirPaths = rcaExtra_setupDestDir(adults6HzInfo.path.destDataDir, dirNames);
     
-    info.subjTag = '*';
-    info.subDirTxt = 'text';
-    info.subDirMat = 'matlab';
-    info.groupLabels = {'Adults'};
-    
-    info.conditionLabels = {'faces', 'cars', 'corridors', 'limbs', 'words'};
-    info.frequencies = [1, 6];
-    info.useSpecialDataLoader = 0;
-    info.frequencyLabels = {{'1F1', '2F1', '3F1', '4F1'}, {'1F2', '2F2'}};
-    info.bins = 1:10;
+    adults6HzInfo.path.destDataDir_MAT = dirPaths{1};
+    adults6HzInfo.path.destDataDir_FIG = dirPaths{2};
+    adults6HzInfo.path.destDataDir_RCA = dirPaths{3};
+   
+    % replace default values here
+    adults6HzInfo.info.subjTag = '*';
+    adults6HzInfo.info.subDirTxt = 'text';
+    adults6HzInfo.info.subDirMat = 'matlab';
+    adults6HzInfo.info.groupLabels = {'Adults 6 Hz'};
+    adults6HzInfo.info.conditionLabels = {'Condition 1', 'Condition 2', 'Condition 3', 'Condition 4', 'Condition 5'};
+    adults6HzInfo.info.frequenciesHz = [1, 6];
+    adults6HzInfo.info.useSpecialDataLoader = false;
+    adults6HzInfo.info.frequencyLabels = {{'1F1', '2F1', '3F1', '4F1'}, {'1F2', '2F2'}};
+    adults6HzInfo.info.binsNmb = 10;
 end
 
 

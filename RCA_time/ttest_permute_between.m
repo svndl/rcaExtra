@@ -1,4 +1,4 @@
-function [realT,realP,corrT,critVal,clustDistrib]= ttest_permute_between(inData1, inData2, maxPerms, timeMask, permMatrix, deletePool, tParams )
+function [realT, realP, corrT, critVal, clustDistrib] = ttest_permute_between(inData1, inData2, maxPerms, timeMask, permMatrix, deletePool, tParams )
         % [realT,realP,corrT,critVal,clustDistrib]= ttest_permute( inData,maxPerms,timeMask,permMatrix,deletePool,tParams )
         % 
         % input:

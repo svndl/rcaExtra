@@ -18,6 +18,7 @@ function [sig, pVal, stat] = computeStatsFreqBetween(subjAvgReal1, subjAvgImag1,
     
     xyData1 = zeros(nSubj1, 2, nCnd);
     xyData2 = zeros(nSubj2, 2, nCnd);
+    
     %% STATS
     for f = 1:nFreqs
         for cnd = 1:nCnd

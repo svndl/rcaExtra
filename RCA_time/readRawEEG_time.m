@@ -1,7 +1,7 @@
-function [subj_names, DataOut] = rcaReadRawEEG_Custom(info)
+function [subj_names, DataOut] = readRawEEG_time(info)
     
     loadedDir = info.destDataDir_MAT;
-    eegSrc = info.sourceEEG;
+    eegSrc = info.sourceEEGDir;
     
     listDir = fullfile(eegSrc, info.subjTag);
     subdir = info.subDirMat;

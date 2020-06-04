@@ -48,8 +48,8 @@ function plotSettings = getOnOffPlotSettings(type, domain)
             warmColors = interleave(1 ,reds(end:-2:3, :), oranges(end:-2:3, :));
             coldColors = interleave(1, blues(end:-2:3, :), greens(end:-2:3, :));
     
-            colors = cat(3, coldColors(1:end, :), ...
-                warmColors(1:end, :));
+            colors = cat(3, coldColors(1:end-1, :), ...
+                warmColors(2:end, :));
         otherwise
     end
     plotSettings.colors = colors;

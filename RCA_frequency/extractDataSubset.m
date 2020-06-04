@@ -1,10 +1,10 @@
 function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceDataFileName, settings)
-    % Return only the desired subset of data contained in sourceDataFileName
-    % which contains only binsToUse, freqsToUse, condsToUse
+    % Return subset of data contained in sourceDataFileName
+    % containing binsToUse, freqsToUse, condsToUse
     
     %Copyright 2019 Alexandra Yakovleva Stanford University SVNDL
     
-    load(sourceDataFileName);    
+    load(sourceDataFileName); 
     
     if (~isfield(settings, 'useConditions'))
         condsToUse = [];
@@ -24,34 +24,22 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
         freqsToUse = settings.useFrequencies;        
     end
     
-    
     if (~isfield(settings, 'useTrials'))
         trialsToUse = [];
     else
         trialsToUse = settings.useTrials;        
     end
 
-    
     if (isempty(condsToUse))
         condsToUse = 1:size(signalData, 1);
     end
-    
-    
-    nConds = length(condsToUse);
+        
+    nConds = length(condsToUse);  
+        
     signalDataSel = cell(nConds, 1);
     noise1Sel = cell(nConds, 1);
     noise2Sel = cell(nConds, 1);
     
-    % compatibility with the old data format
-    
-    if (exist('info', 'var'))
-        indB = info.indB;
-        indF = info.indF;
-        freqLabels = info.freqLabels;
-        binLabels = info.binLabels;
-        chanIncluded = info.chanIncluded;
-    end
-   
     
     for c = 1:nConds
         if condsToUse(c) > size(signalData, 1) || isempty(signalData{condsToUse(c)})
@@ -62,19 +50,20 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
             if isempty(binsToUse)
                 % use all available bins
                 % (note: canmot differ across conditions)
-                binsToUse = unique(indB{condsToUse(c)});
+                binsToUse = unique(info.indB{condsToUse(c)});
                 binsToUse = binsToUse(binsToUse>0); % use all bins except the average bin
             else
+                
             end
             if isempty(freqsToUse)
                 % use all available frequencies
                 % (note: cannot differ across conditions)
-                settings.useFrequencies = unique(freqLabels{condsToUse(c)});
-                freqsToUse = unique(indF{condsToUse(c)});
+                settings.useFrequencies = unique(info.freqLabels{condsToUse(c)});
+                freqsToUse = unique(info.indF{condsToUse(c)});
             else
-                [~, freqsToUse] = ismember(settings.useFrequencies, freqLabels{condsToUse(c)});
+                [~, freqsToUse] = ismember(settings.useFrequencies, info.freqLabels{condsToUse(c)});
             end
-            selRowIx = ismember(indB{condsToUse(c)}, binsToUse) & ismember(indF{condsToUse(c)}, freqsToUse);
+            selRowIx = ismember(info.indB{condsToUse(c)}, binsToUse) & ismember(info.indF{condsToUse(c)}, freqsToUse);
             if isempty(trialsToUse)
                 % use all available trials 
                 % (note: can differ across conditions)
@@ -92,13 +81,13 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
             noise2Sel{c}     =     noise2{condsToUse(c)}(repmat(selRowIx,[2,1]),:,curTrials);
             
             % find non-empty frequency indices
-            nonEmpty = find(cell2mat(cellfun(@(x) ~isempty(x),indF,'uni',false)));
+            nonEmpty = find(cell2mat(cellfun(@(x) ~isempty(x), info.indF, 'uni', false)));
             % find first among conditions to use
             nonEmpty = min(nonEmpty(ismember(nonEmpty,condsToUse)));
             % check if indices are unequal
-            if any ( indF{nonEmpty} ~= indF{condsToUse(c)} )
+            if any ( info.indF{nonEmpty} ~= info.indF{condsToUse(c)} )
                 disp('frequency indices are not matched across conditions');
-            elseif any ( indB{nonEmpty} ~= indB{condsToUse(c)} )
+            elseif any ( info.indB{nonEmpty} ~= info.indB{condsToUse(c)} )
                 disp('bin indices are not matched across conditions');
             else
             end
@@ -115,14 +104,15 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
 %                 binLabelsSel{c}  = binLabels{condsToUse(c)}(binsToUse); % add one, because bin level 0 = average
 %             end  
 %             % grap frequency labels
-              freqLabelsSel{c}  = freqLabels{condsToUse(c)}(freqsToUse);
-              binLabelsSel{c}  = binLabels{condsToUse(c)}(binsToUse + 1); % add one, because bin level 0 = average              
+              freqLabelsSel{c}  = info.freqLabels{condsToUse(c)}(freqsToUse);
+              binLabelsSel{c}  = info.binLabels{condsToUse(c)}(binsToUse + 1); % add one, because bin level 0 = average              
 %             % grap frequency labels
 %             trialsSel{c}  = curTrials;
         end
     end
 
-    % now replace missing conditions with NaNs, dude!
+    % now replace missing conditions with NaNs
+    
     signalDataSel = replaceEmpty(signalDataSel);
     noise1Sel = replaceEmpty(noise1Sel);
     noise2Sel = replaceEmpty(noise2Sel);

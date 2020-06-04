@@ -28,7 +28,7 @@ function bh = freqplotBar(h, values, errors, colors, labels)
         set(beh(c), 'color', colors(c, :));
     end
     title('Amplitudes', 'Interpreter', 'none');
-    legend(labels{:});
+    legend(labels{:}, 'Interpreter', 'none');
     try
         xticklabels(xlabels(:));
     catch

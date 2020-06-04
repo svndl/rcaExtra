@@ -1,4 +1,4 @@
-function [mu, s] = run_OZAnalysis(dataIn, freq, path, tag, channel)
+function [mu, s] = runOZ_time(dataIn, freq, path, tag, channel)
     % resample data
     NS_DAR = 420;
     sampling_rate = round(NS_DAR/freq);    

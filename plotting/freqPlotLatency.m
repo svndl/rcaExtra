@@ -34,7 +34,7 @@ function t1 = freqPlotLatency(h, angles, errors, colors, labels, f)
     
     end
     title('Latency Estimate', 'Interpreter', 'tex');    
-    legend(labels{:}); 
+    legend(labels{:}, 'Interpreter', 'none'); 
     try
         xticks(1:nF);
         xticklabels(xlabels);

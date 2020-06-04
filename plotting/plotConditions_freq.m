@@ -1,4 +1,4 @@
-function [cnd_Bars, cnd_Lolliplots] = plotConditions_freq(f, cndLabels, cndData, colorOrder)
+function [cnd_Bars, cnd_Lolliplots] = plotConditions_freq(f, cndLabels, cndData, colorOrder, cp)
 
 %% INPUT:
     % varargin -- proj groups + labels: {group1, group2, groupLabels, conditionLabels, componentLabels}
@@ -19,11 +19,9 @@ function [cnd_Bars, cnd_Lolliplots] = plotConditions_freq(f, cndLabels, cndData,
         plotSettings = getOnOffPlotSettings('groupsconditions', 'Frequency');
         plotColors = squeeze(plotSettings.colors(colorOrder, :, :))';
     end
-            
-    close all;
-    
-    nComp = 1; % drop the OZ component
-
+                
+    nComp = 1;
+    cp = 1;
     % amplitude and frequency
     nSubplots_Col = 2;
     nSubplots_Row = nComp;
@@ -36,8 +34,6 @@ function [cnd_Bars, cnd_Lolliplots] = plotConditions_freq(f, cndLabels, cndData,
     
     cnd_Lolliplots = figure;
     set(cnd_Lolliplots, 'units', 'normalized', 'outerposition', [0 0 1 1]);
-
-    cp = 1; %RC's
  
     cndAmps = squeeze(cndData.amp(:, cp, :)); 
     cndAmpsErrs = squeeze(cndData.errA(:, cp, :, :));

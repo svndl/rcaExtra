@@ -1,14 +1,19 @@
-function rcPlot_time(rcaDataIn, tc, A)
+function rcPlot_time(rcaDataIn, tc, A, Rxx, Ryy, dGen)
+% Function would display results of RC data
+% Alexandra Yakovleva, 2020 Stanford University
 
+    % number of components to plot
     nComp = size(A, 2);
+    
+    % calculating mean and standard deviation for each component
     rcaDataMean = cellfun(@(x) nanmean(x, 3), rcaDataIn, 'uni', false);
     catData = cat(3, rcaDataMean{:});
     muData = nanmean(catData, 3);
     muData = muData - repmat(muData(1, :), [size(muData, 1) 1]);
     semData = nanstd(catData, [], 3)/(sqrt(size(catData, 3)));
 
+    % set colorbar limits across all components
     colorbarLimits = [min(A(:)), max(A(:))];
-
     extremeVals = [min(A); max(A)];
 
     %% flip signs
@@ -28,9 +33,14 @@ function rcPlot_time(rcaDataIn, tc, A)
         end
     end
 
+    
+    %% plotting routine
+    nSubplotsRow = 3;
+    
+    % plotting topos
     try
         for c = 1:nComp
-            subplot(2, nComp, c);
+            subplot(nSubplotsRow, nComp, c);
             ax = gca;
             outerpos = ax.OuterPosition;
             ti = ax.TightInset;
@@ -41,40 +51,53 @@ function rcPlot_time(rcaDataIn, tc, A)
             ax.Position = [left bottom ax_width ax_height];           
             plotOnEgi(s(c).*A(:, c), colorbarLimits);
             title(['RC' num2str(c)], 'FontSize', 25);
-            if (c == nComp)
-                % display colorbar
-                colorbar;
-            end
+%             if (c == nComp)
+%                 % display colorbar at the last component
+%                 colorbar;
+%             end
         end
     catch
         fprintf('call to plotOnEgi() failed. Plotting electrode values in a 1D style instead.\n');
-        for c = 1:nComp, subplot(3, nComp, c); plot(A(:, c), '*k-'); end
+        for c = 1:nComp, subplot(nSubplotsRow, nComp, c); plot(A(:, c), '*k-'); end
         title(['RC' num2str(c)]);
     end
+    
+    % plotting waveforms
     AxesHandle = cell(nComp, 1);
     try
         for c = 1:nComp
-            AxesHandle{c} = subplot(2, nComp, c + nComp);
+            AxesHandle{c} = subplot(nSubplotsRow, nComp, c + nComp);
             shadedErrorBar(tc, s(c).*muData(:, c),semData(:, c), 'k');
             %axis square;
             set(gca, 'FontSize', 20);
-            xlabel('\sl Time (msec)');
-            ylabel('\sl Amplitude (\muV)');            
+            if (c == 1)            
+                xlabel('\sl Time (msec)');
+                ylabel('\sl Amplitude (\muV)');
+            end
         end
         linkaxes([AxesHandle{:}], 'xy');
     catch err
         fprintf('unable to plot rc means and sems. \n');
     end
-    % no access to these values outside of RCA run code
-%     try
-%         [~,eigs]=eig(Rxx+Ryy);
-%         eigs=sort(diag(eigs),'ascend');
-%         subplot(325); hold on
-%         plot(eigs,'*k:');
-%         nEigs=length(eigs);
-%         plot(nEigs-Kout,eigs(nEigs-Kout),'*g');
-%         title('Within-trial covariance spectrum');
-%     catch
-%         fprintf('unable to plot within-trial covariance spectrum. \n');
-%     end
+    
+    % plotting covariance and dGen
+    try
+        [~, eg] = eig(Rxx + Ryy);
+        e = sort(diag(eg), 'ascend');
+        subplot(nSubplotsRow, 2, 5);
+        % plot last nComp
+        plot(e(end - nComp + 1:end), '*r', 'MarkerSize', 10);
+        title('Within-trial covariance spectrum', 'FontSize', 20);
+        set(gca, 'FontSize', 20);
+
+        
+        subplot(nSubplotsRow, 2, 6); 
+        plot(dGen(end - nComp + 1:end), '^b', 'MarkerSize', 10);
+        title('Across-trial covariance spectrum', 'FontSize', 20); 
+        set(gca, 'FontSize', 20);
+       
+    catch err
+        fprintf('unable to plot within-trial covariance spectrum. \n');
+    end
+       
 end

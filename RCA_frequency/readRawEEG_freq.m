@@ -1,9 +1,9 @@
-function [subjs, sensorData, cellNoiseData1, cellNoiseData2, info] = readselectiveDFTData(path_info, settings)
+function [subjs, sensorData, cellNoiseData1, cellNoiseData2, info] = readRawEEG_freq(settings)
 % Copyright 2019 Alexabdra Yakovleva Stanford University
        
     dataType = 'RLS';
-    sourceData = path_info.sourceEEG;
-    loadedData = path_info.destDataDir_MAT;
+    sourceData = settings.sourceEEGDir;
+    loadedData = settings.destDataDir_MAT;
 
     %% list subjects
     list_subj = list_folder(fullfile(sourceData, settings.subjTag));
@@ -24,7 +24,7 @@ function [subjs, sensorData, cellNoiseData1, cellNoiseData2, info] = readselecti
         for s = 1:nsubj
             if (list_subj(s).isdir)
                 try
-                    subjSrcDir = fullfile(sourceData, list_subj(s).name, path_info.subDirTxt);
+                    subjSrcDir = fullfile(sourceData, list_subj(s).name, settings.subDirTxt);
                 catch err
                     subjSrcDir = fullfile(sourceData, list_subj(s).name);
                 end    

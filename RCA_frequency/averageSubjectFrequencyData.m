@@ -1,6 +1,5 @@
 function [avgSubj_Re, avgSubj_Im] = averageSubjectFrequencyData(inputData, nBs, nFs, W)
 
-
     nComps = size(W, 2);
     
     %% Step 1. Project to reduce dims

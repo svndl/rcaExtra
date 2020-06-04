@@ -8,6 +8,6 @@ function legend_handle = customErrPlot(currAxisHandle, timecourse, muVar, ...
     muVar = muVar*1e06;
     errVar = errVar*1e06;
     h = shadedErrorBar(timecourse, muVar, errVar, ...
-        {'Color', clr, 'LineWidth', 4, 'linestyle', lineSpec}); hold on;
+        {'Color', clr, 'LineWidth', 4, 'linestyle', lineSpec}, 1); hold on;
     legend_handle = h.mainLine;    
 end

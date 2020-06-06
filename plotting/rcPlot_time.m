@@ -1,4 +1,4 @@
-function rcPlot_time(rcaDataIn, tc, A, Rxx, Ryy, dGen)
+function rcPlot_time(rcaDataIn, tc, A, statData, Rxx, Ryy, dGen)
 % Function would display results of RC data
 % Alexandra Yakovleva, 2020 Stanford University
 
@@ -51,10 +51,6 @@ function rcPlot_time(rcaDataIn, tc, A, Rxx, Ryy, dGen)
             ax.Position = [left bottom ax_width ax_height];           
             plotOnEgi(s(c).*A(:, c), colorbarLimits);
             title(['RC' num2str(c)], 'FontSize', 25);
-%             if (c == nComp)
-%                 % display colorbar at the last component
-%                 colorbar;
-%             end
         end
     catch
         fprintf('call to plotOnEgi() failed. Plotting electrode values in a 1D style instead.\n');
@@ -64,40 +60,50 @@ function rcPlot_time(rcaDataIn, tc, A, Rxx, Ryy, dGen)
     
     % plotting waveforms
     AxesHandle = cell(nComp, 1);
+    lineProps = {'k', 'LineWidth', 1};
+    yMax = 1.2*max(muData(:));
     try
         for c = 1:nComp
             AxesHandle{c} = subplot(nSubplotsRow, nComp, c + nComp);
-            shadedErrorBar(tc, s(c).*muData(:, c),semData(:, c), 'k');
+            shadedErrorBar(tc, s(c).*muData(:, c), semData(:, c), lineProps); hold on;
+            AxesHandle{c}.YLim = [-yMax, yMax];
             %axis square;
             set(gca, 'FontSize', 20);
             if (c == 1)            
                 xlabel('\sl Time (msec)');
                 ylabel('\sl Amplitude (\muV)');
             end
+            % add stats
+            if (~isempty(statData))
+                plot_addStatsBar_time(AxesHandle{c}, statData.pValues(:, c), ...
+                    statData.sig(:, c), tc);
+            end
+            
         end
-        linkaxes([AxesHandle{:}], 'xy');
+        linkaxes([AxesHandle{:}], 'y');
     catch err
         fprintf('unable to plot rc means and sems. \n');
     end
     
     % plotting covariance and dGen
-    try
-        [~, eg] = eig(Rxx + Ryy);
-        e = sort(diag(eg), 'ascend');
-        subplot(nSubplotsRow, 2, 5);
-        % plot last nComp
-        plot(e(end - nComp + 1:end), '*r', 'MarkerSize', 10);
-        title('Within-trial covariance spectrum', 'FontSize', 20);
-        set(gca, 'FontSize', 20);
-
+    hasAdditionalData = ~isempty(Rxx) && ~isempty(Ryy) && ~isempty(dGen);
+    if(hasAdditionalData)
+        try
+            [~, eg] = eig(Rxx + Ryy);
+            e = sort(diag(eg), 'ascend');
+            subplot(nSubplotsRow, 2, 5);
+            % plot last nComp
+            plot(e(end - nComp + 1:end), '*r', 'MarkerSize', 10);
+            title('Within-trial covariance spectrum', 'FontSize', 20);
+            set(gca, 'FontSize', 20);
         
-        subplot(nSubplotsRow, 2, 6); 
-        plot(dGen(end - nComp + 1:end), '^b', 'MarkerSize', 10);
-        title('Across-trial covariance spectrum', 'FontSize', 20); 
-        set(gca, 'FontSize', 20);
+            subplot(nSubplotsRow, 2, 6); 
+            plot(dGen(end - nComp + 1:end), '^b', 'MarkerSize', 10);
+            title('Across-trial covariance spectrum', 'FontSize', 20); 
+            set(gca, 'FontSize', 20);
        
-    catch err
-        fprintf('unable to plot within-trial covariance spectrum. \n');
+        catch err
+            fprintf('unable to plot within-trial covariance spectrum. \n');
+        end
     end
-       
 end

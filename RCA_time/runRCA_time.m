@@ -1,11 +1,15 @@
-function rcResult = runRCA_time(dataIn, rcaSettings)
+function rcResult = runRCA_time(rcaSettings, dataIn)
     
     % resample data if needed
     resampled_data = dataIn;
     if (size(dataIn{1, 1}, 1) ~= rcaSettings.samplingRate)
         resampled_data = resampleData(dataIn, rcaSettings.samplingRate);
     end
-    
+    if (~isempty(rcaSettings.useCnds))
+        dataSlice = resampled_data(:, rcaSettings.useCnds);
+    else
+        dataSlice = resampled_data;
+    end
     disp(['Running RC on ' rcaSettings.label ' dataset']);    
     matFileRCA = fullfile(rcaSettings.destDataDir_RCA, ['rcaResults_Time_' rcaSettings.label '.mat']);
     
@@ -15,7 +19,7 @@ function rcResult = runRCA_time(dataIn, rcaSettings)
     
     % if file doesn't exst, run analysis and save results
     if(~exist(matFileRCA, 'file'))
-        [rcaData, W, A, Rxx, Ryy, Rxy, dGen, ~] = rcaRun(resampled_data', rcaSettings.nReg, rcaSettings.nComp);
+        [rcaData, W, A, Rxx, Ryy, Rxy, dGen, ~] = rcaRun(dataSlice', rcaSettings.nReg, rcaSettings.nComp);
         runSettings = rcaSettings;
         save(matFileRCA, 'rcaData', 'W', 'A', 'Rxx', 'Ryy', 'Rxy', 'dGen', 'runSettings');
         % add title to figures
@@ -34,7 +38,7 @@ function rcResult = runRCA_time(dataIn, rcaSettings)
             matFileRCA_old = fullfile(rcaSettings.destDataDir_RCA, ['previous_rcaResults_Time_' rcaSettings.label '.mat']);
             movefile(matFileRCA ,matFileRCA_old, 'f')
             
-            [rcaData, W, A, ~, ~, ~, ~] = rcaRun(resampled_data', rcaSettings.nReg, rcaSettings.nComp);
+            [rcaData, W, A, ~, ~, ~, ~] = rcaRun(dataSlice, rcaSettings.nReg, rcaSettings.nComp);
             runSettings = rcaSettings;
             save(matFileRCA, 'rcaData', 'W', 'A', 'Rxx', 'Ryy', 'Rxy', 'dGen', 'runSettings');
         end
@@ -44,11 +48,11 @@ function rcResult = runRCA_time(dataIn, rcaSettings)
         % add projected data
         if (~exist('rcaData', 'var'))
             try
-                rcaData = rcaProject(resampled_data, W);
+                rcaData = rcaProject(dataSlice, W);
                 save(matFileRCA, 'rcaData', 'W', 'A', 'Rxx', 'Ryy', 'Rxy', 'dGen');
             catch err
                 disp('could not project Subjects, results not modified');
-                rcaData = resampled_data;
+                rcaData = dataSlice;
             end
         end
         % add settings
@@ -67,17 +71,24 @@ function rcResult = runRCA_time(dataIn, rcaSettings)
     %% 
     tc = linspace(0, rcaSettings.timecourseLen - 1, rcaSettings.samplingRate);
     
+    % compute stats
+    statSettings = rcaExtra_getStatsSettings(rcaSettings);
+    subjRCMean = rcaExtra_prepareDataArrayForStats(rcaData', statSettings);
+    sigResults = rcaExtra_testSignificance(subjRCMean, [], statSettings);
     %% plot rc results 
     try
-        rcPlot_time(rcaData, tc, A, Rxx, Ryy, dGen);
+        rcPlot_time(rcaData, tc, A, sigResults, Rxx, Ryy, dGen);
         parentFig = get(gca, 'Parent');
-        parentFig.Name = rcaSettings.label;
-        
-        saveas(gcf, fullfile(rcaSettings.destDataDir_FIG, ['RCA_' rcaSettings.label '.fig']));
-        saveas(gcf, fullfile(rcaSettings.destDataDir_FIG, ['RCA_' rcaSettings.label '.png']));
+        parentFig.Name = rcaSettings.label;            
     catch err
-        % Rxx, Ryy, dGen not available, handle later
+        % Rxx, Ryy, dGen not available
+        rcPlot_time(rcaData, tc, A, sigResults, [], [], []);
+        parentFig = get(gca, 'Parent');
+        parentFig.Name = rcaSettings.label;       
     end
+    
+    saveas(gcf, fullfile(rcaSettings.destDataDir_FIG, ['RCA_' rcaSettings.label '.fig']));
+    saveas(gcf, fullfile(rcaSettings.destDataDir_FIG, ['RCA_' rcaSettings.label '.png']));
     
     %% compute mean and deviations for each projected condition and for all
     
@@ -92,7 +103,7 @@ function rcResult = runRCA_time(dataIn, rcaSettings)
     end
     
     % store results
-    rcResult.sourceData = resampled_data; % (not sure if we should store it ...)
+    rcResult.sourceData = dataSlice; % (not sure if we should store it ...)
     rcResult.W = W;
     rcResult.A = A;
     rcResult.timecourse = tc;

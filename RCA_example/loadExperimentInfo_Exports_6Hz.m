@@ -31,7 +31,7 @@ function adults6HzInfo = loadExperimentInfo_Exports_6Hz
     adults6HzInfo.info.conditionLabels = {'Condition 1', 'Condition 2', 'Condition 3', 'Condition 4', 'Condition 5'};
     adults6HzInfo.info.frequenciesHz = [1, 6];
     adults6HzInfo.info.useSpecialDataLoader = false;
-    adults6HzInfo.info.frequencyLabels = {{'1F1', '2F1', '3F1', '4F1'}, {'1F2', '2F2'}};
+    adults6HzInfo.info.frequencyLabels = {{'1F1' '2F1' '3F1' '4F1'}, {'1F2' '2F2'}};
     adults6HzInfo.info.binsNmb = 10;
 end
 

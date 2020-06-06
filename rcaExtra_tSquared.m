@@ -37,7 +37,3 @@ function [sig, pVal, stat] = rcaExtra_tSquared(dataSet1, dataSet2)
         end
     end
 end
-
-
-
-end

@@ -25,7 +25,7 @@ function runSettings = rcaExtra_getRCARunSettings(infoStruct)
     runSettings.nReg = 7; 
     runSettings.nComp = 6;
     runSettings.label = {};
-    
+    runSettings.useCnds = [];
     runSettings.rcPlotStyle =  'matchMaxSignsToRc1'; 
     runDate = datestr(clock,26); 
     runDate(strfind(runDate,'/')) ='';

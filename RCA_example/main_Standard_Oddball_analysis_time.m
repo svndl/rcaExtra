@@ -45,23 +45,18 @@ function main_Standard_Oddball_analysis_time
     
     % run RC analysis for each condition
     plotSettings = rcaExtra_getPlotSettings(analysisStruct);
-    statSettings = rcaExtra_getStatsSettings(rcSettings);
+    %statSettings = rcaExtra_getStatsSettings(rcSettings);
     plotSettings.plotType = 'exploratory';
     
     for nc = 1:nConditions
         % copy runtime settings from 1Hz template
         runSettings_1hz_condition{nc} = runSettings_1hz;
-        
+        runSettings_1hz_condition{nc}.useCnds = 1;
         % add condition-specific label 
         runSettings_1hz_condition{nc}.label = analysisStruct.info.conditionLabels{nc};
         
-        % select subset of raw data
-        conditionRawData = EEGData(:, nc);
-        
-        rcResult_condition{nc} = rcaExtra_runAnalysis(conditionRawData, runSettings_1hz_condition{nc});
-        % compute statistic significance
-        [subjRCMean, subjSensorMean] = rcaExtra_prepareDataForStats(rcResult_condition{nc}, statSettings);
-        sigResults = rcaExtra_testSignificance(subjRCMean, [], statSettings);        
+        % select subset of raw data        
+        rcResult_condition{nc} = rcaExtra_runAnalysis(runSettings_1hz_condition{nc}, EEGData);
         % plot results
     end
 end

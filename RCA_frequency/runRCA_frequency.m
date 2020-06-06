@@ -1,12 +1,17 @@
-function rcaResult = runRCA_frequency(sensorData, cellNoiseData1, cellNoiseData2, ...
-    rcaSettings)
+function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, cellNoiseData2)
 % Alexandra Yakovleva, Stanford University 2012-2020.
 
     fprintf('Running RCA frequency...\n');
+    if (~isempty(rcaSettings.nCnd))
+        dataSlice = sensorData(rcaSettings.useCnds, :);
+    else
+        dataSlice = sensorData;
+    end
+    
     savedFile = fullfile(rcaSettings.destDataDir_RCA, [rcaSettings.label, '_freq.mat']);
     if (~exist(savedFile, 'file'))
         [rcaData, W, A, Rxx, Ryy, Rxy, dGen, ~] = ...
-            rcaRun(sensorData, rcaSettings.nReg, rcaSettings.nComp); 
+            rcaRun(dataSlice, rcaSettings.nReg, rcaSettings.nComp); 
         covData.Rxx = Rxx;
         covData.Ryy = Ryy;
         covData.Rxy = Rxy;
@@ -15,7 +20,7 @@ function rcaResult = runRCA_frequency(sensorData, cellNoiseData1, cellNoiseData2
         noiseData.higherSideBand = rcaProject(cellNoiseData2, W);
         %% generate final output struct
         rcaResult.projectedData = rcaData;
-        rcaResult.sourceData = sensorData;
+        rcaResult.sourceData = dataSlice;
 
         rcaResult.W = W;
         rcaResult.A = A;

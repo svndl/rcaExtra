@@ -92,6 +92,7 @@ function [h0, realP, corrT, critVal, clustDistrib] = rcaExtra_ttestPermute(inDat
     poolobj = gcp;
         
     if (testAgainstZero)
+        fcnCall = @ttest;
         [h0, realP, ~, ~] = fcnCall(dataSlice1, 0, ttestSettings.tParams{:});
         pooledData = dataSlice1;
         pooledIdx = ones(nSubjs1, 1);

@@ -15,5 +15,11 @@ function res = rcaExtra_compareRCASettings_freq(settingsLoaded, settingsCurrent)
     % load frequency labels
     diff_freq = isequal(settingsLoaded.freqLabels, settingsCurrent.freqLabels);
     
-    res = diff_subjects && diff_ncomp && diff_nreg && diff_freq && diff_bins;
+    try
+        diff_cnd = (settingsLoaded.useCnds == settingsCurrent.useCnds);
+    catch err
+        disp('No info on conditions used for analysis, loading data at your own risk');
+        diff_cnd = 1; 
+    end
+    res = diff_subjects && diff_ncomp && diff_nreg && diff_freq && diff_bins && diff_cnd;
 end

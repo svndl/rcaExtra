@@ -32,35 +32,29 @@ function plotSettings = rcaExtra_getPlotSettings(infoStruct)
         otherwise
     end
     %% colors for various plotting styles
+    % 'accents' colormap        
+    plotSettings.colors.accents = [colorbrewer.qual.Dark2{8}; colorbrewer.qual.Accent{4}]/255;
     
-    switch type
-        case 'accents'
+    % 'bluered' colormap
+    PaletteN = 9;
+    blues = colorbrewer.seq.Blues{PaletteN}/255;
+    reds = colorbrewer.seq.Reds{PaletteN}/255;
+    plotSettings.colors.bluered = interleave(1, blues(end:-1:1, :), ...
+        reds(end:-1:1, :));
             
-            plotSettings.colors = [colorbrewer.qual.Dark2{8}; colorbrewer.qual.Accent{4}]/255;
+    % 'interleaved' colormaps
             
-        case 'bluered'
-            PaletteN = 9;
-            blues = colorbrewer.seq.Blues{PaletteN}/255;
-            reds = colorbrewer.seq.Reds{PaletteN}/255;
-            plotSettings.colors = interleave(1, blues(end:-1:1, :), ...
-                reds(end:-1:1, :));
-            
-        case 'interleaved'
-            
-            PaletteN = 9;
-            blues = colorbrewer.seq.Blues{PaletteN}/255;
-            reds = colorbrewer.seq.Reds{PaletteN}/255;
-            oranges = colorbrewer.seq.Oranges{PaletteN}/255;
-            greens = colorbrewer.seq.Greens{PaletteN}/255;
-            
-            warmColors = interleave(1 ,reds(end:-2:3, :), oranges(end:-2:3, :));
-            coldColors = interleave(1, blues(end:-2:3, :), greens(end:-2:3, :));
-            
-            plotSettings.colors = cat(3, coldColors(1:end - 1, :), ...
-                warmColors(2:end, :));
-        otherwise
-    end
-
+    PaletteN = 9;
+    blues = colorbrewer.seq.Blues{PaletteN}/255;
+    reds = colorbrewer.seq.Reds{PaletteN}/255;
+    oranges = colorbrewer.seq.Oranges{PaletteN}/255;
+    greens = colorbrewer.seq.Greens{PaletteN}/255;
+    
+    warmColors = interleave(1 ,reds(end:-2:3, :), oranges(end:-2:3, :));
+    coldColors = interleave(1, blues(end:-2:3, :), greens(end:-2:3, :));
+    
+    plotSettings.colors.interleaved = cat(3, coldColors(1:end - 1, :), ...
+        warmColors(2:end, :));
     % plot general settings
     
     %plotSettings.runDate = runDate; % runtime info

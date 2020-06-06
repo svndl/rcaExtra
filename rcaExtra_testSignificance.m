@@ -40,7 +40,33 @@ function statResults = rcaExtra_testSignificance(dataSet1, dataSet2, testSetting
             
             % time domain testing:
         case 'freq'
-            [h0, pVal, stat] = rcaExtra_tSquared(dataSet1, dataSet2);            
+            [nF, nRc, nCnd, nSubj] = size(dataSet1.subjAvgImag);
             
+            h0 = zeros(nF, nRc, nCnd);
+            pVal = ones(nF, nRc, nCnd);
+             
+            for r = 1:nRc
+                for c = 1:nCnd
+                    d1 = dataSet1.subjAvgReal(:, r, c, :);
+                    d2 = dataSet1.subjAvgImag(:, r, c, :);
+                    % reshape conditions
+                    data1Slice.subjAvgReal = reshape(d1, [nF 1 nSubj]);
+                    data1Slice.subjAvgImag = reshape(d2, [nF 1 nSubj]);
+                    
+                    data2Slice = [];
+                    if (~isempty(dataSet2))
+                        d3 = dataSet2.subjAvgReal(:, r, c, :);
+                        d4 = dataSet2.subjAvgImag(:, r, c, :);
+                        nSubj2 = size(dataSet2.subjAvgImag);
+                        
+                        data2Slice.subjAvgReal = reshape(d3, [nF 1 nSubj2]);
+                        data2Slice.subjAvgImag = reshape(d4, [nF 1 nSubj2]);
+                    end                     
+                    [h0(:, r, c), pVal(:, r, c), ~] = rcaExtra_tSquared(data1Slice, data2Slice);
+                end
+            end
+        otherwise
     end
+    statResults.sig = h0;
+    statResults.pValues = pVal;
 end

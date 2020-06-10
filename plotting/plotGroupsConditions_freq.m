@@ -58,7 +58,7 @@ function [groupcondition_Bars, groupcondition_Lolliplots] = plotGroupsConditions
         groupLatErrs_cell = cellfun(@(x) squeeze(x.errP(:, cp, nc, :)), groups, 'uni', false);
        
         groupAngles_raw = cat(2, groupLat_cell{:});
-        groupAngles = unwrap(groupAngles_raw); 
+        groupAngles = unwrapPhases(unwrap(groupAngles_raw)); 
     
         groupAnglesErrs = cat(3, groupLatErrs_cell{:});
     
@@ -84,7 +84,7 @@ function [groupcondition_Bars, groupcondition_Lolliplots] = plotGroupsConditions
                 alpha = groupAngles(nf, ng);
                 L = groupCndAmp(nf, ng);
                 try
-                    ellipseCalc = groups{ng}.ellipseErr{1};
+                    ellipseCalc = groups{ng}.ellipseErr{nc};
                 catch
                     ellipseCalc = currGroupProj.err;
                 end

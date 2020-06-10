@@ -30,8 +30,9 @@ function main_Standard_Oddball_analysis_freq
     rcSettings.binsToUse = loadSettings.useBins;
     rcSettings.freqsToUse = loadSettings.useFrequencies;
     rcSettings.label = 'Condition1';
+    rcSettings.useCnds = 1;
     
-    rcaStruct = rcaExtra_runAnalysis(rcSettings, sensorData(:, 1), cellNoiseData1, cellNoiseData2);
+    rcaStruct = rcaExtra_runAnalysis(rcSettings, sensorData, cellNoiseData1, cellNoiseData2);
     statSettings = rcaExtra_getStatsSettings(rcSettings);
     [subjRCMean, subjSensorMean] = rcaExtra_prepareDataForStats(rcaStruct, statSettings);
     

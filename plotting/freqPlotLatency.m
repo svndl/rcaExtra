@@ -15,7 +15,7 @@ function t1 = freqPlotLatency(h, angles, errors, colors, labels, f)
     values = unwrapPhases(angles);
     
     ebh = errorbar(x, values, err_Lo, err_Hi, ...
-         '*', 'LineStyle', 'none', 'LineWidth', 2, 'MarkerSize', 10); hold on;
+         '*', 'LineStyle', 'none', 'LineWidth', 4, 'MarkerSize', 12); hold on;
      
     for c = 1:nCnd
         [Pc, Sc] = polyfit(f*x(:, c), values(:, c), 1);
@@ -29,7 +29,7 @@ function t1 = freqPlotLatency(h, angles, errors, colors, labels, f)
     
         t1 = text(3, values(3, c), sprintf('%.2f \\pm %.1f (msec)', latency, dd), ...
             'FontSize', 30, 'Interpreter', 'tex', 'color',  colors(c, :));
-        plot(x(:, c), yfit, '-.', 'color', colors(c, :)); hold on;
+        plot(x(:, c), yfit, '-.', 'LineWidth', 2, 'color', colors(c, :)); hold on;
         set(ebh(c), 'color', colors(c, :));
     
     end

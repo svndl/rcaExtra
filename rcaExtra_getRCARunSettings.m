@@ -16,11 +16,11 @@ function runSettings = rcaExtra_getRCARunSettings(infoStruct)
             runSettings.binsToUse = 0; % bins used for training, vector
             runSettings.freqsToUse = 0; % frequencies used for trainig, vector 
             runSettings.trialsToUse = []; % use all trials
-            runSettings.dataType = 'RLS';           
+            runSettings.dataType = 'RLS';
         otherwise
     end
     % common variavles
-    
+    runSettings.freqsUsed = infoStruct.info.frequenciesHz;            
     runSettings.subjList = {}; % store subjects
     runSettings.nReg = 7; 
     runSettings.nComp = 6;

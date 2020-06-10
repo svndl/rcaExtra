@@ -28,13 +28,15 @@ function bh = freqplotBar(h, values, errors, colors, labels)
         set(beh(c), 'color', colors(c, :));
     end
     title('Amplitudes', 'Interpreter', 'none');
-    legend(labels{:}, 'Interpreter', 'none');
+    if (~isempty(labels))
+        legend(labels{:}, 'Interpreter', 'none');
+    end
     try
         xticklabels(xlabels(:));
     catch
         xlabel(xlabels);
     end
-    set(gca,'FontSize', 30);
+    set(gca,'FontSize', 30, 'fontname', 'helvetica', 'FontAngle', 'italic');
     % set square
     
 end

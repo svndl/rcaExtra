@@ -1,13 +1,9 @@
-function [proj, subj] = averageFrequencyData(inputData, nBs, nFs, W)
+function [proj, subj] = averageFrequencyData(inputData, nBs, nFs)
 % Alexandra Yakovleva, Stanford University 2012-2020.
-    nChs =  size(W, 1);
-    nComps = size(W, 2);
-    
-    %% Step 1. Project to reduce dims
-    projData = projectData(inputData, W);
-    
+    nComps = size(inputData{1, 1}, 2);
+     
     %% Step 2. Split into Real/Imag components
-    [data_Re, data_Im] = getRealImag_byBin(projData, nBs, nFs, nComps);
+    [data_Re, data_Im] = getRealImag_byBin(inputData, nBs, nFs, nComps);
     
     % data_X is cell array Cnds x Subjs, each element is 1:nBs x 1:nFs x nTrials  
     % avg project -- subjects's data is merged together and computed weighted average
@@ -36,9 +32,4 @@ function [proj, subj] = averageFrequencyData(inputData, nBs, nFs, W)
     proj.subjsRe = cat(3, avgSubj_Re(:, :)');
     proj.subjsIm = cat(3, avgSubj_Im(:, :)');
     subj = projectSubjData(ampSubj, phaseSubj, errSubj);    
-end
-function [data_re, data_im] = getRealImag_byBin(inputData, nBins, nFreqs, nChs)
-    [data_cos, data_sin] = getRealImag(inputData);
-    data_re = cellfun(@(x) reshape(x, [nBins nFreqs nChs size(x, 3)]), data_cos, 'uni', false);
-    data_im = cellfun(@(x) reshape(x, [nBins nFreqs nChs size(x, 3)]), data_sin, 'uni', false);
 end

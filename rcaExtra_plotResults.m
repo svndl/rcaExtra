@@ -1,7 +1,8 @@
 function gcfHandles = rcaExtra_plotResults(varargin, plotSettings)
 % plotting results of RC analysis
 % Alexandra Yakovleva, Stanford University 2020
-% varargin: cell array of dataStructures
+% varargin: cell array of dataStructures: rcaExtra_plotResults(data1,
+% data2, ..., dataN, plotSettings);
 
 % dataStructure has different fields depending on the time/frequency domain
 % analysis.
@@ -12,6 +13,8 @@ function gcfHandles = rcaExtra_plotResults(varargin, plotSettings)
     % dataStructure.labels
 
 % for Frequency domain the required fields are 
+
+% both time and frequency domain: 
     % dataStructure.stats
 
 

@@ -2,10 +2,11 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
 % Alexandra Yakovleva, Stanford University 2012-2020.
 
     fprintf('Running RCA frequency...\n');
-    if (~isempty(rcaSettings.nCnd))
-        dataSlice = sensorData(rcaSettings.useCnds, :);
+    if (isfield(rcaSettings, 'useCnds') && ~isempty(rcaSettings.useCnds))
+        dataSlice = sensorData(:, rcaSettings.useCnds);
     else
         dataSlice = sensorData;
+        rcaSettings.useCnds = size(sensorData, 2);
     end
     
     savedFile = fullfile(rcaSettings.destDataDir_RCA, [rcaSettings.label, '_freq.mat']);
@@ -47,7 +48,16 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
             rcaResult = runRCA_frequency(sensorData, cellNoiseData1, cellNoiseData2, rcaSettings);            
         end
     end
-    % plot results with topo and within/between settings here
     
-    
+    statSettings = rcaExtra_getStatsSettings(rcSettings);
+    [subjRCMean, ~] = rcaExtra_prepareDataForStats(rcaResult, statSettings);    
+    % add stats    
+    statData = rcaExtra_testSignificance(subjRCMean, [], statSettings);
+    projAvg = averageFreqData(rcaData, numel(rcaSettings.binsToUse), ...
+        numel(rcaSettings.freqsToUse));
+    try
+        rcPlot_freq(projAvg, freq, A, statData, Rxx, Ryy, dGen);
+    catch
+        
+    end
 end

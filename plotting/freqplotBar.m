@@ -27,7 +27,7 @@ function bh = freqplotBar(h, values, errors, colors, labels)
         set(bh(c), 'FaceColor', patchColor);
         set(beh(c), 'color', colors(c, :));
     end
-    title('Amplitudes', 'Interpreter', 'none');
+    %title('Amplitudes', 'Interpreter', 'none');
     if (~isempty(labels))
         legend(labels{:}, 'Interpreter', 'none');
     end
@@ -36,7 +36,7 @@ function bh = freqplotBar(h, values, errors, colors, labels)
     catch
         xlabel(xlabels);
     end
-    set(gca,'FontSize', 30, 'fontname', 'helvetica', 'FontAngle', 'italic');
+    set(gca,'FontSize', 20, 'fontname', 'helvetica', 'FontAngle', 'italic');
     % set square
     
 end

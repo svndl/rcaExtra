@@ -49,15 +49,14 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
         end
     end
     
-    statSettings = rcaExtra_getStatsSettings(rcSettings);
+    statSettings = rcaExtra_getStatsSettings(rcaSettings);
     [subjRCMean, ~] = rcaExtra_prepareDataForStats(rcaResult, statSettings);    
     % add stats    
     statData = rcaExtra_testSignificance(subjRCMean, [], statSettings);
-    projAvg = averageFreqData(rcaData, numel(rcaSettings.binsToUse), ...
+    [projAvg, ~] = averageFrequencyData(rcaData', numel(rcaSettings.binsToUse), ...
         numel(rcaSettings.freqsToUse));
     try
-        rcPlot_freq(projAvg, freq, A, statData, Rxx, Ryy, dGen);
-    catch
-        
+        rcaExtra_plotRCSummary(projAvg, rcaSettings, statData)    
+    catch err
     end
 end

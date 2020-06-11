@@ -45,7 +45,7 @@ function rcPlot_freq(rcaDataIn, freq, A, statData, Rxx, Ryy, dGen)
             ax_height = outerpos(4) - ti(2) - ti(4);
             ax.Position = [left bottom ax_width ax_height];           
             plotOnEgi(s(c).*A(:, c), colorbarLimits);
-            title(['RC' num2str(c)], 'FontSize', 25);
+            title(['RC' num2str(c)], 'FontSize', 25, 'fontname', 'helvetica', 'FontAngle', 'italic');
         end
     catch
         fprintf('call to plotOnEgi() failed. Plotting electrode values in a 1D style instead.\n');
@@ -72,7 +72,7 @@ function rcPlot_freq(rcaDataIn, freq, A, statData, Rxx, Ryy, dGen)
             % add significance
             asterisk = repmat('*', size(groupAmp, 1), 1);
             asterick_plotSettings = {'HorizontalAlignment', 'center', 'VerticalAlignment', 'top', ...
-                'FontSize', 50, 'fontname', 'helvetica'};
+                'FontSize', 50, 'fontname', 'helvetica', 'Color', 'r'};
             
             if (~isempty(statData))
                 currRC_sig = statData.sig(:, c);
@@ -82,13 +82,13 @@ function rcPlot_freq(rcaDataIn, freq, A, statData, Rxx, Ryy, dGen)
                 text_sigAsterick = asterisk(currRC_sig > 0);
     
                 text(AxesHandle{c}, 1:length(currPValue), ...
-                    text_maxY, num2str(currPValue, '%0.2f'));
+                    text_maxY, num2str(currPValue, '%0.2f'), 'FontSize', 10);
    
                 % preset settings for stats
                 text(AxesHandle{c}, find(currRC_sig > 0), ...
                 groupAmp(currRC_sig > 0), text_sigAsterick, asterick_plotSettings{:});
             end
-            pbaspect(AxesHandle{c}, [2 1 1]);
+            pbaspect(AxesHandle{c}, [1 1 1]);
         end
         linkaxes([AxesHandle{:}], 'y');
     catch err
@@ -103,13 +103,15 @@ function rcPlot_freq(rcaDataIn, freq, A, statData, Rxx, Ryy, dGen)
             e = sort(diag(eg), 'ascend');
             subplot(nSubplotsRow, 2, 5);
             % plot last nComp
-            plot(e(end - nComp + 1:end), '*r', 'MarkerSize', 10);
-            title('Within-trial covariance spectrum', 'FontSize', 20);
+            plot(e(end - nComp + 1:end), '*', 'MarkerSize', 20);
+            title('Within-trial covariance spectrum', 'FontSize', 20, ...
+                'fontname', 'helvetica', 'FontAngle', 'italic');
             set(gca, 'FontSize', 20);
         
             subplot(nSubplotsRow, 2, 6); 
-            plot(dGen(end - nComp + 1:end), '^b', 'MarkerSize', 10);
-            title('Across-trial covariance spectrum', 'FontSize', 20); 
+            plot(dGen(end - nComp + 1:end), '^', 'MarkerSize', 20);
+            title('Across-trial covariance spectrum', 'FontSize', 20, ...
+                'fontname', 'helvetica', 'FontAngle', 'italic'); 
             set(gca, 'FontSize', 20);
        
         catch err

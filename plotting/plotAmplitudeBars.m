@@ -1,4 +1,4 @@
-function plotAmplitudeBars(fighandle, rcaDataIn, statData)
+function plotAmplitudeBars(fighandle, rcaDataIn, statData, nSubplotsRow)
     % plotting amplitude
     % use black colors
     
@@ -8,7 +8,8 @@ function plotAmplitudeBars(fighandle, rcaDataIn, statData)
     AxesHandle = cell(nComp, 1);
     try
         for c = 1:nComp
-            AxesHandle{c} = subplot(fighandle, nSubplotsRow, nComp, c + nComp);
+            gca(fighandle);
+            AxesHandle{c} = subplot(nSubplotsRow, nComp, c + nComp);
 
             % concat bars for amplitude plot
             groupAmp = squeeze(rcaDataIn.amp(:, c));

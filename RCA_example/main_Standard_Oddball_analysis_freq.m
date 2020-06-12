@@ -22,25 +22,26 @@ function main_Standard_Oddball_analysis_freq
     loadSettings.useBins = 1:10;
     loadSettings.useFrequencies = {'1F1', '2F1', '3F1', '4F1'};
     % read raw data     
-    [subjList, sensorData, cellNoiseData1, cellNoiseData2, infoOut] = getRawData(loadSettings);
-    rcSettings = rcaExtra_getRCARunSettings(analysisStruct);
-    rcSettings.subjList = subjList;
+    [subjList, sensorData, cellNoiseData1, cellNoiseData2, ~] = getRawData(loadSettings);
     
-    % run RCA
+    % get the rc settings template
+    rcSettings = rcaExtra_getRCARunSettings(analysisStruct);
+    
+    % fill the template with our settings/parameters
+    
+    rcSettings.subjList = subjList;    
     rcSettings.binsToUse = loadSettings.useBins;
     rcSettings.freqsToUse = loadSettings.useFrequencies;
-    rcSettings.label = 'Condition1';
-    rcSettings.useCnds = 1;
     
-    rcaStruct = rcaExtra_runAnalysis(rcSettings, sensorData, cellNoiseData1, cellNoiseData2);
-    statSettings = rcaExtra_getStatsSettings(rcSettings);
-    [subjRCMean, subjSensorMean] = rcaExtra_prepareDataForStats(rcaStruct, statSettings);
-    
-    statData = rcaExtra_testSignificance(subjRCMean, [], statSettings);
-    % plot settings
-    
-    plotSettings = rcaExtra_getPlotSettings(analysisStruct);
-    
-    
-    
+    % run analysis on all conditions
+    nConditions = size(sensorData, 2);
+    rcSettings_byCondition = cell(1, nConditions);
+    rcResultStruct_byCondition = cell(1, nConditions);
+    for nc = 1:nConditions
+        rcSettings_byCondition{nc} = rcSettings;
+        rcSettings_byCondition{nc}.label = analysisStruct.info.conditionLabels{nc};
+        rcSettings_byCondition{nc}.useCnds = nc;
+        
+        rcResultStruct_byCondition{nc} = rcaExtra_runAnalysis(rcSettings_byCondition{nc}, sensorData, cellNoiseData1, cellNoiseData2);
+    end
 end

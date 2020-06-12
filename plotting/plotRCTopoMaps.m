@@ -26,8 +26,8 @@ function plotRCTopoMaps(axHandle, topoMaps, nRows)
     % plotting topos
     try
         for c = 1:nComp
-            subplot(axHandle, nRows, nComp, c);
-            ax = gca;
+            gca(axHandle)
+            ax = subplot(nRows, nComp, c);
             outerpos = ax.OuterPosition;
             ti = ax.TightInset;
             left = outerpos(1) + ti(1);
@@ -38,9 +38,9 @@ function plotRCTopoMaps(axHandle, topoMaps, nRows)
             plotOnEgi(s(c).*topoMaps(:, c), colorbarLimits);
             title(['RC' num2str(c)], 'FontSize', 25, 'fontname', 'helvetica', 'FontAngle', 'italic');
         end
-    catch
+    catch err
         fprintf('call to plotOnEgi() failed. Plotting electrode values in a 1D style instead.\n');
-        for c = 1:nComp, subplot(nSubplotsRow, nComp, c); plot(A(:, c), '*k-'); end
+        for c = 1:nComp, subplot(nRows, nComp, c); plot(topoMaps(:, c), '*k-'); end
         title(['RC' num2str(c)]);
     end
 end

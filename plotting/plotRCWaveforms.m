@@ -1,17 +1,15 @@
-function plotRCWaveforms(plotHandle, nSubplotsRow)
-
-
-    AxesHandle = cell(nComp, 1);
+function plotRCWaveforms(figHandle, rcResult, statData, nSubplotsRow)
+    AxesHandle = cell(rcResult.rcaSettings.nComp, 1);
     lineProps = {'k', 'LineWidth', 1};
-    yMax = 1.2*max(muData(:));
+    yMax = 1.2*max(rcResult.mu(:));
     gca(figHandle);
     try
-        for c = 1:nComp
-            AxesHandle{c} = subplot(nSubplotsRow, nComp, c + nComp);
-            shadedErrorBar(tc, s(c).*muData(:, c), semData(:, c), lineProps); hold on;
+        for c = 1:rcResult.rcaSettings.nComp
+            AxesHandle{c} = subplot(nSubplotsRow, rcResult.rcaSettings.nComp, c + rcResult.rcaSettings.nComp);
+            shadedErrorBar(rcResult.timecourse, rcResult.mu(:, c), rcResult.s(:, c), lineProps); hold on;
             AxesHandle{c}.YLim = [-yMax, yMax];
             %axis square;
-            set(gca, 'FontSize', 20);
+            set(gca, 'FontSize', 20, 'fontname', 'helvetica');
             if (c == 1)            
                 xlabel('\sl Time (msec)');
                 ylabel('\sl Amplitude (\muV)');
@@ -19,7 +17,7 @@ function plotRCWaveforms(plotHandle, nSubplotsRow)
             % add stats
             if (~isempty(statData))
                 plot_addStatsBar_time(AxesHandle{c}, statData.pValues(:, c), ...
-                    statData.sig(:, c), tc);
+                    statData.sig(:, c), rcResult.timecourse);
             end
             
         end

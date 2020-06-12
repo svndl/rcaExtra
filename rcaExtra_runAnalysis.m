@@ -13,8 +13,4 @@ function rcResult = rcaExtra_runAnalysis(rcSettings, dataIn, varargin)
         otherwise
             rcResult = runRCA_time(rcSettings, dataIn);
     end
-    % TODO here:
-    % flip component signs (should be migrated to runRCA_*)
-    
-    %dataOut = rcaExtra_adjustRCSigns(rcResult, rcSettings);  
 end

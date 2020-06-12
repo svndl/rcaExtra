@@ -17,6 +17,7 @@ function rcaResult = runRCA_time(currSettings, dataIn)
     %% run RCA
      
     delete(gcp('nocreate'));
+    fprintf('Running RCA time for dataset %s number of components: %d ...\n', currSettings.label, currSettings.nComp);
     
     % if file doesn't exst, run analysis and save results
     if(~exist(matFileRCA, 'file'))
@@ -52,7 +53,7 @@ function rcaResult = runRCA_time(currSettings, dataIn)
                     rcaResult.W = W;
                     rcaResult.A = A;
                     rcaResult.projectedData = rcaData'; 
-                    rcaResult.rcaSettings = runSettings;
+                    rcaResult.rcaSettings = currSettings;
                     rcaResult.covData.Rxx = Rxx;
                     rcaResult.covData.Ryy = Ryy;
                     rcaResult.covData.Rxy = Rxy;
@@ -77,6 +78,7 @@ function rcaResult = runRCA_time(currSettings, dataIn)
                 rcaResult = runRCA_time(currSettings, dataIn);
             end
         catch err
+            rcaExtra_displayError(err);
             disp('Unable to load weights, re-running the analysis...');
             rcaResult = runRCA_time(currSettings, dataIn);           
         end            
@@ -85,9 +87,8 @@ function rcaResult = runRCA_time(currSettings, dataIn)
     %% flip the RC weights here
     %W_new = rcaExtra_adjustRCSigns(rcResults, rcSettings);
     
-    %% 
     % average each subject's response
-    subjMean_cell = cellfun(@(x) nanmean(x, 3), rcaData, 'uni', false)';
+    subjMean_cell = cellfun(@(x) nanmean(x, 3), rcaResult.projectedData, 'uni', false)';
     nCnd = size(subjMean_cell, 2);
     subjMean_bycnd = cell(1, nCnd);
     for nc = 1:nCnd
@@ -107,13 +108,12 @@ function rcaResult = runRCA_time(currSettings, dataIn)
     
     % compute stats
     statSettings = rcaExtra_getStatsSettings(currSettings);
-    subjRCMean = rcaExtra_prepareDataArrayForStats(rcaData', statSettings);
+    subjRCMean = rcaExtra_prepareDataArrayForStats(rcaResult.projectedData, statSettings);
     sigResults = rcaExtra_testSignificance(subjRCMean, [], statSettings);
     %% plot rc results 
     try
         rcaExtra_plotRCSummary(rcaResult, sigResults);
     catch err
+        rcaExtra_displayError(err);
     end
-        
-    %% compute mean and deviations for each projected condition and for all    
 end

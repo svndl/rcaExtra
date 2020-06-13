@@ -43,9 +43,19 @@ function rcaResult = runRCA_time(currSettings, dataIn)
             % new version structure
             load(matFileRCA, 'rcaResult');
             if (~exist('rcaResult', 'var'))
-                % load old version structure, 
+                % load old version structure
+                
+                % define default values for Rxx, Rxy, Ryy, dGen
+                % in older version there variables were not stored
+                
+                Rxx = [];
+                Ryy = [];
+                Rxy = [];
+                dGen = [];
+                
                 load(matFileRCA, 'rcaData', 'W', 'A', 'Rxx', 'Ryy', 'Rxy', 'dGen', 'runSettings');
-                if (~exist('rcaData', 'var'))
+                % loading the old version 
+                if (exist('rcaData', 'var'))
                     % create new version struct
                     rcaResult.W = W;
                     rcaResult.A = A;
@@ -53,14 +63,14 @@ function rcaResult = runRCA_time(currSettings, dataIn)
                     rcaResult.W = W;
                     rcaResult.A = A;
                     rcaResult.projectedData = rcaData'; 
-                    rcaResult.rcaSettings = currSettings;
+                    rcaResult.rcaSettings = runSettings;
                     rcaResult.covData.Rxx = Rxx;
                     rcaResult.covData.Ryy = Ryy;
                     rcaResult.covData.Rxy = Rxy;
                     rcaResult.covData.dGen = dGen;
                     rcaResult.timecourse = tc;
                     % save old datafile 
-                    matFileRCA_old = fullfile(currSettings.destDataDir_RCA, ['oldStruct_rcaResults_Time_' currSettings.label '.mat']);
+                    matFileRCA_old = fullfile(currSettings.destDataDir_RCA, ['oldStruct_rcaResults_Time_' runSettings.label '.mat']);
                     movefile(matFileRCA ,matFileRCA_old, 'f');            
                     % create new data file
                     save(matFileRCA, 'rcaResult');

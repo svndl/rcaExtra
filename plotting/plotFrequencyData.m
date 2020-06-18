@@ -5,5 +5,5 @@ function plotFrequencyData(proj, subj, labels, cndLabels)
     %barPlot(proj.amp, proj.errA, proj.phase, proj.errP, labels, cndLabels);
     
     lollipopPlot(proj.amp, proj.phase, proj.ellipseErr, labels);
-    plotSubjScatter(subj.amp, subj.err, labels);
+    %plotSubjScatter(subj.amp, subj.err, labels);
 end

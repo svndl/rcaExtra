@@ -98,7 +98,7 @@ function rcaResult = runRCA_time(currSettings, dataIn)
     %W_new = rcaExtra_adjustRCSigns(rcResults, rcSettings);
     
     % average each subject's response
-    subjMean_cell = cellfun(@(x) nanmean(x, 3), rcaResult.projectedData, 'uni', false)';
+    subjMean_cell = cellfun(@(x) nanmean(x, 3), rcaResult.projectedData', 'uni', false)';
     nCnd = size(subjMean_cell, 2);
     subjMean_bycnd = cell(1, nCnd);
     for nc = 1:nCnd
@@ -116,14 +116,14 @@ function rcaResult = runRCA_time(currSettings, dataIn)
     rcaResult.mu_cnd = cellfun(@(x) nanmean(x, 3), subjMean_bycnd, 'uni', false);
     rcaResult.s_cnd = cellfun(@(x) nanstd(x, [], 3)/(sqrt(size(x, 3))), subjMean_bycnd, 'uni', false);
     
-    % compute stats
-    statSettings = rcaExtra_getStatsSettings(currSettings);
-    subjRCMean = rcaExtra_prepareDataArrayForStats(rcaResult.projectedData, statSettings);
-    sigResults = rcaExtra_testSignificance(subjRCMean, [], statSettings);
-    %% plot rc results 
-    try
-        rcaExtra_plotRCSummary(rcaResult, sigResults);
-    catch err
-        rcaExtra_displayError(err);
-    end
+%     % compute stats
+%     statSettings = rcaExtra_getStatsSettings(currSettings);
+%     subjRCMean = rcaExtra_prepareDataArrayForStats(rcaResult.projectedData, statSettings);
+%     sigResults = rcaExtra_testSignificance(subjRCMean, [], statSettings);
+%     %% plot rc results 
+%     try
+%         rcaExtra_plotRCSummary(rcaResult, sigResults);
+%     catch err
+%         rcaExtra_displayError(err);
+%     end
 end

@@ -26,7 +26,7 @@ function [sig, pVal, stat] = rcaExtra_tSquared(dataSet1, dataSet2)
             xyData1(:, :, cnd) = [squeeze(dataSet1.subjAvgReal(f, cnd, :)), squeeze(dataSet1.subjAvgImag(f, cnd, :))];
             if (~isempty(dataSet2))   
             
-                xyData2(:, :, cnd) = [squeeze(dataSet2.subjAvgReal(f, cnd, :)), squeeze(dataSet1.subjAvgImag2(f, cnd, :))];                
+                xyData2(:, :, cnd) = [squeeze(dataSet2.subjAvgReal(f, cnd, :)), squeeze(dataSet1.subjAvgImag(f, cnd, :))];                
                 stats = t2FC(xyData1, xyData2);
             else
                 stats = tSquaredFourierCoefs(xyData1);                

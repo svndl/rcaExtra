@@ -26,6 +26,9 @@ function rcaExtra_plotRCSummary(rcResult, rcStats)
     
     %% save figure
     filename = strcat('rca_', rcResult.rcaSettings.domain, rcResult.rcaSettings.label, '_', rcResult.rcaSettings.runDate, '.fig');
+    filename_png = strcat('rca_', rcResult.rcaSettings.domain, rcResult.rcaSettings.label, '_', rcResult.rcaSettings.runDate, '.eps');
+
     saveas(gcf, fullfile(rcResult.rcaSettings.destDataDir_FIG, filename));
+    saveas(gcf, fullfile(rcResult.rcaSettings.destDataDir_FIG, filename_png));
 end
 

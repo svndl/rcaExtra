@@ -22,15 +22,17 @@ function main_Standard_Oddball_analysis_freq
     loadSettings.useBins = 1:10;
     loadSettings.useFrequencies = {'1F1', '2F1', '3F1', '4F1'};
     % read raw data     
-    [subjList, sensorData, cellNoiseData1, cellNoiseData2, ~] = getRawData(loadSettings);
+    [subjList, sensorData, cellNoiseData1, cellNoiseData2, infoOut] = getRawData(loadSettings);
     
     % get the rc settings template
     rcSettings = rcaExtra_getRCARunSettings(analysisStruct);
     
     % fill the template with our settings/parameters
     
-    rcSettings.subjList = subjList;    
-    rcSettings.binsToUse = loadSettings.useBins;
+    rcSettings.subjList = subjList;
+    % this should be the total number of bins, not bin Indicies
+    rcSettings.binsToUse = 1:numel(loadSettings.useBins);
+    
     rcSettings.freqsToUse = loadSettings.useFrequencies;
     
     % run analysis on all conditions

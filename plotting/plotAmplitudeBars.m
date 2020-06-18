@@ -41,6 +41,7 @@ function plotAmplitudeBars(fighandle, rcaDataIn, statData, nSubplotsRow)
         end
         linkaxes([AxesHandle{:}], 'y');
     catch err
-        fprintf('unable to plot Amplitude \n');
+        fprintf('unable to plot Amplitude \n');        
+        rcaExtra_displayError(err);
     end
 end

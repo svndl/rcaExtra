@@ -57,7 +57,7 @@ function statResults = rcaExtra_testSignificance(dataSet1, dataSet2, testSetting
                     if (~isempty(dataSet2))
                         d3 = dataSet2.subjAvgReal(:, r, c, :);
                         d4 = dataSet2.subjAvgImag(:, r, c, :);
-                        nSubj2 = size(dataSet2.subjAvgImag);
+                        nSubj2 = size(dataSet2.subjAvgImag, 4);
                         
                         data2Slice.subjAvgReal = reshape(d3, [nF 1 nSubj2]);
                         data2Slice.subjAvgImag = reshape(d4, [nF 1 nSubj2]);

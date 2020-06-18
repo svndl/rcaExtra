@@ -39,3 +39,22 @@ function barPlot(amp, error_amp, ph, error_phase, labels, settings)
         scatterPlotPhase(sh_phs, phiData, phi_errData, title_p, cndLabels, yLabel_p, c_rg, f, delay);
     end
 end
+% % add significance
+% asterisk = repmat('*', size(groupAmp, 1), 1);
+% asterick_plotSettings = {'HorizontalAlignment', 'center', 'VerticalAlignment', 'top', ...
+%     'FontSize', 50, 'fontname', 'helvetica', 'Color', 'r'};
+% 
+% if (~isempty(statData))
+%     currRC_sig = statData.sig(:, c);
+%     currPValue = statData.pValues(:, c);
+%     % pValues text Y position
+%     text_maxY = 0.5*groupAmp ;
+%     text_sigAsterick = asterisk(currRC_sig > 0);
+%     
+%     text(AxesHandle{c}, 1:length(currPValue), ...
+%         text_maxY, num2str(currPValue, '%0.2f'), 'FontSize', 10);
+%     
+%     % preset settings for stats
+%     text(AxesHandle{c}, find(currRC_sig > 0), ...
+%         groupAmp(currRC_sig > 0), text_sigAsterick, asterick_plotSettings{:});
+% end

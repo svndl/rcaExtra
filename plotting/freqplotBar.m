@@ -1,10 +1,10 @@
 function bh = freqplotBar(h, values, errors, colors, labels)
     
     axes(h);
-    nCnd = size(values, 2);    
-    nF = size(values, 1);
-    xlabels = cellfun( @(x) strcat(num2str(x), 'F'), num2cell(1:1:nF), 'uni', false);
+    nF = size(values, 1);    
+    nCnd = size(values, 2); 
     
+    xlabels = cellfun( @(x) strcat(num2str(x), 'F'), num2cell(1:1:nF), 'uni', false);
     x = repmat((1:nF)', [1 nCnd]);
    
     nGroups = nF;

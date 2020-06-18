@@ -8,7 +8,7 @@ function [proj, subj, w] = averageProject(dataIn, nBins)
     if (nBins > 1)
         catDim = 4;
     else
-        catDim = 3;
+        catDim = 4;
     end
     % cat together all subjects's trials 
     for c = 1:nCnd

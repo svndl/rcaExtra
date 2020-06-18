@@ -58,6 +58,7 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
             
         catch err
             disp('Failed to load stored data, re-running RCA ...');
+            rcaExtra_displayError(err);
             matFileRCA_old = fullfile(rcaSettings.destDataDir_RCA, ['corrupted_rcaResults_' rcaSettings.label '_freq.mat']);
             movefile(savedFile ,matFileRCA_old, 'f');
             rcaResult = runRCA_frequency(sensorData, cellNoiseData1, cellNoiseData2, rcaSettings);            
@@ -65,7 +66,7 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
     end
     
     statSettings = rcaExtra_getStatsSettings(rcaSettings);
-    [subjRCMean, ~] = rcaExtra_prepareDataForStats(rcaResult, statSettings);
+    subjRCMean = rcaExtra_prepareDataArrayForStats(rcaResult.projectedData', statSettings);
     
     % add stats    
     statData = rcaExtra_testSignificance(subjRCMean, [], statSettings);

@@ -36,6 +36,7 @@ function bh = freqplotBar(h, values, errors, colors, labels)
     catch
         xlabel(xlabels);
     end
+    title('Amplitude Values');
     set(gca,'FontSize', 20, 'fontname', 'helvetica', 'FontAngle', 'italic');
     ylabel('Amplitude (\muV)');
     % set square

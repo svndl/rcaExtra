@@ -16,7 +16,7 @@ function res = rcaExtra_compareRCASettings_freq(settingsLoaded, settingsCurrent)
     diff_freq = isequal(settingsLoaded.freqLabels, settingsCurrent.freqLabels);
     
     try
-        diff_cnd = (settingsLoaded.useCnds == settingsCurrent.useCnds);
+        diff_cnd = isequal(settingsLoaded.useCnds, settingsCurrent.useCnds);
     catch err
         disp('No info on conditions used for analysis, loading data at your own risk');
         diff_cnd = 1; 

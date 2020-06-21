@@ -60,8 +60,8 @@ function [h0, realP, corrT, critVal, clustDistrib] = rcaExtra_ttestPermute(inDat
     end
     
     if ~isfield(ttestSettings, 'maxPerms')
-        ttestSettings.maxPerms = numPerms;
-        ttestSettings.iPerms = 1:numPerms;
+        ttestSettings.maxPerms = min(numPerms, 5000);
+        ttestSettings.iPerms = 1:ttestSettings.maxPerms;
     else
         % choose a random set of the possible perms/combs
         rand('state', sum(100*clock));

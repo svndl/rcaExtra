@@ -47,7 +47,7 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
                 disp('New settings don''t match previous instance, re-running RCA ...'); 
                 matFileRCA_old = fullfile(rcaSettings.destDataDir_RCA, ['previous_rcaResults_' rcaSettings.label '_freq.mat']);
                 movefile(savedFile ,matFileRCA_old, 'f');
-                rcaResult = runRCA_frequency(sensorData, cellNoiseData1, cellNoiseData2, rcaSettings);
+                rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, cellNoiseData2);
             end
             % if average data doesn't exist (older version), dd it to the
             % output
@@ -61,7 +61,7 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
             rcaExtra_displayError(err);
             matFileRCA_old = fullfile(rcaSettings.destDataDir_RCA, ['corrupted_rcaResults_' rcaSettings.label '_freq.mat']);
             movefile(savedFile ,matFileRCA_old, 'f');
-            rcaResult = runRCA_frequency(sensorData, cellNoiseData1, cellNoiseData2, rcaSettings);            
+            rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, cellNoiseData2);            
         end
     end
     

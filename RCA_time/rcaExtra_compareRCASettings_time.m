@@ -14,7 +14,7 @@ function res = rcaExtra_compareRCASettings_time(settingsLoaded, settingsCurrent)
     
     % compare conditions
     try
-        diff_cnd = (settingsLoaded.useConds == settingsCurrent.useConds);
+        diff_cnd = isequal(settingsLoaded.useConds, settingsCurrent.useConds);
     catch err
         disp('No info on conditions used for analysis, loading data at your own risk');
         diff_cnd = 1; 

@@ -116,14 +116,14 @@ function rcaResult = runRCA_time(currSettings, dataIn)
     rcaResult.mu_cnd = cellfun(@(x) nanmean(x, 3), subjMean_bycnd, 'uni', false);
     rcaResult.s_cnd = cellfun(@(x) nanstd(x, [], 3)/(sqrt(size(x, 3))), subjMean_bycnd, 'uni', false);
     
-%     % compute stats
-%     statSettings = rcaExtra_getStatsSettings(currSettings);
-%     subjRCMean = rcaExtra_prepareDataArrayForStats(rcaResult.projectedData, statSettings);
-%     sigResults = rcaExtra_testSignificance(subjRCMean, [], statSettings);
-%     %% plot rc results 
-%     try
-%         rcaExtra_plotRCSummary(rcaResult, sigResults);
-%     catch err
-%         rcaExtra_displayError(err);
-%     end
+    % compute stats
+    statSettings = rcaExtra_getStatsSettings(currSettings);
+    subjRCMean = rcaExtra_prepareDataArrayForStats(rcaResult.projectedData, statSettings);
+    sigResults = rcaExtra_testSignificance(subjRCMean, [], statSettings);
+    %% plot rc results 
+    try
+        rcaExtra_plotRCSummary(rcaResult, sigResults);
+    catch err
+        rcaExtra_displayError(err);
+    end
 end

@@ -38,7 +38,7 @@ function plotSettings = getOnOffPlotSettings(type, domain)
                 reds(end:-1:1, :));
                         
         case 'groupsconditions'
-            
+            showlegends = true;
             PaletteN = 9;
             blues = colorbrewer.seq.Blues{PaletteN}/255;
             reds = colorbrewer.seq.Reds{PaletteN}/255;

@@ -1,4 +1,15 @@
 function setAxisAtTheOrigin(gc)
+% sets axis at the origin 
+    if (iscell(gc))
+        % cell array of axis handles
+        cellfun(@(x) setSingleAxesAtThe0(x), gc, 'uni', false);
+    else
+        %single handle
+        setSingleAxesAtThe0(gc)
+    end  
+ end
+    
+function setSingleAxesAtThe0(gc)
     axes(gc);
     xl = get(gc, 'XLim');
     yl = get(gc, 'YLim');
@@ -38,3 +49,4 @@ function setAxisAtTheOrigin(gc)
     axis off;
     set(gcf,'color','w');    
 end
+        

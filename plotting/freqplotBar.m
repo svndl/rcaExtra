@@ -15,12 +15,11 @@ function bh = freqplotBar(h, values, errors, colors, labels)
         xE(:, b) = (1:nGroups) - groupWidth/2 + (2*b -1 )*groupWidth / (2*nBars);
     end
     
-    bh = bar(x, values); hold on;
+    bh = bar(x, values, 'LineWidth', 4); hold on;
     beh = errorbar(xE, values, squeeze(errors(:, :, 1)), squeeze(errors(:, :, 2)), ...
-        'LineStyle', 'none', 'LineWidth', 2);
+        'LineStyle', 'none', 'LineWidth', 4);
     
     patchSaturation = 0.15;
-
     for c = 1:nCnd
         patchColor = colors(c, :) + (1 - colors(c, :))*(1 - patchSaturation);
         set(bh(c), 'EdgeColor', colors(c, :));
@@ -28,14 +27,25 @@ function bh = freqplotBar(h, values, errors, colors, labels)
         set(beh(c), 'color', colors(c, :));
     end
     %title('Amplitudes', 'Interpreter', 'none');
-    if (~isempty(labels))
-        legend(labels{:}, 'Interpreter', 'none');
-    end
     try
         xticklabels(xlabels(:));
     catch
         xlabel(xlabels);
     end
+%     hatchOpts = {'HatchAngle', 45, 'HatchDensity', 35, 'SpeckleMarkerStyle', 'o'};
+%     hatchPatterns = {'single', 'cross', 'speckle', 'single', 'fill'};
+%     hatchHandle = cell(numel(bh), 1);
+%     for b = 1:numel(bh)
+%         hatchHandle{b} = hatchfill2(bh(b), hatchPatterns{b}, hatchOpts{:});
+%     end
+%     if (~isempty(labels))
+%         legend([hatchHandle{:}], labels{:}, 'Interpreter', 'none');
+%     end
+    if (~isempty(labels))
+        legend(bh, labels{:}, 'Interpreter', 'none');
+    end
+    currYLimit = ylim(gca);
+    ylim([0, 1.2*currYLimit(2)]);
     title('Amplitude Values');
     set(gca,'FontSize', 20, 'fontname', 'helvetica', 'FontAngle', 'italic');
     ylabel('Amplitude (\muV)');

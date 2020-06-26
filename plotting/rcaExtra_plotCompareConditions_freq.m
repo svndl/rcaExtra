@@ -9,15 +9,14 @@ function [fh_AmplitudesFreqs, fh_Lolliplots]= rcaExtra_plotCompareConditions_fre
     % groupData.stats -- values for statistical info (computed between conditions and between groups)
     % groupData.A -- topography
     % groupData.label -- group label
-    close all;
     nCnd = size(rcaData.projAvg.amp, 3);
     
     if (isempty(plotSettings))  
-        plotInfo = getOnOffPlotSettings('groups', 'Frequency');         
+        plotInfo = getOnOffPlotSettings('brewer_groups', 'Frequency');         
         % two figures per component
         nComp = rcaData.rcaSettings.nComp;
     else
-        plotInfo = getOnOffPlotSettings('groups', 'Frequency');                 
+        plotInfo = getOnOffPlotSettings('brewer_groups', 'Frequency');                 
         plotInfo.legendLabels = plotSettings.conditionLabels;
         nComp = plotSettings.RCsToPlot;
         plotInfo.Title = plotSettings.groupLabel;
@@ -46,19 +45,25 @@ function [fh_AmplitudesFreqs, fh_Lolliplots]= rcaExtra_plotCompareConditions_fre
     
     for cp = 1:nComp
         % plotting amplitude/latency 
-        fh_AmplitudesFreqs{cp} = figure('units', 'normalized', 'outerposition', [0 0 1 1]);
-        fh_AmplitudesFreqs{cp}.Name = strcat(plotInfo.Title, num2str(cp));
+        fh_Amplitudes{cp} = figure('units', 'normalized', 'outerposition', [0 0 1 1]);
+        fh_Latencies{cp} = figure('units', 'normalized', 'outerposition', [0 0 1 1]);
+
+        fh_Amplitudes{cp}.Name = strcat(plotInfo.Title, num2str(cp), 'Amplitude');
+        fh_Latencies{cp}.Name = strcat(plotInfo.Title, num2str(cp), 'Latency');
+       
         %  
-        amplitudes = subplot(nSubplots_Row, nSubplots_Col, 1, 'Parent', fh_AmplitudesFreqs{cp});
-        latencies = subplot(nSubplots_Row, nSubplots_Col, 2, 'Parent', fh_AmplitudesFreqs{cp});
-    
+%         amplitudes = subplot(nSubplots_Row, nSubplots_Col, 1, 'Parent', fh_AmplitudesFreqs{cp});
+%         latencies = subplot(nSubplots_Row, nSubplots_Col, 2, 'Parent', fh_AmplitudesFreqs{cp});
+
+        amplitudes = subplot(1, 1, 1, 'Parent', fh_Amplitudes{cp});
+        latencies = subplot(1, 1, 1, 'Parent', fh_Latencies{cp});
+
         %% concat bars for amplitude plot
         groupAmps = squeeze(rcaData.projAvg.amp(:, cp, :));
         groupAmpErrs = squeeze(rcaData.projAvg.errA(:, cp, :, :));
         freqplotBar(amplitudes, groupAmps, groupAmpErrs, plotInfo.colors, plotInfo.legendLabels);
         set(amplitudes, plotInfo.axesprops{:});
         pbaspect(amplitudes, [1 1 1]);
-        
         % if number of conditions is 2 or 1, add significance
         if(nCnd <= 2) 
         
@@ -87,9 +92,16 @@ function [fh_AmplitudesFreqs, fh_Lolliplots]= rcaExtra_plotCompareConditions_fre
         set(latencies, plotInfo.axesprops{:});
         pbaspect(latencies, [1 1 1]);
         %% save amp-frequency 
-        fig_file = fullfile(rcaData.rcaSettings.destDataDir_FIG, ['rcaExtra_plotConditions_AmpFreq_RC_' num2str(cp)]);
-        saveas(fh_AmplitudesFreqs{cp}, fig_file, 'png');
-        saveas(fh_AmplitudesFreqs{cp}, fig_file, 'fig');
+        fig_file_amp = fullfile(rcaData.rcaSettings.destDataDir_FIG, ['rcaExtra_plotConditions_Amp_RC_' num2str(cp)]);
+        fig_file_lat = fullfile(rcaData.rcaSettings.destDataDir_FIG, ['rcaExtra_plotConditions_Lat_RC_' num2str(cp)]);
+        
+        if (~exist(rcaData.rcaSettings.destDataDir_FIG, 'dir'))
+            mkdir(rcaData.rcaSettings.destDataDir_FIG)
+        end
+        saveas(fh_Amplitudes{cp}, fig_file_amp, 'png');
+        saveas(fh_Amplitudes{cp}, fig_file_amp, 'fig');
+        saveas(fh_Latencies{cp}, fig_file_lat, 'png');
+        saveas(fh_Latencies{cp}, fig_file_lat, 'fig');
         
         
         %% lolliplots
@@ -110,8 +122,8 @@ function [fh_AmplitudesFreqs, fh_Lolliplots]= rcaExtra_plotCompareConditions_fre
                 catch
                     ellipseCalc = rcaData.projAvg{nc}.err;
                 end
-                x = L.*cos(alpha);
-                y = L.*sin(alpha);
+                x = -L.*cos(alpha);
+                y = -L.*sin(alpha);
                 e_x = 0;
                 e_y = 0;
                 try

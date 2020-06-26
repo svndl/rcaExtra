@@ -20,7 +20,7 @@ function [pValue, h0] = ttest_paired(varargin)
             RC = varargin{3};           
         otherwise
     end
-    nIters = 5000;
+    nIters = 7000;
     if (isempty(cellArray2))
         meanVals = cellfun(@(x) squeeze(nanmean(squeeze(x(:, RC, :)), 2)), cellArray1, 'uni', false);
         meanVals1 = meanVals(:, 1);

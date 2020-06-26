@@ -93,6 +93,10 @@ function rcaResult = runRCA_time(currSettings, dataIn)
             rcaResult = runRCA_time(currSettings, dataIn);           
         end            
     end
+    %% copy figures folder
+    
+    rcaResult.rcaSettings.destDataDir_FIG = currSettings.destDataDir_FIG;
+    
     
     %% flip the RC weights here
     %W_new = rcaExtra_adjustRCSigns(rcResults, rcSettings);
@@ -119,11 +123,11 @@ function rcaResult = runRCA_time(currSettings, dataIn)
     % compute stats
     statSettings = rcaExtra_getStatsSettings(currSettings);
     subjRCMean = rcaExtra_prepareDataArrayForStats(rcaResult.projectedData, statSettings);
-    sigResults = rcaExtra_testSignificance(subjRCMean, [], statSettings);
+%    sigResults = rcaExtra_testSignificance(subjRCMean, [], statSettings);
     %% plot rc results 
-    try
-        rcaExtra_plotRCSummary(rcaResult, sigResults);
-    catch err
-        rcaExtra_displayError(err);
-    end
+%     try
+%         rcaExtra_plotRCSummary(rcaResult, sigResults);
+%     catch err
+%         rcaExtra_displayError(err);
+%     end
 end

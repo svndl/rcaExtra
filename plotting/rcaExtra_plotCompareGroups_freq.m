@@ -13,7 +13,6 @@ function rcaExtra_plotCompareGroups_freq(plotSettings, varargin)
     nGroups = nargin - 1;
     groupRCAData = varargin;
     
-    close all;
     %% groups must have comparable number of frequencies and RC components
     
     nRCs = cell2mat(cellfun(@(x) getfield(x, 'rcaSettings', 'nComp'), groupRCAData, 'uni', false));
@@ -34,10 +33,10 @@ function rcaExtra_plotCompareGroups_freq(plotSettings, varargin)
     end
     
     if (isempty(plotSettings))  
-        plotInfo = getOnOffPlotSettings('groups', 'Frequency');         
+        plotInfo = getOnOffPlotSettings('grayscale', 'Frequency');         
         % two figures per component
     else
-        plotInfo = getOnOffPlotSettings('groups', 'Frequency');                 
+        plotInfo = getOnOffPlotSettings('grayscale', 'Frequency');                 
         plotInfo.legendLabels = plotSettings.conditionLabels;
         rcsToPLot = plotSettings.RCsToPlot;
         plotInfo.Title = plotSettings.groupLabel;
@@ -140,8 +139,8 @@ function rcaExtra_plotCompareGroups_freq(plotSettings, varargin)
                     catch
                         ellipseCalc = groupRCAData{ng}.projAvg{nc}.err;
                     end
-                    x = L.*cos(alpha);
-                    y = L.*sin(alpha);
+                    x = -L.*cos(alpha);
+                    y = -L.*sin(alpha);
                     e_x = 0;
                     e_y = 0;
                     try

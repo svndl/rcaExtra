@@ -9,8 +9,13 @@ function t1 = freqPlotLatency(h, angles, errors, colors, labels, f)
     x = repmat((1:nF)', [1 nCnd]);    
        
       % errors are in degs
-    err_Lo = squeeze(errors(:, :, 1));
-    err_Hi = squeeze(errors(:, :, 2));
+    if (nCnd > 1)
+        err_Lo = squeeze(errors(:, :, 1));
+        err_Hi = squeeze(errors(:, :, 2));
+    else
+        err_Lo = squeeze(errors(:, 1));
+        err_Hi = squeeze(errors(:, 2));        
+    end
     
     values = unwrapPhases(angles);
     

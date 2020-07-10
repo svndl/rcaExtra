@@ -146,7 +146,9 @@ function [fh_AmplitudesFreqs, fh_Lolliplots]= rcaExtra_plotCompareConditions_fre
             setAxisAtTheOrigin(ax{nf});
 
             %descr = ['Conditions ' freqLabels{nf}];
-            legend([legendRef{:}], plotInfo.legendLabels(:));
+            if (~isempty(plotInfo.legendLabels))
+                legend([legendRef{:}], plotInfo.legendLabels(:));
+            end
             %title(plotInfo.Title, 'Interpreter', 'none');
         end
         %linkaxes([ax{:}],'xy');

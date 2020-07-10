@@ -16,9 +16,13 @@ function bh = freqplotBar(h, values, errors, colors, labels)
     end
     
     bh = bar(x, values, 'LineWidth', 4); hold on;
-    beh = errorbar(xE, values, squeeze(errors(:, :, 1)), squeeze(errors(:, :, 2)), ...
-        'LineStyle', 'none', 'LineWidth', 4);
-    
+    if (nCnd > 1)
+        beh = errorbar(xE, values, squeeze(errors(:, :, 1)), squeeze(errors(:, :, 2)), ...
+            'LineStyle', 'none', 'LineWidth', 2);
+    else
+       beh = errorbar(xE, values, squeeze(errors(:, 1)), squeeze(errors(:, 2)), ...
+            'LineStyle', 'none', 'LineWidth', 2);
+    end    
     patchSaturation = 0.15;
     for c = 1:nCnd
         patchColor = colors(c, :) + (1 - colors(c, :))*(1 - patchSaturation);

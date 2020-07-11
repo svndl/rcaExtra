@@ -18,10 +18,10 @@ function t1 = freqPlotLatency(h, angles, errors, colors, labels, f)
     end
     
     values = unwrapPhases(angles);
-    
-    ebh = errorbar(x, values, err_Lo, err_Hi, 'LineStyle', 'none', ...
-        'LineWidth', 4, 'MarkerSize', 12); hold on;
-    Markers = {'o','o','^','^','>','<'};
+     Markers = {'o','o','^','^','>','<'};
+   
+    ebh = errorbar(x, values, err_Lo, err_Hi, '^', 'LineStyle', 'none', ...
+        'LineWidth', 2, 'MarkerSize', 12, 'CapSize', 0); hold on;
     
     
     p = cell(nCnd, 1);
@@ -31,7 +31,7 @@ function t1 = freqPlotLatency(h, angles, errors, colors, labels, f)
         yfit = f*Pc(1)*x(:, c) + Pc(2);
     
         % add more points to yFit for plotting
-        xq = x(1, c):0.25:x(end, c);
+        xq = x(1, c):1:x(end, c);
         yFit_plot = f*Pc(1)*xq' + Pc(2);
         %% display slope
         latency = 1000*Pc(1)/(2*pi);    
@@ -41,9 +41,8 @@ function t1 = freqPlotLatency(h, angles, errors, colors, labels, f)
         t1 = text(3, values(3, c), sprintf('%.2f \\pm %.1f (msec)', latency, dd), ...
             'FontSize', 30, 'Interpreter', 'tex', 'color',  colors(c, :));
         % alternate filled/unfilled
-        markerStyle = strcat('-', Markers{c});
-        p{c} = plot(xq, yFit_plot, markerStyle, 'LineWidth', 4, 'color', colors(c, :), ...
-            'MarkerFaceColor', colors(c, :), 'MarkerSize', 12); hold on;
+        markerStyle = strcat('-');
+        p{c} = plot(xq, yFit_plot, markerStyle, 'LineWidth', 2, 'color', colors(c, :)); hold on;
 %         try
 %             if (openMarker)
 %                 openMarker = false;

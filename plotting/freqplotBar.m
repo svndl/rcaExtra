@@ -15,7 +15,7 @@ function bh = freqplotBar(h, values, errors, colors, labels)
         xE(:, b) = (1:nGroups) - groupWidth/2 + (2*b -1 )*groupWidth / (2*nBars);
     end
     
-    bh = bar(x, values, 'LineWidth', 4); hold on;
+    bh = bar(x, values, 'LineWidth', 2); hold on;
     if (nCnd > 1)
         beh = errorbar(xE, values, squeeze(errors(:, :, 1)), squeeze(errors(:, :, 2)), ...
             'LineStyle', 'none', 'LineWidth', 2);
@@ -51,7 +51,7 @@ function bh = freqplotBar(h, values, errors, colors, labels)
     currYLimit = ylim(gca);
     ylim([0, 1.2*currYLimit(2)]);
     title('Amplitude Values');
-    set(gca,'FontSize', 20, 'fontname', 'helvetica', 'FontAngle', 'italic');
+    set(gca,'FontSize', 30, 'fontname', 'helvetica', 'FontAngle', 'italic');
     ylabel('Amplitude (\muV)');
     % set square
     

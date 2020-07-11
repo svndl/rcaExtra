@@ -62,7 +62,9 @@ function [fh_AmplitudesFreqs, fh_Lolliplots]= rcaExtra_plotCompareConditions_fre
         groupAmps = squeeze(rcaData.projAvg.amp(:, cp, :));
         groupAmpErrs = squeeze(rcaData.projAvg.errA(:, cp, :, :));
         freqplotBar(amplitudes, groupAmps, groupAmpErrs, plotInfo.colors, plotInfo.legendLabels);
+        title(amplitudes, strcat(plotInfo.Title, ' RC', num2str(cp)));
         set(amplitudes, plotInfo.axesprops{:});
+        
         pbaspect(amplitudes, [1 1 1]);
         % if number of conditions is 2 or 1, add significance
         if(nCnd <= 2) 
@@ -89,6 +91,8 @@ function [fh_AmplitudesFreqs, fh_Lolliplots]= rcaExtra_plotCompareConditions_fre
         groupAngles = unwrapPhases(squeeze(rcaData.projAvg.phase(:, cp, :)));
         groupAnglesErrs = squeeze(rcaData.projAvg.errP(:, cp, :, :));
         freqPlotLatency(latencies, groupAngles, groupAnglesErrs, plotInfo.colors, plotInfo.legendLabels, freqHZ);
+        title(latencies, strcat(plotInfo.Title, ' RC', num2str(cp)));
+        
         set(latencies, plotInfo.axesprops{:});
         pbaspect(latencies, [1 1 1]);
         %% save amp-frequency 
@@ -135,21 +139,21 @@ function [fh_AmplitudesFreqs, fh_Lolliplots]= rcaExtra_plotCompareConditions_fre
                     e_x = e0(:, 1) + x;
                     e_y = e0(:, 2) + y;
                 end
-                props = { 'linewidth', 8, 'color', colorGroup, 'linestyle', groupstyle};             
+                props = { 'linewidth', 4, 'color', colorGroup, 'linestyle', groupstyle};             
                 patchSaturation = 0.5;
                 patchColor =  colorGroup + (1 - colorGroup)*(1 - patchSaturation);
-                errLine = line(e_x, e_y, 'LineWidth', 5); hold on;
+                errLine = line(e_x, e_y, 'LineWidth', 4); hold on;
                 set(errLine,'color', patchColor);
                 legendRef{nc} = plot(ax{nf}, [0, x], [0, y], props{:}); hold on;
             end
             set(ax{nf}, plotInfo.axesprops{:});
             setAxisAtTheOrigin(ax{nf});
+            title(strcat('RC', num2str(cp), ' : ', num2str(nf), 'F'), 'Interpreter', 'none');
 
             %descr = ['Conditions ' freqLabels{nf}];
             if (~isempty(plotInfo.legendLabels))
                 legend([legendRef{:}], plotInfo.legendLabels(:));
             end
-            %title(plotInfo.Title, 'Interpreter', 'none');
         end
         %linkaxes([ax{:}],'xy');
         %setAxisAtTheOrigin(ax);

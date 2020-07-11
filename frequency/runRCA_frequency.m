@@ -23,19 +23,13 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
         
         %% generate final output struct
         rcaResult.projectedData = rcaData;
-        rcaResult.sourceData = dataSlice;
+        %rcaResult.sourceData = dataSlice;
 
         rcaResult.W = W;
         rcaResult.A = A;
         rcaResult.covData = covData; 
         rcaResult.noiseData = noiseData;
         rcaResult.rcaSettings = rcaSettings;
-        % store average data 
-        [projAvg, subjAvg] = averageFrequencyData(rcaData, ...
-            numel(rcaSettings.binsToUse), numel(rcaSettings.freqsToUse));
-        rcaResult.projAvg = projAvg;
-        rcaResult.subjAvg = subjAvg;
- 
         save(savedFile, 'rcaResult');        
     else
         try
@@ -49,12 +43,6 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
                 movefile(savedFile ,matFileRCA_old, 'f');
                 rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, cellNoiseData2);
             end
-            % if average data doesn't exist (older version), dd it to the
-            % output
-            [projAvg, subjAvg] = averageFrequencyData(rcaResult.projectedData, ...
-                numel(rcaSettings.binsToUse), numel(rcaSettings.freqsToUse));
-            rcaResult.projAvg = projAvg;
-            rcaResult.subjAvg = subjAvg;
             
         catch err
             disp('Failed to load stored data, re-running RCA ...');
@@ -65,6 +53,12 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
         end
     end
     
+    % compute average data
+    [projAvg, subjAvg] = averageFrequencyData(rcaData, ...
+        numel(rcaSettings.binsToUse), numel(rcaSettings.freqsToUse));
+    rcaResult.projAvg = projAvg;
+    rcaResult.subjAvg = subjAvg;
+ 
     statSettings = rcaExtra_getStatsSettings(rcaSettings);
     subjRCMean = rcaExtra_prepareDataArrayForStats(rcaResult.projectedData', statSettings);
     

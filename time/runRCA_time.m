@@ -25,7 +25,7 @@ function rcaResult = runRCA_time(currSettings, dataIn)
         
         rcaResult.W = W;
         rcaResult.A = A;
-        rcaResult.sourceData = dataSlice;
+        %rcaResult.sourceData = dataSlice;
         rcaResult.W = W;
         rcaResult.A = A;
         rcaResult.projectedData = rcaData'; % corrected to nSubj x nCnd dimentions
@@ -59,7 +59,7 @@ function rcaResult = runRCA_time(currSettings, dataIn)
                     % create new version struct
                     rcaResult.W = W;
                     rcaResult.A = A;
-                    rcaResult.sourceData = dataSlice;
+                    %rcaResult.sourceData = dataSlice;
                     rcaResult.W = W;
                     rcaResult.A = A;
                     rcaResult.projectedData = rcaData'; 
@@ -93,6 +93,7 @@ function rcaResult = runRCA_time(currSettings, dataIn)
             rcaResult = runRCA_time(currSettings, dataIn);           
         end            
     end
+    
     %% copy figures folder
     
     rcaResult.rcaSettings.destDataDir_FIG = currSettings.destDataDir_FIG;
@@ -121,8 +122,8 @@ function rcaResult = runRCA_time(currSettings, dataIn)
     rcaResult.s_cnd = cellfun(@(x) nanstd(x, [], 3)/(sqrt(size(x, 3))), subjMean_bycnd, 'uni', false);
     
     % compute stats
-    statSettings = rcaExtra_getStatsSettings(currSettings);
-    subjRCMean = rcaExtra_prepareDataArrayForStats(rcaResult.projectedData, statSettings);
+%    statSettings = rcaExtra_getStatsSettings(currSettings);
+%    subjRCMean = rcaExtra_prepareDataArrayForStats(rcaResult.projectedData, statSettings);
 %    sigResults = rcaExtra_testSignificance(subjRCMean, [], statSettings);
     %% plot rc results 
 %     try

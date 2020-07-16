@@ -35,7 +35,7 @@ function [corr_list, flip_list] = rcaExtra_adjustRCSigns(rcResult)
     % cut in half due to symmetry 
     outcomes = outcomes_all(round(1:0.5*nComb), :);
     
-    temp_corr = zeros(nComb, 1);
+    temp_corr = zeros(round(0.5*nComb), 1);
     for c = 1:size(outcomes, 1)
         temp_rca = rca_data_avg;
         temp_rca(:, outcomes(c,:)) = rca_data_avg(:, outcomes(c,:))*-1;

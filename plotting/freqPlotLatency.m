@@ -18,12 +18,17 @@ function t1 = freqPlotLatency(h, angles, errors, colors, labels, f)
     end
     
     values = unwrapPhases(angles);
-     Markers = {'o','o','^','^','>','<'};
+    %Markers = {'o','o','^','^','>','<'};
    
     ebh = errorbar(x, values, err_Lo, err_Hi, '^', 'LineStyle', 'none', ...
-        'LineWidth', 2, 'MarkerSize', 12, 'CapSize', 0); hold on;
+        'LineWidth', 2, 'MarkerSize', 12, 'CapSize', 0, ...
+        'MarkerFaceColor', 'auto', 'MarkerEdgeColor', 'auto'); hold on;
     
-    
+    if (numel(f) > 1)
+        fprintf('Found multiple frequencies, making a informal decision on wich one to use: %f \n', f(1));
+        f = f(1);
+    end
+        
     p = cell(nCnd, 1);
     for c = 1:nCnd
         [Pc, Sc] = polyfit(f*x(:, c), values(:, c), 1);
@@ -36,13 +41,14 @@ function t1 = freqPlotLatency(h, angles, errors, colors, labels, f)
         %% display slope
         latency = 1000*Pc(1)/(2*pi);    
         d = (yfit - values(:, c)).^2;
-        dd = sqrt(sum(d)/(nF - 2)); 
-    
+        dMs = 1000*d/(2*pi);
+        %dd = sqrt(sum(d)/(nF - 2)); 
+        dd = sqrt(sum(dMs)/(nF - 2)); 
         t1 = text(3, values(3, c), sprintf('%.2f \\pm %.1f (msec)', latency, dd), ...
             'FontSize', 30, 'Interpreter', 'tex', 'color',  colors(c, :));
         % alternate filled/unfilled
-        markerStyle = strcat('-');
-        p{c} = plot(xq, yFit_plot, markerStyle, 'LineWidth', 2, 'color', colors(c, :)); hold on;
+        markerStyle = strcat(':');
+        p{c} = plot(xq, yFit_plot, markerStyle, 'LineWidth', 4, 'color', colors(c, :)); hold on;
 %         try
 %             if (openMarker)
 %                 openMarker = false;
@@ -57,7 +63,9 @@ function t1 = freqPlotLatency(h, angles, errors, colors, labels, f)
     end
     title('Latency Estimate', 'Interpreter', 'tex');  
     if ~isempty(labels)
-        legend([p{:}], labels{:}, 'Interpreter', 'none'); 
+        legend([p{:}], labels{:}, 'Interpreter', 'none', 'FontSize', 30, ...
+            'EdgeColor', 'none', 'Color', 'none'); 
+        
     end
     try
         xticks(1:nF);

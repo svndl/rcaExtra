@@ -46,7 +46,7 @@ function bh = freqplotBar(h, values, errors, colors, labels)
 %         legend([hatchHandle{:}], labels{:}, 'Interpreter', 'none');
 %     end
     if (~isempty(labels))
-        legend(bh, labels{:}, 'Interpreter', 'none');
+        legend(bh, labels{:}, 'Interpreter', 'none',  'FontSize', 30, 'EdgeColor', 'none', 'Color', 'none');
     end
     currYLimit = ylim(gca);
     ylim([0, 1.2*currYLimit(2)]);

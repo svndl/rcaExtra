@@ -62,7 +62,7 @@ function [fh_AmplitudesFreqs, fh_Lolliplots]= rcaExtra_plotCompareConditions_fre
         groupAmps = squeeze(rcaData.projAvg.amp(:, cp, :));
         groupAmpErrs = squeeze(rcaData.projAvg.errA(:, cp, :, :));
         freqplotBar(amplitudes, groupAmps, groupAmpErrs, plotInfo.colors, plotInfo.legendLabels);
-        title(amplitudes, strcat(plotInfo.Title, ' RC', num2str(cp)));
+        title(amplitudes, strcat(plotInfo.Title, ' RC', num2str(cp)), 'FontSize', 35);
         set(amplitudes, plotInfo.axesprops{:});
         
         pbaspect(amplitudes, [1 1 1]);
@@ -91,7 +91,7 @@ function [fh_AmplitudesFreqs, fh_Lolliplots]= rcaExtra_plotCompareConditions_fre
         groupAngles = unwrapPhases(squeeze(rcaData.projAvg.phase(:, cp, :)));
         groupAnglesErrs = squeeze(rcaData.projAvg.errP(:, cp, :, :));
         freqPlotLatency(latencies, groupAngles, groupAnglesErrs, plotInfo.colors, plotInfo.legendLabels, freqHZ);
-        title(latencies, strcat(plotInfo.Title, ' RC', num2str(cp)));
+        title(latencies, strcat(plotInfo.Title, ' RC', num2str(cp)), 'FontSize', 35);
         
         set(latencies, plotInfo.axesprops{:});
         pbaspect(latencies, [1 1 1]);
@@ -99,14 +99,17 @@ function [fh_AmplitudesFreqs, fh_Lolliplots]= rcaExtra_plotCompareConditions_fre
         fig_file_amp = fullfile(rcaData.rcaSettings.destDataDir_FIG, ['rcaExtra_plotConditions_Amp_RC_' num2str(cp)]);
         fig_file_lat = fullfile(rcaData.rcaSettings.destDataDir_FIG, ['rcaExtra_plotConditions_Lat_RC_' num2str(cp)]);
         
-        if (~exist(rcaData.rcaSettings.destDataDir_FIG, 'dir'))
-            mkdir(rcaData.rcaSettings.destDataDir_FIG)
+        try
+            if (~exist(rcaData.rcaSettings.destDataDir_FIG, 'dir'))
+                mkdir(rcaData.rcaSettings.destDataDir_FIG)
+            end
+            saveas(fh_Amplitudes{cp}, fig_file_amp, 'png');
+            saveas(fh_Amplitudes{cp}, fig_file_amp, 'fig');
+            saveas(fh_Latencies{cp}, fig_file_lat, 'png');
+            saveas(fh_Latencies{cp}, fig_file_lat, 'fig');
+        catch err
+            rcaExtra_displayError(err);            
         end
-        saveas(fh_Amplitudes{cp}, fig_file_amp, 'png');
-        saveas(fh_Amplitudes{cp}, fig_file_amp, 'fig');
-        saveas(fh_Latencies{cp}, fig_file_lat, 'png');
-        saveas(fh_Latencies{cp}, fig_file_lat, 'fig');
-        
         
         %% lolliplots
         fh_Lolliplots{cp} = figure('units', 'normalized', 'outerposition', [0 0 1 1]);
@@ -158,9 +161,13 @@ function [fh_AmplitudesFreqs, fh_Lolliplots]= rcaExtra_plotCompareConditions_fre
         %linkaxes([ax{:}],'xy');
         %setAxisAtTheOrigin(ax);
         %% save lolliplot
-        fig_file = fullfile(rcaData.rcaSettings.destDataDir_FIG, ['rcaExtra_plotConditions_Lolliplots_RC_' num2str(cp)]);
-        saveas(fh_Lolliplots{cp}, fig_file, 'png');
-        saveas(fh_Lolliplots{cp}, fig_file, 'fig');        
+        try        
+            fig_file = fullfile(rcaData.rcaSettings.destDataDir_FIG, ['rcaExtra_plotConditions_Lolliplots_RC_' num2str(cp)]);
+            saveas(fh_Lolliplots{cp}, fig_file, 'png');
+            saveas(fh_Lolliplots{cp}, fig_file, 'fig');
+        catch err
+            rcaExtra_displayError(err);
+        end
      end
 end
 

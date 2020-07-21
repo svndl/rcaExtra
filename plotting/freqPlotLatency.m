@@ -18,9 +18,10 @@ function t1 = freqPlotLatency(h, angles, errors, colors, labels, f)
     end
     
     values = unwrapPhases(angles);
-    %Markers = {'o','o','^','^','>','<'};
-   
-    ebh = errorbar(x, values, err_Lo, err_Hi, '^', 'LineStyle', 'none', ...
+    markerOpts = {'+', 'o', '*', '.', 'x', 'square', 'diamond', ...
+        'v', '^', '>', '<', 'pentagram', 'hexagram', 'none'};
+    
+    ebh = errorbar(x, values, err_Lo, err_Hi, 'Marker', markerOpts{1:nCnd}, 'LineStyle', 'none', ...
         'LineWidth', 2, 'MarkerSize', 12, 'CapSize', 0, ...
         'MarkerFaceColor', 'auto', 'MarkerEdgeColor', 'auto'); hold on;
     

@@ -47,12 +47,12 @@ function rcaExtra_plotCompareGroups_freq(plotSettings, varargin)
     
     % amplitude and frequency allocation/setup
     
-    fh_AmplitudesFreqs = cell(rcsToPLot, 1);
+    fh_Amplitudes = cell(rcsToPLot, 1);
     fh_Lolliplots = cell(rcsToPLot, 1);
    
     % specify number of subplots for amplitude and frequency
     nSubplots_Row = 1;    
-    nSubplots_Col = 2;
+    nSubplots_Col = 1;
     
     % stat template
     asterisk = repmat('*', nFreqs, 1) ;
@@ -61,12 +61,16 @@ function rcaExtra_plotCompareGroups_freq(plotSettings, varargin)
             
     for cp = 1:rcsToPLot
         for nc = 1:cndsToPlot
-            % plotting amplitude/latency 
-            fh_AmplitudesFreqs{cp} = figure('units', 'normalized', 'outerposition', [0 0 1 1]);
-            fh_AmplitudesFreqs{cp}.Name = strcat('Comparing Groups', plotInfo.legendLabels{nc}, 'RC ', num2str(cp));
-            %  
-            amplitudes = subplot(nSubplots_Row, nSubplots_Col, 1, 'Parent', fh_AmplitudesFreqs{cp});
-            latencies = subplot(nSubplots_Row, nSubplots_Col, 2, 'Parent', fh_AmplitudesFreqs{cp});
+            % plotting amplitude 
+            fh_Amplitudes{cp} = figure('units', 'normalized', 'outerposition', [0 0 1 1]);
+            fh_Amplitudes{cp}.Name = strcat('Comparing Groups', plotInfo.legendLabels{nc}, 'RC ', num2str(cp));
+            
+            % plotting latency 
+            fh_Frequencies{cp} = figure('units', 'normalized', 'outerposition', [0 0 1 1]);
+            fh_Frequencies{cp}.Name = strcat('Comparing Groups', plotInfo.legendLabels{nc}, 'RC ', num2str(cp));
+            
+            amplitudes = subplot(nSubplots_Row, nSubplots_Col, 1, 'Parent', fh_Amplitudes{cp});
+            latencies = subplot(nSubplots_Row, nSubplots_Col, 1, 'Parent', fh_Frequencies{cp});
     
             %% concat bars for amplitude plot
             groupAmp_cell = cellfun(@(x) squeeze(x.projAvg.amp(:, cp, nc)), groupRCAData, 'uni', false);
@@ -116,9 +120,13 @@ function rcaExtra_plotCompareGroups_freq(plotSettings, varargin)
             pbaspect(latencies, [1 1 1]);
         
             %% save figure 1
-            fig_file = fullfile(groupRCAData{1}.rcaSettings.destDataDir_FIG, ['rcaExtra_plotGroups_AmpFreq_' plotInfo.legendLabels{nc} '_RC' num2str(cp)]);
-            saveas(fh_AmplitudesFreqs{cp}, fig_file, 'png');
-            saveas(fh_AmplitudesFreqs{cp}, fig_file, 'fig');
+            figFile_amp = fullfile(groupRCAData{1}.rcaSettings.destDataDir_FIG, ['rcaExtra_plotGroups_Amp_' plotInfo.legendLabels{nc} '_RC' num2str(cp)]);
+            figFile_freq = fullfile(groupRCAData{1}.rcaSettings.destDataDir_FIG, ['rcaExtra_plotGroups_Freq_' plotInfo.legendLabels{nc} '_RC' num2str(cp)]);
+            
+            saveas(fh_Amplitudes{cp}, figFile_amp, 'png');
+            saveas(fh_Amplitudes{cp}, figFile_amp, 'fig');
+            saveas(fh_Frequencies{cp}, figFile_freq, 'png');
+            saveas(fh_Frequencies{cp}, figFile_freq, 'fig');
         
             %% lolliplots
             fh_Lolliplots{cp} = figure('units', 'normalized', 'outerposition', [0 0 1 1]);
@@ -152,11 +160,11 @@ function rcaExtra_plotCompareGroups_freq(plotSettings, varargin)
                         e_x = e0(:, 1) + x;
                         e_y = e0(:, 2) + y;
                     end
-                    props = { 'linewidth', 8, 'color', colorGroup, 'linestyle', ...
+                    props = { 'linewidth', 4, 'color', colorGroup, 'linestyle', ...
                         groupstyle};
                     patchSaturation = 0.5;
                     patchColor =  colorGroup + (1 - colorGroup)*(1 - patchSaturation);
-                    errLine = line(e_x, e_y, 'LineWidth', 5); hold on;
+                    errLine = line(e_x, e_y, 'LineWidth', 4); hold on;
                     set(errLine,'color', patchColor);
                     legendRef{ng} = plot(ax{nf}, [0, x], [0, y], props{:}); hold on;
                     set(ax{nf}, plotInfo.axesprops{:});

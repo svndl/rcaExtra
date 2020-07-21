@@ -1,47 +1,37 @@
-function [corr_list, flip_list] = rcaExtra_adjustRCSigns(rcResult)
+function [corrVars, flipIdx] = rcaExtra_adjustRCSigns(rcResult, sourceData)
 % Function computes signs of RC components in a way that mimimizes the difference between
 % source data and reconstructed RC signal
 
 % Alexandra Yakovleva, Stanford University 2020
 
-    % combine source data across trials and conditions
-    switch rcResult.rcaSettings.domain
-        case 'time'
-            sensor_data = cat(3, rcResult.sourceData{:});
-            rca_data = cat(3, rcResult.projectedData{:});            
-            sensor_data_avg = nanmean(sensor_data, 3);
-            rca_data_avg = nanmean(rca_data, 3);
-            % take mean across subjects, then root mean squared
-           
-            %sensor_rms = rms(nanmean(sensor_data, 3), 1);
-            %[~, sort_idx] = sort(sum(sensor_rms, 1), 'descend');
-
-        case 'freq'
-            %if (~isfield(rcResult));
-            rca_data_avg = mean(rcResult.projAvg.amp, 3);
-            [sensorAvg, ~]  = averageFrequencyData(rcResult.sourceData, ...
-                numel(rcResult.rcaSettings.binsToUse),...
-                numel(rcResult.rcaSettings.freqsToUse));
-            sensor_data_avg = mean(sensorAvg.amp, 3);
-%             [~, sort_idx] = sort(sum(vector_mu, 1), 'descend');      
-%         otherwise
-    end
-    sensor_sum = sum(sensor_data_avg, 2); 
+    % compute subject's average 
+    rcDataAvg_cell = cellfun(@(x) nanmean(x, 3), rcResult.projectedData, 'uni', false);
+    sensorDataAvg_cell = cellfun(@(x) nanmean(x, 3), sourceData, 'uni', false);
     
-    n_comp = rcResult.rcaSettings.nComp;
-    outcomes_all = logical(dec2bin(0:2^n_comp - 1) - '0');
-    nComb = size(outcomes_all, 1);
-
-    % cut in half due to symmetry 
-    outcomes = outcomes_all(round(1:0.5*nComb), :);
+    % concatenate all subjects 
+    rcDataAvg = cat(3, rcDataAvg_cell{:});
+    sensorDataAvg = cat(3, sensorDataAvg_cell{:});
+    % concatenate averaged data into 
     
-    temp_corr = zeros(round(0.5*nComb), 1);
+    sensorSum = squeeze(sum(sensorDataAvg, 2));     
+    nComp = rcResult.rcaSettings.nComp;
+    
+    outcomes_all = logical(dec2bin(0:2^nComp - 1) - '0');
+    nComb_all = size(outcomes_all, 1);
+    
+    % cut in half due to symmetry  
+    nComb = round(nComb_all);    
+    outcomes = outcomes_all(1:nComb, :);
+
+    tempCorr = zeros(nComb, 1);
     for c = 1:size(outcomes, 1)
-        temp_rca = rca_data_avg;
-        temp_rca(:, outcomes(c,:)) = rca_data_avg(:, outcomes(c,:))*-1;
-        temp_sum = nansum(temp_rca, 2);
-        temp_corr(c) = corr(temp_sum(:), sensor_sum(:));
+        tempRCA = rcDataAvg;
+        tempRCA(:, outcomes(c, :), :) = -1*rcDataAvg(:, outcomes(c, :), :);
+        tempSum = squeeze(nansum(tempRCA, 2));
+        tempCorr(c) = corr(mean(tempSum, 2), mean(sensorSum, 2));
+        %tempCorr(c) = corr2(tempSum, sensorSum);
+        
     end
-    [corr_list, corr_idx] = sort(temp_corr, 'descend');
-    flip_list = outcomes(corr_idx, :);
+    [corrVars, varIdx] = sort(abs(tempCorr), 'descend');
+    flipIdx = outcomes(varIdx(1), :);
 end

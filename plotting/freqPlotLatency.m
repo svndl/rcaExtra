@@ -21,10 +21,9 @@ function t1 = freqPlotLatency(h, angles, errors, colors, labels, f)
     markerOpts = {'+', 'o', '*', '.', 'x', 'square', 'diamond', ...
         'v', '^', '>', '<', 'pentagram', 'hexagram', 'none'};
     
-    ebh = errorbar(x, values, err_Lo, err_Hi, 'Marker', markerOpts{1:nCnd}, 'LineStyle', 'none', ...
+    ebh = errorbar(x, values, err_Lo, err_Hi, 'LineStyle', 'none', ...
         'LineWidth', 2, 'MarkerSize', 12, 'CapSize', 0, ...
         'MarkerFaceColor', 'auto', 'MarkerEdgeColor', 'auto'); hold on;
-    
     if (numel(f) > 1)
         fprintf('Found multiple frequencies, making a informal decision on wich one to use: %f \n', f(1));
         f = f(1);
@@ -32,6 +31,8 @@ function t1 = freqPlotLatency(h, angles, errors, colors, labels, f)
         
     p = cell(nCnd, 1);
     for c = 1:nCnd
+        set(ebh(c), 'Marker', markerOpts{c});
+        
         [Pc, Sc] = polyfit(f*x(:, c), values(:, c), 1);
        
         yfit = f*Pc(1)*x(:, c) + Pc(2);

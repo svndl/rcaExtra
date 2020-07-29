@@ -1,4 +1,4 @@
-function [fh_AmplitudesFreqs, fh_Lolliplots]= rcaExtra_plotCompareConditions_freq(plotSettings, rcaData)
+function [fh_AmplitudesFreqs, fh_Lolliplots] = rcaExtra_plotCompareConditions_freq(plotSettings, rcaData)
 % compares conditions within group
 
 %% INPUT:
@@ -39,7 +39,9 @@ function [fh_AmplitudesFreqs, fh_Lolliplots]= rcaExtra_plotCompareConditions_fre
     nSubplots_Col = 2;
     
     % stat template
-    asterisk = repmat('*', nFreqs, 1) ;
+    asterisk_1 = repmat({'*'}, nFreqs, 1) ;
+    asterisk_2 = repmat({'**'}, nFreqs, 1) ;
+    
     asterick_plotSettings = {'HorizontalAlignment', 'center', 'VerticalAlignment', 'top', ...
                 'FontSize', 50, 'fontname', 'helvetica'};
     
@@ -75,16 +77,26 @@ function [fh_AmplitudesFreqs, fh_Lolliplots]= rcaExtra_plotCompareConditions_fre
             statData = rcaExtra_testSignificance(subjRCMean, [], statSettings);
                
              % pValues text Y position
-            currRC_sig = statData.sig(:, cp);
-            currRC_pV = statData.pValues(:, cp);
-            text_maxY = 0.5*max(groupAmps, [], 2);
-            text_sigAsterick = asterisk(currRC_sig > 0);
-        
-            text(amplitudes, 1:length(currRC_pV), ...
-                text_maxY, num2str(currRC_pV,'%0.3f'), plotInfo.statssettings{:});
-        
-            text(amplitudes, find(currRC_sig>0), ...
-                groupAmps(currRC_sig > 0), text_sigAsterick, asterick_plotSettings{:});
+             currRC_sig_1 = statData.pValues(:, cp) < 0.05.*statData.pValues(:, cp) > 0.01;
+             currRC_sig_2 = statData.pValues(:, cp) < 0.01;
+             %currRC_sig = statData.sig(:, cp);
+             currRC_pV = statData.pValues(:, cp);
+            
+             % pValues text Y position
+             text_maxY = 0.5*max(groupAmps, [], 2);
+             
+             text_sigAsterick_1 = asterisk_1(currRC_sig_1 > 0);
+             text_sigAsterick_2 = asterisk_2(currRC_sig_2 > 0);
+             
+             text(amplitudes, 1:length(currRC_pV), ...
+                 text_maxY, num2str(currRC_pV, '%0.4f'), 'FontSize', 30);
+             
+             % preset settings for stats
+             text(amplitudes, find(currRC_sig_1 > 0), ...
+                 groupAmps(currRC_sig_1 > 0), text_sigAsterick_1, asterick_plotSettings{:});
+             
+             text(amplitudes, find(currRC_sig_2 > 0), ...
+                 groupAmps(currRC_sig_2 > 0), text_sigAsterick_2, asterick_plotSettings{:});
                
         end
         %% concat frequency for latency plot
@@ -129,8 +141,8 @@ function [fh_AmplitudesFreqs, fh_Lolliplots]= rcaExtra_plotCompareConditions_fre
                 catch
                     ellipseCalc = rcaData.projAvg{nc}.err;
                 end
-                x = -L.*cos(alpha);
-                y = -L.*sin(alpha);
+                x = L.*cos(alpha);
+                y = L.*sin(alpha);
                 e_x = 0;
                 e_y = 0;
                 try
@@ -141,6 +153,8 @@ function [fh_AmplitudesFreqs, fh_Lolliplots]= rcaExtra_plotCompareConditions_fre
                 if (~isempty(e0))
                     e_x = e0(:, 1) + x;
                     e_y = e0(:, 2) + y;
+%                     e_x = e0(:, 1);
+%                     e_y = e0(:, 2);
                 end
                 props = { 'linewidth', 4, 'color', colorGroup, 'linestyle', groupstyle};             
                 patchSaturation = 0.5;

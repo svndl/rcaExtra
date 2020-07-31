@@ -13,4 +13,19 @@ function rcResult = rcaExtra_runAnalysis(rcSettings, dataIn, varargin)
         otherwise
             rcResult = runRCA_time(rcSettings, dataIn);
     end
+    
+    % test weight flipping
+    sprintf('Running weight-flipping analysis now \n');
+    outcomes = rcaExtra_adjustRCSigns(rcResult, dataIn);
+    
+    % print out the results
+    fprintf('Weight flipping for %s \n', rcSettings.domain);
+    fprintf('Max Correlation for 2D (all subjs) %f \n', max(outcomes.corrVars_2d));
+    fprintf('Sign flips for 2D (1 = multiply by -1, 0 = keep) : ');
+    fprintf(' %d ', outcomes.flipIdx_2d);
+    fprintf('\n');
+    fprintf('Max Correlation for average (avg subject) %f \n', max(outcomes.corrVars_avg))
+    fprintf('Sign flips for avg (1 = multiply by -1, 0 = keep): ');
+    fprintf(' %d ', outcomes.flipIdx_avg);   
+    fprintf('\n');
 end

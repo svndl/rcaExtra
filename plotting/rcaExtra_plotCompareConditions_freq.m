@@ -15,6 +15,9 @@ function [fh_AmplitudesFreqs, fh_Lolliplots] = rcaExtra_plotCompareConditions_fr
         plotInfo = getOnOffPlotSettings('brewer_groups', 'Frequency');         
         % two figures per component
         nComp = rcaData.rcaSettings.nComp;
+        plotInfo.Title = 'Default';
+        plotInfo.legendLabels = {};
+        plotSettings.RCsToPlot = 2;
     else
         plotInfo = getOnOffPlotSettings('brewer_groups', 'Frequency');                 
         plotInfo.legendLabels = plotSettings.conditionLabels;

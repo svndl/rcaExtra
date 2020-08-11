@@ -62,8 +62,13 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
     statSettings = rcaExtra_getStatsSettings(rcaSettings);
     subjRCMean = rcaExtra_prepareDataArrayForStats(rcaResult.projectedData', statSettings);
     
-    % add stats    
-    statData = rcaExtra_testSignificance(subjRCMean, [], statSettings);
+    % add stats   
+    try
+        statData = rcaExtra_testSignificance(subjRCMean, [], statSettings);
+    catch err
+        rcaExtra_displayError(err);
+        statData = [];
+    end
     try
         rcaExtra_plotRCSummary(rcaResult, statData);
     catch err

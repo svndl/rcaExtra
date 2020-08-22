@@ -11,8 +11,8 @@ function statSettings = rcaExtra_getStatsSettings(rcInfoStruct)
             statSettings.deletePool = true;
             
         case 'freq'
-            statSettings.nBins = numel(rcInfoStruct.binsToUse);
-            statSettings.nFreqs = numel(rcInfoStruct.freqsToUse);
+            statSettings.nBins = numel(rcInfoStruct.useBins);
+            statSettings.nFreqs = numel(rcInfoStruct.useFrequencies);
         otherwise
     end
     statSettings.nComp = rcInfoStruct.nComp;

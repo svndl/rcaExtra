@@ -16,24 +16,35 @@ function main_Standard_Oddball_analysis_freq
         analysisStruct = loadExperimentInfo_Default;
     end
     
-    % specified for general data loader and plotting, currently not used
     analysisStruct.domain = 'freq';
+    
+    %% get load settings template structure
     loadSettings = rcaExtra_getDataLoadingSettings(analysisStruct);
+    
+    %% fill structure with actual parameters
     loadSettings.useBins = 1:10;
     loadSettings.useFrequencies = {'1F1', '2F1', '3F1', '4F1'};
-    % read raw data     
-    [subjList, sensorData, cellNoiseData1, cellNoiseData2, infoOut] = getRawData(loadSettings);
     
-    % get the rc settings template
+    %% read raw data     
+    [subjList, sensorData, cellNoiseData1, cellNoiseData2, ~] = getRawData(loadSettings);
+    
+    %% get the RC runtime settings template structure
     rcSettings = rcaExtra_getRCARunSettings(analysisStruct);
     
-    % fill the template with our settings/parameters
+    %% fill the RC runtime template structure with real parameters
     
+    % Define subject names. Will be used to compare between
+    % saved (stored) results and requested results
     rcSettings.subjList = subjList;
-    % this should be the total number of bins, not bin Indicies
-    rcSettings.binsToUse = 1:numel(loadSettings.useBins);
+   
+    % Define bin vector. Will be used to compare between
+    % saved (stored) results and requested results
+    rcSettings.useBins = loadSettings.useBins;
     
-    rcSettings.freqsToUse = loadSettings.useFrequencies;
+    % Define frequency list. Will be used to compare between
+    % saved (stored) results and requested results
+    rcSettings.useFrequencies = loadSettings.useFrequencies;
+    
     
     % run analysis on all conditions
     nConditions = size(sensorData, 2);

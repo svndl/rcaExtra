@@ -18,8 +18,8 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
         covData.Ryy = Ryy;
         covData.Rxy = Rxy;
         covData.dGen = dGen;
-        noiseData.lowerSideBand = rcaProject(cellNoiseData1, W); 
-        noiseData.higherSideBand = rcaProject(cellNoiseData2, W);
+        noiseData.lowerSideBand = rcaProject(cellNoiseData1(:, rcaSettings.useCnds), W); 
+        noiseData.higherSideBand = rcaProject(cellNoiseData2(:, rcaSettings.useCnds), W);
         
         %% generate final output struct
         rcaResult.projectedData = rcaData;
@@ -55,7 +55,7 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
     
     % compute average data
     [projAvg, subjAvg] = averageFrequencyData(rcaResult.projectedData, ...
-        numel(rcaSettings.binsToUse), numel(rcaSettings.freqsToUse));
+        numel(rcaSettings.useBins), numel(rcaSettings.useFrequencies));
     rcaResult.projAvg = projAvg;
     rcaResult.subjAvg = subjAvg;
  

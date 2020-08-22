@@ -22,6 +22,7 @@ function rcaExtra_plotRCSummary(rcResult, rcStats)
     try
         plotdGen(f, rcResult.covData, rcResult.rcaSettings.nComp, nRows);
     catch err
+        rcaExtra_displayError(err);
     end
     
     %% save figure

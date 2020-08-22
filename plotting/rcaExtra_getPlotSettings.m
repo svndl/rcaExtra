@@ -28,7 +28,7 @@ function plotSettings = rcaExtra_getPlotSettings(infoStruct)
             plotSettings.axesSettings = defaultaxesprops;
             % settings for stats
             plotSettings.statsSettings = {'HorizontalAlignment', 'center','VerticalAlignment','top', ...
-                'FontSize',  fontSize + 5, 'fontname', 'helvetica', 'fontangle', 'italic' };  
+                'FontSize',  plotSettings.fontSize + 5, 'fontname', 'helvetica', 'fontangle', 'italic' };  
         otherwise
     end
     %% colors for various plotting styles
@@ -58,7 +58,7 @@ function plotSettings = rcaExtra_getPlotSettings(infoStruct)
     % plot general settings
     
     %plotSettings.runDate = runDate; % runtime info
-    plotSettings.resultsDir = infoStruct.path.destDataDir_FIG;
+    plotSettings.resultsDir = infoStruct.destDataDir_FIG;
     % type of plot: exploratory or comparison    
     plotSettings.plotType = {};
 end

@@ -1,6 +1,6 @@
-function fh_Lolliplots = rcaExtra_loliplot_freq(amps, freqs, ellipseErr, colors, labels)
+function fh_Lolliplots = rcaExtra_loliplot_freq(freqs, ampVals, freqVals, ellipseErr, colors, labels)
 
-    [nFreqs, nCnd] = size(amps);
+    [nFreqs, nCnd] = size(ampVals);
     fh_Lolliplots = figure;
     ax = cell(nFreqs, 1);
     for nf = 1:nFreqs 
@@ -8,8 +8,8 @@ function fh_Lolliplots = rcaExtra_loliplot_freq(amps, freqs, ellipseErr, colors,
         for nc = 1:nCnd
             colorGroup = colors(nc, :);
             
-            alpha = freqs(nf, nc);
-            L = amps(nf, nc);
+            alpha = freqVals(nf, nc);
+            L = ampVals(nf, nc);
             try
                 ellipseCalc = ellipseErr{nc};
             catch
@@ -25,10 +25,10 @@ function fh_Lolliplots = rcaExtra_loliplot_freq(amps, freqs, ellipseErr, colors,
                 e0 = ellipseCalc(nf);
             end
             if (~isempty(e0))
-                e_x = e0(:, 1) + x;
-                e_y = e0(:, 2) + y;
-                %                     e_x = e0(:, 1);
-                %                     e_y = e0(:, 2);
+%                 e_x = e0(:, 1) + x;
+%                 e_y = e0(:, 2) + y;
+                e_x = e0(:, 1);
+                e_y = e0(:, 2);
             end
             props = { 'linewidth', 2, 'color', colorGroup};
             patchSaturation = 0.5;
@@ -39,7 +39,7 @@ function fh_Lolliplots = rcaExtra_loliplot_freq(amps, freqs, ellipseErr, colors,
         end
         set(ax{nf},'FontSize', 30, 'fontname', 'helvetica', 'FontAngle', 'italic');        
         setAxisAtTheOrigin(ax{nf});
-        title(strcat(num2str(nf), 'F'), 'Interpreter', 'none');
+        title(freqs(nf), 'Interpreter', 'none');
         pbaspect(ax{nf}, [1 1 1]);
         %descr = ['Conditions ' freqLabels{nf}];
         if (~isempty(labels))

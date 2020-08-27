@@ -26,7 +26,7 @@ function fh_PhasesFreqs = rcaExtra_plotLatencies(rcaResult, plotSettings)
     fh_PhasesFreqs = cell(rcaResult.rcaSettings.nComp, 1);
     for cp = 1:rcaResult.rcaSettings.nComp
         
-        %
+        %dims nF by nConditions
         rcaAngles = squeeze(rcaResult.projAvg.phase(:, cp, :));
         rcaAngErrs = squeeze(rcaResult.projAvg.errP(:, cp, :, :));
         fh_PhasesFreqs{cp} = rcaExtra_latplot_freq(freqVals, rcaAngles, rcaAngErrs, ...
@@ -34,8 +34,11 @@ function fh_PhasesFreqs = rcaExtra_plotLatencies(rcaResult, plotSettings)
         fh_PhasesFreqs{cp}.Name = strcat('Latencies RC ', num2str(cp),...
             ' F = ', num2str(rcaResult.rcaSettings.useFrequenciesHz));        
         title(fh_PhasesFreqs{cp}.Name);
-        
-        saveas(fh_PhasesFreqs{cp}, ...
-            fullfile(rcaResult.rcaSettings.destDataDir_FIG, [fh_PhasesFreqs{cp}.Name '.fig']));
+        try
+            saveas(fh_PhasesFreqs{cp}, ...
+                fullfile(rcaResult.rcaSettings.destDataDir_FIG, [fh_PhasesFreqs{cp}.Name '.fig']));
+        catch err
+            rcaExtra_displayError(err);
+        end
     end
 end

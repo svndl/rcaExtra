@@ -21,6 +21,7 @@ function plotAmplitudeBars(fighandle, rcaDataIn, statData, nSubplotsRow)
             % add significance
             asterisk_1 = repmat({'*'}, size(groupAmp, 1), 1);
             asterisk_2 = repmat({'**'}, size(groupAmp, 1), 1);
+            asterisk_3 = repmat({'***'}, size(groupAmp, 1), 1);
            
             asterick_plotSettings = {'HorizontalAlignment', 'center', 'VerticalAlignment', 'top', ...
                 'FontSize', 50, 'fontname', 'helvetica', 'Color', 'r'};
@@ -28,7 +29,9 @@ function plotAmplitudeBars(fighandle, rcaDataIn, statData, nSubplotsRow)
             if (~isempty(statData))
                 %currRC_sig = statData.sig(:, c);
                 currRC_sig_1 = statData.pValues(:, c) < 0.05 * statData.pValues(:, c) > 0.01;
-                currRC_sig_2 = statData.pValues(:, c) < 0.01;
+                currRC_sig_2 = statData.pValues(:, c) < 0.01 * statData.pValues(:, c) > 0.001;
+                currRC_sig_3 = statData.pValues(:, c) < 0.001;
+                
                 
                 currPValue = statData.pValues(:, c);
                 % pValues text Y position
@@ -36,6 +39,7 @@ function plotAmplitudeBars(fighandle, rcaDataIn, statData, nSubplotsRow)
                 
                 text_sigAsterick_1 = asterisk_1(currRC_sig_1 > 0);
                 text_sigAsterick_2 = asterisk_2(currRC_sig_2 > 0);
+                text_sigAsterick_3 = asterisk_3(currRC_sig_3 > 0);
     
                 text(AxesHandle{c}, 1:length(currPValue), ...
                     text_maxY, num2str(currPValue, '%0.4f'), 'FontSize', 30);
@@ -46,7 +50,10 @@ function plotAmplitudeBars(fighandle, rcaDataIn, statData, nSubplotsRow)
                 
                 text(AxesHandle{c}, find(currRC_sig_2 > 0), ...
                     groupAmp(currRC_sig_2 > 0), text_sigAsterick_2, asterick_plotSettings{:});
-            
+
+                text(AxesHandle{c}, find(currRC_sig_3 > 0), ...
+                    groupAmp(currRC_sig_3 > 0), text_sigAsterick_3, asterick_plotSettings{:});
+                
             end
             pbaspect(AxesHandle{c}, [1 1 1]);
         end

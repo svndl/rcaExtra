@@ -30,16 +30,18 @@ function fh_Lolliplots = rcaExtra_plotLollipops(rcaResult, plotSettings)
         % component's error ellipses (condition x nf cell array) 
         rcaEllipses = cellfun(@(x) x(:, cp), rcaResult.projAvg.ellipseErr, 'uni', false);
         
-        fh_Lolliplots{cp} = rcaExtra_loliplot_freq(rcaAmps, rcaLats, rcaEllipses, ...
+        fh_Lolliplots{cp} = rcaExtra_loliplot_freq(rcaResult.rcaSettings.useFrequencies, rcaAmps, rcaLats, rcaEllipses, ...
             plotSettings.colors.accents, plotSettings.legendLabels);
         
         fh_Lolliplots{cp}.Name = strcat('RC ', num2str(cp),...
             ' F = ', num2str(rcaResult.rcaSettings.useFrequenciesHz));
         
-        title(fh_Lolliplots{cp}.Name);        
         %% save figure in rcaResult.rcaSettings
-        saveas(fh_Lolliplots{cp}, ...
-            fullfile(rcaResult.rcaSettings.destDataDir_FIG, [fh_Lolliplots{cp}.Name '.fig']));
-        
+        try
+            saveas(fh_Lolliplots{cp}, ...
+                fullfile(rcaResult.rcaSettings.destDataDir_FIG, [fh_Lolliplots{cp}.Name '.fig']));
+        catch err
+            rcaExtra_displayError(err);
+        end
     end
 end

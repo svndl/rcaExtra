@@ -33,8 +33,11 @@ function fh_AmplitudesFreqs = rcaExtra_plotAmplitudes(rcaResult, plotSettings)
         fh_AmplitudesFreqs{cp}.Name = strcat('Amplitudes RC ', num2str(cp),...
             ' F = ', num2str(rcaResult.rcaSettings.useFrequenciesHz));        
         title(fh_AmplitudesFreqs{cp}.Name);
-        
-        saveas(fh_AmplitudesFreqs{cp}, ...
-            fullfile(rcaResult.rcaSettings.destDataDir_FIG, [fh_AmplitudesFreqs{cp}.Name '.fig']));
+        try
+            saveas(fh_AmplitudesFreqs{cp}, ...
+                fullfile(rcaResult.rcaSettings.destDataDir_FIG, [fh_AmplitudesFreqs{cp}.Name '.fig']));
+        catch err
+            rcaExtra_displayError(err);
+        end
     end
 end

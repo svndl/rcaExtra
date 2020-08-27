@@ -28,4 +28,22 @@ function rcResult = rcaExtra_runAnalysis(rcSettings, dataIn, varargin)
     fprintf('Sign flips for avg (1 = multiply by -1, 0 = keep): ');
     fprintf(' %d ', outcomes.flipIdx_avg);   
     fprintf('\n');
+    %% Option 1: store the flipping outcomes separately
+    % save(fullfile(rcSettings.destDataDir_RCA, 'rc_signs.mat'), 'outcomes');
+    
+    % %Option 2: add outcomes to existing rcaResult structure
+    % capitalize the time/freq domain label:
+    % domainLabel = [upper(rcSettings.domain(1)) rcSettings.domain(2:end)];
+   
+    % recreate save path for rcaResult.mat structure
+    % rcMatfile = fullfile(rcSettings.destDataDir_RCA, strcat('rcaResults_', domainLabel, rcaSettings.label, '.mat'));
+    
+    % copy loaded results to structure with required name (we'll be relying on loading and using the 'rcaResult', not rcResult)
+    % rcaResult = rcResult;
+    
+    % add outcomes field to structure
+    
+    % rcaResult.outcomes = outcomes;
+    % append data to the existing structure
+    % save(rcMatfile, 'rcaResult', -append');
 end

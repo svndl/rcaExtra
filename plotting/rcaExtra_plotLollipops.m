@@ -6,7 +6,7 @@ function fh_Lolliplots = rcaExtra_plotLollipops(rcaResult, plotSettings)
        % fill settings template
        plotSettings = rcaExtra_getPlotSettings(rcaResult.rcaSettings);
        plotSettings.legendLabels = arrayfun(@(x) strcat('Condition ', num2str(x)), ...
-           1:rcaResult.rcaSettings.useCnds, 'uni', false);
+           1:size(rcaResult.projAvg.ellipseErr, 1), 'uni', false);
        % default settings for all plotting: 
        % font type, font size
        
@@ -25,13 +25,13 @@ function fh_Lolliplots = rcaExtra_plotLollipops(rcaResult, plotSettings)
         
         % component's amplitudes and frequencies
         rcaLats = squeeze(rcaResult.projAvg.phase(:, cp, :));
-        rcaAmps = squeeze(rcaResult.projAvg.amp(:, cp, :, :));
+        rcaAmps = squeeze(rcaResult.projAvg.amp(:, cp, :));
         
         % component's error ellipses (condition x nf cell array) 
         rcaEllipses = cellfun(@(x) x(:, cp), rcaResult.projAvg.ellipseErr, 'uni', false);
         
         fh_Lolliplots{cp} = rcaExtra_loliplot_freq(rcaResult.rcaSettings.useFrequencies, rcaAmps, rcaLats, rcaEllipses, ...
-            plotSettings.colors.accents, plotSettings.legendLabels);
+            plotSettings.useColors, plotSettings.legendLabels);
         
         fh_Lolliplots{cp}.Name = strcat('RC ', num2str(cp),...
             ' F = ', num2str(rcaResult.rcaSettings.useFrequenciesHz));

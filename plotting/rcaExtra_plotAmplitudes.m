@@ -6,7 +6,7 @@ function fh_AmplitudesFreqs = rcaExtra_plotAmplitudes(rcaResult, plotSettings)
        % fill settings template
        plotSettings = rcaExtra_getPlotSettings(rcaResult.rcaSettings);
        plotSettings.legendLabels = arrayfun(@(x) strcat('Condition ', num2str(x)), ...
-           1:rcaResult.rcaSettings.useCnds, 'uni', false);
+           1:size(rcaResult.projAvg.ellipseErr, 1), 'uni', false);
        % default settings for all plotting: 
        % font type, font size
        
@@ -29,7 +29,7 @@ function fh_AmplitudesFreqs = rcaExtra_plotAmplitudes(rcaResult, plotSettings)
         groupAmps = squeeze(rcaResult.projAvg.amp(:, cp, :));
         groupAmpErrs = squeeze(rcaResult.projAvg.errA(:, cp, :, :));
         fh_AmplitudesFreqs{cp} = rcaExtra_barplot_freq(freqVals, groupAmps, groupAmpErrs, ...
-            plotSettings.colors.accents, plotSettings.legendLabels);
+            plotSettings.useColors, plotSettings.legendLabels);
         fh_AmplitudesFreqs{cp}.Name = strcat('Amplitudes RC ', num2str(cp),...
             ' F = ', num2str(rcaResult.rcaSettings.useFrequenciesHz));        
         title(fh_AmplitudesFreqs{cp}.Name);

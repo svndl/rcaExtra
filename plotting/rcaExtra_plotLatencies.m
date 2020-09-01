@@ -7,7 +7,7 @@ function fh_PhasesFreqs = rcaExtra_plotLatencies(rcaResult, plotSettings)
        % fill settings template
        plotSettings = rcaExtra_getPlotSettings(rcaResult.rcaSettings);
        plotSettings.legendLabels = arrayfun(@(x) strcat('Condition ', num2str(x)), ...
-           1:rcaResult.rcaSettings.useCnds, 'uni', false);
+           1:size(rcaResult.projAvg.ellipseErr, 1), 'uni', false);
        % default settings for all plotting: 
        % font type, font size
        
@@ -30,7 +30,7 @@ function fh_PhasesFreqs = rcaExtra_plotLatencies(rcaResult, plotSettings)
         rcaAngles = squeeze(rcaResult.projAvg.phase(:, cp, :));
         rcaAngErrs = squeeze(rcaResult.projAvg.errP(:, cp, :, :));
         fh_PhasesFreqs{cp} = rcaExtra_latplot_freq(freqVals, rcaAngles, rcaAngErrs, ...
-            plotSettings.colors.accents, plotSettings.legendLabels);
+            plotSettings.useColors, plotSettings.legendLabels);
         fh_PhasesFreqs{cp}.Name = strcat('Latencies RC ', num2str(cp),...
             ' F = ', num2str(rcaResult.rcaSettings.useFrequenciesHz));        
         title(fh_PhasesFreqs{cp}.Name);

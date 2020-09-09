@@ -12,7 +12,7 @@ function fh_PhasesFreqs = rcaExtra_plotLatencies(rcaResult, plotSettings)
        % font type, font size
        
        plotSettings.Title = 'Latency Plot';
-       plotSettings.RCsToPlot = 3;
+       plotSettings.RCsToPlot = 1:3;
        % legend background (transparent)
        % xTicks labels
        % xAxis, yAxis labels
@@ -23,15 +23,15 @@ function fh_PhasesFreqs = rcaExtra_plotLatencies(rcaResult, plotSettings)
     
     freqIdx = cellfun(@(x) str2double(x(1)), rcaResult.rcaSettings.useFrequencies, 'uni', true);
     freqVals = rcaResult.rcaSettings.useFrequenciesHz*freqIdx;
-    fh_PhasesFreqs = cell(rcaResult.rcaSettings.nComp, 1);
-    for cp = 1:rcaResult.rcaSettings.nComp
-        
+    fh_PhasesFreqs = cell(numel(plotSettings.RCsToPlot), 1);
+    for cp = 1:numel(plotSettings.RCsToPlot)
+        rc = plotSettings.RCsToPlot(cp);
         %dims nF by nConditions
-        rcaAngles = squeeze(rcaResult.projAvg.phase(:, cp, :));
-        rcaAngErrs = squeeze(rcaResult.projAvg.errP(:, cp, :, :));
+        rcaAngles = squeeze(rcaResult.projAvg.phase(:, rc, :));
+        rcaAngErrs = squeeze(rcaResult.projAvg.errP(:, rc, :, :));
         fh_PhasesFreqs{cp} = rcaExtra_latplot_freq(freqVals, rcaAngles, rcaAngErrs, ...
             plotSettings.useColors, plotSettings.legendLabels);
-        fh_PhasesFreqs{cp}.Name = strcat('Latencies RC ', num2str(cp),...
+        fh_PhasesFreqs{cp}.Name = strcat('Latencies RC ', num2str(rc),...
             ' F = ', num2str(rcaResult.rcaSettings.useFrequenciesHz));        
         title(fh_PhasesFreqs{cp}.Name);
         try

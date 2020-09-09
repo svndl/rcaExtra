@@ -15,12 +15,12 @@ function rcaExtra_plotCompareConditions_time(plotSettings, rcaResult)
        % fill settings template
        plotSettings = rcaExtra_getPlotSettings(rcaResult.rcaSettings);
        plotSettings.legendLabels = arrayfun(@(x) strcat('Condition ', num2str(x)), ...
-           1:size(rcaResult.projAvg.ellipseErr, 1), 'uni', false);
+           1:size(rcaResult.projectedData, 2), 'uni', false);
        % default settings for all plotting: 
        % font type, font size
        
        plotSettings.Title = 'Waveforms';
-       % plotSettings.RCsToPlot = 3;
+       plotSettings.RCsToPlot = 1:3;
        % legend background (transparent)
        % xTicks labels
        % xAxis, yAxis labels
@@ -29,11 +29,23 @@ function rcaExtra_plotCompareConditions_time(plotSettings, rcaResult)
     end
     % handles for each rc component
     
-    fh = cell(rcaResult.rcaSettings.nComp);
     
-    for nrc = 1:rcaResult.rcaSettings.nComp
-    
-        fh{nrc} = shadedErrorBar(rcaResult.timecourse, rcaResult.mu(:, c), rcaResult.s(:, c), lineProps); hold on;
+    for cp = 1:numel(plotSettings.RCsToPlot)
+        
+        rc = plotSettings.RCsToPlot(cp);
+        f = rcaExtra_plotWaveforms_time(rcaResult.timecourse, ...
+            squeeze(rcaResult.mu_cnd(:, rc, :)),...
+            squeeze(rcaResult.s_cnd(:, rc, :)), plotSettings.useColors, plotSettings.legendLabels);
+        
+        fhWaveforms.Name = strcat('RC ', num2str(rc), plotSettings.Title);
+        
+        %% save figure in rcaResult.rcaSettings
+        try
+            saveas(f, ...
+                fullfile(rcaResult.rcaSettings.destDataDir_FIG, [fhWaveforms.Name '.fig']));
+        catch err
+            rcaExtra_displayError(err);
+        end
     end
 end
 

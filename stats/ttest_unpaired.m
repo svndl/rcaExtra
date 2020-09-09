@@ -5,7 +5,7 @@ function [pValue, h0] = ttest_unpaired(dataIn1, dataIn2, flag)
         
     end
     RC = 1;
-    nIters = 10000;
+    nIters = 5000;
     
     meanVals1 = cellfun(@(x) squeeze(nanmean(squeeze(x(:, RC, :)), 2)), dataIn1, 'uni', false);
     meanVals2 = cellfun(@(x) squeeze(nanmean(squeeze(x(:, RC, :)), 2)), dataIn2, 'uni', false);

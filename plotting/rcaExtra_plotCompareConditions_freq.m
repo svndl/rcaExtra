@@ -14,6 +14,7 @@ function rcaExtra_plotCompareConditions_freq(plotSettings, rcaResult)
 
     % lolliplots, copy global plot settings and modify if needed;
     plotSettings_loli = plotSettings;
+    
     fh_Lolli = rcaExtra_plotLollipops(rcaResult, plotSettings_loli);
     % Latency plots, copy global plot settings and modify if needed;
     
@@ -21,7 +22,14 @@ function rcaExtra_plotCompareConditions_freq(plotSettings, rcaResult)
     fh_Lat = rcaExtra_plotLatencies(rcaResult, plotSettings_lat);
     
     % aplitude plots, copy global plot settings and modify if needed;
-    plotSettings_amp = plotSettings;    
+    plotSettings_amp = plotSettings;
     fh_Amp = rcaExtra_plotAmplitudes(rcaResult, plotSettings_amp);
+    
+    % plot avg Sin Cos as dots for each harmonic multiple
+    plotSettings_reim = plotSettings;    
+    fh_SinCos = rcaExtra_plotSinCos_freq(rcaResult, plotSettings_reim);
+    
+    % semilogy for log bar charts only
+    % 
 end
 

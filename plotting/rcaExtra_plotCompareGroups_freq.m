@@ -58,6 +58,17 @@ function rcaExtra_plotCompareGroups_freq(plotSettings, varargin)
         rcaResultCondition_template.projAvg.errP = cat(3, groupsErrP{:});
         
         plotSettings_cnd = plotSettings;
+        plotSettings_cnd.useColors = plotSettings.colors.interleaved(:, :, nc);
+        
+        % group 1 Condition A, B
+        % group 2 Condition A, B
+        % group 3 Condition A, B
+        
+        % creating a joint group where we merge together datafrom same conditions 
+        
+        % Group A: Group 1 condition A, Group 2 Condition A, Group 3 Condition A
+        
+        % Group B: Group 1 Condition B, Group 2 Condition B, Group 3 Condition B
         
         % create groups+condition labels for legends
         if (~isempty(plotSettings) && ~isempty(plotSettings.legendLabels))

@@ -1,6 +1,6 @@
 function fh_Lolliplots = rcaExtra_plotLollipops(rcaResult, plotSettings)
-% Function will plot amplitude bars for a given RC result structure.
-% input arguments: rcaResult structure       
+% Function will plot lolliplots for a given RC result structure.
+% input arguments: rcaResult structure, plotSettings (can be [])       
     
     if (isempty(plotSettings))
        % fill settings template
@@ -11,29 +11,29 @@ function fh_Lolliplots = rcaExtra_plotLollipops(rcaResult, plotSettings)
        % font type, font size
        
        plotSettings.Title = 'Lollipop Plot';
-       plotSettings.RCsToPlot = 3;
+       plotSettings.RCsToPlot = 1:3;
        % legend background (transparent)
        % xTicks labels
        % xAxis, yAxis labels
        % hatching (yes/no) 
        % plot title 
         
-    end
-    fh_Lolliplots = cell(rcaResult.rcaSettings.nComp, 1);
+    end        
+    fh_Lolliplots = cell(numel(plotSettings.RCsToPlot), 1);
     
-    for cp = 1:rcaResult.rcaSettings.nComp
-        
+    for cp = 1:numel(plotSettings.RCsToPlot)
+        rc = plotSettings.RCsToPlot(cp);
         % component's amplitudes and frequencies
-        rcaLats = squeeze(rcaResult.projAvg.phase(:, cp, :));
-        rcaAmps = squeeze(rcaResult.projAvg.amp(:, cp, :));
+        rcaLats = squeeze(rcaResult.projAvg.phase(:, rc, :));
+        rcaAmps = squeeze(rcaResult.projAvg.amp(:, rc, :));
         
         % component's error ellipses (condition x nf cell array) 
-        rcaEllipses = cellfun(@(x) x(:, cp), rcaResult.projAvg.ellipseErr, 'uni', false);
+        rcaEllipses = cellfun(@(x) x(:, rc), rcaResult.projAvg.ellipseErr, 'uni', false);
         
         fh_Lolliplots{cp} = rcaExtra_loliplot_freq(rcaResult.rcaSettings.useFrequencies, rcaAmps, rcaLats, rcaEllipses, ...
             plotSettings.useColors, plotSettings.legendLabels);
         
-        fh_Lolliplots{cp}.Name = strcat('RC ', num2str(cp),...
+        fh_Lolliplots{cp}.Name = strcat('RC ', num2str(rc),...
             ' F = ', num2str(rcaResult.rcaSettings.useFrequenciesHz));
         
         %% save figure in rcaResult.rcaSettings

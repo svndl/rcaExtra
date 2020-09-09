@@ -1,7 +1,4 @@
-function fh_AmplitudesFreqs = rcaExtra_plotAmplitudes(rcaResult, plotSettings)
-% Function will plot amplitude bars for a given RC result structure.
-% input arguments: rcaResult structure       
-    
+function fhSinCos = rcaExtra_plotSinCos_freq(rcaResult, plotSettings)
     if (isempty(plotSettings))
        % fill settings template
        plotSettings = rcaExtra_getPlotSettings(rcaResult.rcaSettings);
@@ -10,7 +7,7 @@ function fh_AmplitudesFreqs = rcaExtra_plotAmplitudes(rcaResult, plotSettings)
        % default settings for all plotting: 
        % font type, font size
        
-       plotSettings.Title = 'Amplitude Plot';
+       plotSettings.Title = 'Lollipop Plot';
        plotSettings.RCsToPlot = 1:3;
        % legend background (transparent)
        % xTicks labels
@@ -19,24 +16,29 @@ function fh_AmplitudesFreqs = rcaExtra_plotAmplitudes(rcaResult, plotSettings)
        % plot title 
         
     end
-    
+    fhSinCos = cell(numel(plotSettings.RCsToPlot), 1);
     freqIdx = cellfun(@(x) str2double(x(1)), rcaResult.rcaSettings.useFrequencies, 'uni', true);
     freqVals = rcaResult.rcaSettings.useFrequenciesHz*freqIdx;
-    fh_AmplitudesFreqs = cell(numel(plotSettings.RCsToPlot), 1);
+    
     for cp = 1:numel(plotSettings.RCsToPlot)
-        
         rc = plotSettings.RCsToPlot(cp);
+        % component's amplitudes and frequencies
+        rcaLats = squeeze(rcaResult.projAvg.phase(:, rc, :));
+        rcaAmps = squeeze(rcaResult.projAvg.amp(:, rc, :));
         
-        groupAmps = squeeze(rcaResult.projAvg.amp(:, rc, :));
-        groupAmpErrs = squeeze(rcaResult.projAvg.errA(:, rc, :, :));
-        fh_AmplitudesFreqs{cp} = rcaExtra_barplot_freq(freqVals, groupAmps, groupAmpErrs, ...
+        % component's error ellipses (condition x nf cell array) 
+        rcaEllipses = cellfun(@(x) x(:, rc), rcaResult.projAvg.ellipseErr, 'uni', false);
+        
+        fhSinCos{cp} = rcaExtra_sincos_freq(freqVals, rcaAmps, rcaLats, rcaEllipses, ...
             plotSettings.useColors, plotSettings.legendLabels);
-        fh_AmplitudesFreqs{cp}.Name = strcat('Amplitudes RC ', num2str(rc),...
-            ' F = ', num2str(rcaResult.rcaSettings.useFrequenciesHz));        
-        title(fh_AmplitudesFreqs{cp}.Name);
+        
+        fhSinCos{cp}.Name = strcat('RC ', num2str(rc),...
+            ' F = ', num2str(rcaResult.rcaSettings.useFrequenciesHz));
+        
+        %% save figure in rcaResult.rcaSettings
         try
-            saveas(fh_AmplitudesFreqs{cp}, ...
-                fullfile(rcaResult.rcaSettings.destDataDir_FIG, [fh_AmplitudesFreqs{cp}.Name '.fig']));
+            saveas(fhSinCos{cp}, ...
+                fullfile(rcaResult.rcaSettings.destDataDir_FIG, [fhSinCos{cp}.Name '.fig']));
         catch err
             rcaExtra_displayError(err);
         end

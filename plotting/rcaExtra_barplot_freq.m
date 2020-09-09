@@ -12,7 +12,8 @@ function f = rcaExtra_barplot_freq(frequencies, vals, errs, colors, labels)
     for b = 1:nBars
         xE(:, b) = (1:nGroups) - groupWidth/2 + (2*b -1 )*groupWidth / (2*nBars);
     end
-    f = figure;
+    f = figure('units', 'normalized', 'outerposition', [0 0 1 1]);
+    
     barsHandle = bar(x, vals, 'LineWidth', 2); hold on;
     if (nCnd > 1)
         beh = errorbar(xE, vals, squeeze(errs(:, :, 1)), squeeze(errs(:, :, 2)), ...

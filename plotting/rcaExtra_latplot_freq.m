@@ -24,7 +24,7 @@ function f = rcaExtra_latplot_freq(frequencies, vals, errs, colors, labels)
     markerOpts = {'+', 'o', '*', '.', 'x', 'square', 'diamond', ...
         'v', '^', '>', '<', 'pentagram', 'hexagram', 'none'};
     
-    f = figure;
+    f = figure('units', 'normalized', 'outerposition', [0 0 1 1]);
     
     ebh = errorbar(x, values_unwrapped, err_Lo, err_Hi, 'LineStyle', 'none', ...
         'LineWidth', 2, 'MarkerSize', 12, 'CapSize', 0); hold on;   

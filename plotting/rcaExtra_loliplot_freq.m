@@ -1,7 +1,7 @@
 function fh_Lolliplots = rcaExtra_loliplot_freq(freqs, ampVals, freqVals, ellipseErr, colors, labels)
 
     [nFreqs, nCnd] = size(ampVals);
-    fh_Lolliplots = figure;
+    fh_Lolliplots = figure('units','normalized','outerposition',[0 0 1 1]);
     ax = cell(nFreqs, 1);
     for nf = 1:nFreqs 
         ax{nf} = subplot(1, nFreqs, nf, 'Parent', fh_Lolliplots);
@@ -25,10 +25,10 @@ function fh_Lolliplots = rcaExtra_loliplot_freq(freqs, ampVals, freqVals, ellips
                 e0 = ellipseCalc(nf);
             end
             if (~isempty(e0))
-%                 e_x = e0(:, 1) + x;
-%                 e_y = e0(:, 2) + y;
-                e_x = e0(:, 1);
-                e_y = e0(:, 2);
+                e_x = e0(:, 1) + x;
+                e_y = e0(:, 2) + y;
+%                 e_x = e0(:, 1); edNeuro's data fix
+%                 e_y = e0(:, 2);
             end
             props = { 'linewidth', 2, 'color', colorGroup};
             patchSaturation = 0.5;

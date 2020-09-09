@@ -11,7 +11,11 @@ function [subj_names, DataOut] = readRawEEG_time(info)
     removeEyes = 0;
     nanArtifacts = 1;
     censorEvents = [];
-    
+    useCnd = [];
+    if (isfield(info, 'useConditions'))
+        useCnd = info.useConditions;
+    end
+
     readArgs = { how, removeEyes, nanArtifacts, censorEvents};
        
     list_subj = list_folder(listDir);        
@@ -30,12 +34,17 @@ function [subj_names, DataOut] = readRawEEG_time(info)
                     load(subjDataFile);
                 else
                     display(['Loading   ' subjDir]);                   
-                    %subjEEG = readRawData(subjDir, removeEyes);
-                    subjEEG = exportToRcaReady(subjDir, readArgs{:});                    
+                    subjEEG = readRawData(subjDir, removeEyes);
+                    %subjEEG = exportToRcaReady(subjDir, readArgs{:});                    
                     save(subjDataFile, 'subjEEG');
                 end
-                rcaData(nge, :) = subjEEG(:)';
+                if (~isempty(useCnd))
+                    rcaData(nge, :) = subjEEG(useCnd)';
+                else
+                    rcaData(nge, :) = subjEEG(:)';
+                end
             catch err
+                rcaExtra_displayError(err);                
                 display(['Warning, could not load   ' list_subj(nge).name]);
                 subj_names(nge) = [];
                 %do nothing
@@ -46,8 +55,13 @@ function [subj_names, DataOut] = readRawEEG_time(info)
             try                               
                 display(['Loading   ' subjDataFile]);
                 load(subjDataFile);
-                rcaData(nge, :) = subjEEG(:)';
-            catch
+                if (~isempty(useCnd))
+                    rcaData(nge, :) = subjEEG(useCnd)';
+                else
+                    rcaData(nge, :) = subjEEG(:)';
+                end
+            catch err
+                rcaExtra_displayError(err);
             end
         end
     end

@@ -118,8 +118,10 @@ function rcaResult = runRCA_time(currSettings, dataIn)
     rcaResult.s = nanstd(subjMean, [], 3)/(sqrt(size(subjMean, 3)));
     
     % for each condition, compute individual mean/std
-    rcaResult.mu_cnd = cellfun(@(x) nanmean(x, 3), subjMean_bycnd, 'uni', false);
-    rcaResult.s_cnd = cellfun(@(x) nanstd(x, [], 3)/(sqrt(size(x, 3))), subjMean_bycnd, 'uni', false);
+    mu_cnd = cellfun(@(x) nanmean(x, 3), subjMean_bycnd, 'uni', false);
+    s_cnd = cellfun(@(x) nanstd(x, [], 3)/(sqrt(size(x, 3))), subjMean_bycnd, 'uni', false);
+    rcaResult.mu_cnd = cat(3, mu_cnd{:});
+    rcaResult.s_cnd = cat(3, s_cnd{:});
     
     % compute stats
     statSettings = rcaExtra_getStatsSettings(currSettings);

@@ -31,7 +31,7 @@ function out = rcaExtra_computeAverages(rcaResult)
         case 'freq'
             % compute average data
             [projAvg, subjAvg] = averageFrequencyData(rcaResult.projectedData, ...
-                numel(rcaSettings.useBins), numel(rcaSettings.useFrequencies));
+                numel(rcaResult.rcaSettings.useBins), numel(rcaResult.rcaSettings.useFrequencies));
             out.projAvg = projAvg;
             out.subjAvg = subjAvg;            
     end

@@ -8,20 +8,21 @@ function plotRCTopoMaps(axHandle, topoMaps, nRows)
 
     %% flip signs
     s = ones(1, nComp);
-    f = ones(1, nComp);
-    
-    for rc = 1:nComp
-        [~, f(rc)] = max(abs(extremeVals(:, rc)));
-    end
-    if f(1) == 1 % largest extreme value of RC1 is negative
-        s(1) = -1; % flip the sign of RC1 so its largest extreme value is positive (yellow in parula)
-        f(1) = 2;
-    end
-    for rc = 2:nComp
-        if f(rc)~=f(1) % if the poles containing the maximum corr coef are different
-            s(rc) = -1; % we will flip the sign of that RC's time course & thus its corr coef values (in A) too
-        end
-    end
+%    f = ones(1, nComp);
+
+% comment to match the components signs
+%     for rc = 1:nComp
+%         [~, f(rc)] = max(abs(extremeVals(:, rc)));
+%     end
+%     if f(1) == 1 % largest extreme value of RC1 is negative
+%         s(1) = -1; % flip the sign of RC1 so its largest extreme value is positive (yellow in parula)
+%         f(1) = 2;
+%     end
+%     for rc = 2:nComp
+%         if f(rc)~=f(1) % if the poles containing the maximum corr coef are different
+%             s(rc) = -1; % we will flip the sign of that RC's time course & thus its corr coef values (in A) too
+%         end
+%     end
     
     % plotting topos
     try

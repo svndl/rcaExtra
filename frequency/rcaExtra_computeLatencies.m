@@ -23,7 +23,7 @@ function [latencyVals, latencyErrs] = rcaExtra_computeLatencies(rcaResult)
     latencyErrs = zeros(nComp, nCnd);
     for rc = 1:nComp
         
-        rcaAngles = squeeze(rcaResult.projAvg.phase(freqIdx, rc, :));
+        rcaAngles = squeeze(rcaResult.projAvg.phase(:, rc, :));
         values_unwrapped = unwrapPhases(rcaAngles);
         for c = 1:nCnd
 

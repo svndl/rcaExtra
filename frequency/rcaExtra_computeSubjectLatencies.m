@@ -26,7 +26,7 @@ function [latencyVals, latencyErrs] = rcaExtra_computeSubjectLatencies(rcaResult
     for s = 1:nSubj
         for rc = 1:nComp
             for c = 1:nCnd
-                rcaAngles = squeeze(rcaResult.subjAvg.phase(freqIdx, rc, s, c));
+                rcaAngles = squeeze(rcaResult.subjAvg.phase(:, rc, s, c));
                 values_unwrapped = unwrapPhases(rcaAngles);
 
                 [Pc, ~] = polyfit(freqVals, values_unwrapped, 1);

@@ -4,7 +4,8 @@ function varargout = rcaExtra_projectDataSubset(rcaResult, varargin)
 
 % Input args:
 
-% rcaResult: RC result structure
+% rcaResult: RC result structure with the weights you want to use for
+% projection
 % varargin: source data subset(s), cell arrays (nSubjs x nConditions),
 % number of conditions can vary among datasets
 

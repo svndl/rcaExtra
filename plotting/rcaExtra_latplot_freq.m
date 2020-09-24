@@ -47,8 +47,9 @@ function f = rcaExtra_latplot_freq(frequencies, vals, errs, colors, labels)
         
         %dd = sqrt(sum(d)/(nF - 2)); 
         dd = sqrt(sum(dMs)/(nF - 2)); 
-        
-        t1 = text(3, values_unwrapped(3, c), sprintf('%.2f \\pm %.1f (msec)', latency, dd), ...
+        % compute middle point for values
+        middle = mean(values_unwrapped, 1);
+        t1 = text(mean(x), middle, sprintf('%.2f \\pm %.1f (msec)', latency, dd), ...
             'FontSize', 30, 'Interpreter', 'tex', 'color',  colors(c, :)); hold on
         % alternate filled/unfilled
         markerStyle = strcat(':');

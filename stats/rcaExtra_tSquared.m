@@ -23,12 +23,17 @@ function [sig, pVal, stat] = rcaExtra_tSquared(dataSet1, dataSet2)
     %% STATS
     for f = 1:nFreqs
         for cnd = 1:nCnd
+            % create real-imaginary pair for each condition/harmonic multiple
+            
             xyData1(:, :, cnd) = [squeeze(dataSet1.subjAvgReal(f, cnd, :)), squeeze(dataSet1.subjAvgImag(f, cnd, :))];
+            
+            % if there are two datasets, test one against the other
             if (~isempty(dataSet2))   
             
                 xyData2(:, :, cnd) = [squeeze(dataSet2.subjAvgReal(f, cnd, :)), squeeze(dataSet2.subjAvgImag(f, cnd, :))];                
                 stats = t2FC(xyData1, xyData2);
             else
+                % defailt is test afainst 0
                 stats = tSquaredFourierCoefs(xyData1);                
             end           
             sig(f, cnd) = stats.H;

@@ -38,7 +38,7 @@ function statResults = rcaExtra_testSignificance(dataSet1, dataSet2, testSetting
             end
 
             
-            % time domain testing:
+            % frequecny domain testing:
         case 'freq'
             [nF, nRc, nCnd, nSubj] = size(dataSet1.subjAvgImag);
             

@@ -19,7 +19,6 @@ function rcaExtra_plotSignificantResults_time(rcaResul1, rcaResult2, statData, p
        % plot title 
     end
 
-
     % compute average waveforms for each structure
 
     % create template structure from first rcRresult input 

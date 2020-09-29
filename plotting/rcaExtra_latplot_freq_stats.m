@@ -1,4 +1,4 @@
-function f = rcaExtra_latplot_freq(frequencies, vals, errs, colors, labels)
+function f = rcaExtra_latplot_freq_stats(frequencies, vals, errs, colors, labels, significance)
     
     [nF0, nCnd] = size(vals);
     nF = size(frequencies, 2);
@@ -7,31 +7,76 @@ function f = rcaExtra_latplot_freq(frequencies, vals, errs, colors, labels)
         f = [];
         return;
     end
-        
+    % create frequency label arrays  
     xlabels = arrayfun( @(x) strcat(num2str(x), 'Hz'), frequencies, 'uni', false);
+    % x-values
     x = repmat(frequencies', [1 nCnd]);    
-       
-      % errors are in degs
-    if (nCnd > 1)
-        err_Lo = squeeze(errs(:, :, 1));
-        err_Hi = squeeze(errs(:, :, 2));
-    else
-        err_Lo = squeeze(errs(:, 1));
-        err_Hi = squeeze(errs(:, 2));        
-    end
     
+    % unwrap phases
     values_unwrapped = unwrapPhases(vals);
+    
+    % marker options for errorbars
     markerOpts = {'+', 'o', '*', '.', 'x', 'square', 'diamond', ...
         'v', '^', '>', '<', 'pentagram', 'hexagram', 'none'};
     
     f = figure('units', 'normalized', 'outerposition', [0 0 1 1]);
+
+    %% split into significant/no n-significant 
+        
+    sigVals = vals(significance, :);
+    nsigVals = vals(~significance, :);
+    
+    sigxE  = xE(significance, :);      
+    nsigxE = xE(~significance, :);
+    
+    sigValErrs = errs(significance, :, :);
+    nsigValErrs = errs(~significance, :, :);
+    
+    
+    if (nCnd > 1)
+        % for two conditions, compute latencies and display
+        % regression line. Shade non-significant frequencies
+        
+        err_Lo = squeeze(errs(:, :, 1));
+        err_Hi = squeeze(errs(:, :, 2));
+        
+    else
+        % if there's one condition, compute latency estimate 
+        % only if there are 2 or more significant freqencies
+        % 
+        err_Lo = squeeze(errs(:, 1));
+        err_Hi = squeeze(errs(:, 2));   
+        
+        
+        
+    end
+    
+    
+    
+    % display all errormarkers first to store legend info
     
     ebh = errorbar(x, values_unwrapped, err_Lo, err_Hi, 'LineStyle', 'none', ...
         'LineWidth', 2, 'MarkerSize', 12, 'CapSize', 0); hold on;   
     
+    sigSaturation = 0.5;    
     p = cell(nCnd, 1);
+    
+    % loop over conditions to redraw significant markers
+    % and fit regression line if 3 or more harmnic multiples are
+    % significant
     for c = 1:nCnd
+        % define significant/ non significant colors
+        color1 = colors(c, :);
+        color0 = color1 + (1 - color1)*(1 - sigSaturation);
         
+        % color all markers as non-significant 
+        set(ebh(c), 'color', color0, 'Marker', markerOpts{c}, ...
+            'MarkerFaceColor', color0, 'MarkerEdgeColor', color0);
+        
+        % set significant and non-significant colors
+        set(ebh(c), 'color', colors(c, :), 'Marker', markerOpts{c}, ...
+            'MarkerFaceColor', colors(c, :), 'MarkerEdgeColor', colors(c, :));
+
         set(ebh(c), 'color', colors(c, :), 'Marker', markerOpts{c}, ...
             'MarkerFaceColor', colors(c, :), 'MarkerEdgeColor', colors(c, :));
         

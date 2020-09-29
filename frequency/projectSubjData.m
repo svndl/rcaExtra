@@ -5,6 +5,7 @@ function subj = projectSubjData(amp, phase, eAP)
     for c = 1:nCnd
         subj.amp(:, :, :, c) = (cat(3, amp{c, :}));
         subj.phase(:, :, :, c) = (cat(3, phase{c, :}));
-        subj.err(:, :, :, c) = (cat(3, eAP{c, :}));
+        % subj Err is transposed
+        subj.err(:, :, :, c) = (cat(3, eAP{:, c}));
     end
 end

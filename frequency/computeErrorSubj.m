@@ -1,13 +1,13 @@
 function dE = computeErrorSubj(dataRe, dataIm)
 % Alexandra Yakovleva, Stanford University 2012-1020
 
-    nSubj = size(dataRe, 2);
-    nCnd = size(dataRe, 1);
-    dE = cell(nCnd, nSubj);
+    nSubj = size(dataRe, 1);
+    nCnd = size(dataRe, 2);
+    dE = cell(nSubj, nCnd);
     for c = 1:nCnd
-        allSubj_re = squeeze(dataRe(c, :));
-        allSubj_im = squeeze(dataIm(c, :));
-        dE(c, :) = ...
+        allSubj_re = squeeze(dataRe(:, c));
+        allSubj_im = squeeze(dataIm(:, c));
+        dE(:, c) = ...
             cellfun(@(x, y) computeErrTCirc(x, y), ...
             allSubj_re, allSubj_im, 'uni', false);
     end

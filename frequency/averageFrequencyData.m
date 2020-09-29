@@ -1,11 +1,11 @@
 function [proj, subj] = averageFrequencyData(inputData, nBs, nFs)
-% Alexandra Yakovleva, Stanford University 2012-2020.
+% Alexandra Yakovleva, Stanford University 2012-2020.    
     nComps = size(inputData{1, 1}, 2);
      
     %% Step 2. Split into Real/Imag components
     [data_Re, data_Im] = getRealImag_byBin(inputData, nBs, nFs, nComps);
     
-    % data_X is cell array Cnds x Subjs, each element is 1:nBs x 1:nFs x nTrials  
+    % data_X is cell array Subjs x Cnds, each element is 1:nBs x 1:nFs x nTrials  
     % avg project -- subjects's data is merged together and computed weighted average
     % avg subject -- subject's data is averaged separately
     
@@ -29,7 +29,7 @@ function [proj, subj] = averageFrequencyData(inputData, nBs, nFs)
     %% Step 7. Get rid of cells?
     proj = projectProjData(ampProj, phaseProj, ampErrP, phaseErrP);
     proj.ellipseErr = ellipse;
-    proj.subjsRe = cat(3, avgSubj_Re(:, :)');
-    proj.subjsIm = cat(3, avgSubj_Im(:, :)');
+    proj.subjsRe = cat(3, avgSubj_Re(:, :));
+    proj.subjsIm = cat(3, avgSubj_Im(:, :));
     subj = projectSubjData(ampSubj, phaseSubj, errSubj);    
 end

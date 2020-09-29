@@ -39,18 +39,18 @@ function f = rcaExtra_latplot_freq_stats(frequencies, vals, errs, colors, labels
             sigVals = values_unwrapped(significance, 1)';
         
             nsigF = frequencies(~significance);
-            nsigVals =  values_unwrapped(~significance, 1)';
+            nsigVals =  values_unwrapped(~significance, c)';
             % display all errormarkers first to store legend info
             if (~isempty(sigF))
-                ebh_sig(c) = errorbar(sigF, sigVals, err_Lo(significance)', err_Hi(significance)', ...
+                ebh_sig = errorbar(sigF, sigVals, err_Lo(significance)', err_Hi(significance)', ...
                     errorBarOpts{:}); hold on;   
-                set(ebh_sig(c), 'color', color1, 'Marker', markerOpts{1}, ...
+                set(ebh_sig, 'color', color1, 'Marker', markerOpts{1}, ...
                     'MarkerFaceColor', color1, 'MarkerEdgeColor', color1);
             end
             if (~isempty(nsigF))       
-                ebh_nsig(c) = errorbar(nsigF, nsigVals, err_Lo(~significance)', err_Hi(~significance)', ...
+                ebh_nsig = errorbar(nsigF, nsigVals, err_Lo(~significance)', err_Hi(~significance)', ...
                     errorBarOpts{:}); hold on;   
-                set(ebh_nsig(c), 'color', color0, 'Marker', markerOpts{1}, ...
+                set(ebh_nsig, 'color', color0, 'Marker', markerOpts{1}, ...
                     'MarkerFaceColor', color0, 'MarkerEdgeColor', color0);
             end
             [Pc, ~] = polyfit(x(:, c), values_unwrapped(:, c), 1);    
@@ -67,10 +67,10 @@ function f = rcaExtra_latplot_freq_stats(frequencies, vals, errs, colors, labels
             % compute middle point for values
             middle = mean(values_unwrapped(:, c));
             t1 = text(mean(x(:, 1)), middle, sprintf('%.2f \\pm %.1f (msec)', latency, dd), ...
-                'FontSize', 30, 'Interpreter', 'tex', 'color',  color1); hold on
+                'FontSize', 30, 'Interpreter', 'tex', 'color',  color0); hold on
             % alternate filled/unfilled
             markerStyle = strcat(':');
-            p{c} = plot(gca, x(:, c), yfit, markerStyle, 'LineWidth', 4, 'color', color1); hold on;       
+            p{c} = plot(gca, x(:, c), yfit, markerStyle, 'LineWidth', 4, 'color', color0); hold on;       
         end
         legend([p{:}], labels{:}, 'Interpreter', 'none', 'FontSize', 30, ...
             'EdgeColor', 'none', 'Color', 'none');

@@ -36,7 +36,7 @@ function f = rcaExtra_latplot_freq_stats(frequencies, vals, errs, colors, labels
             color0 = color1 + (1 - color1)*(1 - sigSaturation);
             
             sigF = frequencies(significance);
-            sigVals = values_unwrapped(significance, 1)';
+            sigVals = values_unwrapped(significance, c)';
         
             nsigF = frequencies(~significance);
             nsigVals =  values_unwrapped(~significance, c)';

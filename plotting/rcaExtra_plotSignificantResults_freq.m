@@ -25,6 +25,10 @@ function rcaExtra_plotSignificantResults_freq(rcaResult1, rcaResult2, statData, 
     if (hasSecondDataset)
         rcResult2_avg = rcaExtra_computeAverages(rcaResult2);
         rcaResultGroups = {rcResult1_avg, rcResult2_avg};
+        % change default labels
+        plotSettings.legendLabels = arrayfun(@(x) strcat('Group ', num2str(x)), ...
+           1:size(rcaResult1.projectedData, 1), 'uni', false);
+        
     end
     
     % frequency values

@@ -20,19 +20,10 @@ function f = rcaExtra_latplot_freq_stats(frequencies, vals, errs, colors, labels
         'v', '^', '>', '<', 'pentagram', 'hexagram', 'none'};
     
     f = figure('units', 'normalized', 'outerposition', [0 0 1 1]);
-
-    %% split into significant/no n-significant 
+    errorBarOpts = {'LineStyle', 'none', 'LineWidth', 2, 'MarkerSize', 12, 'CapSize', 0};
         
-    sigVals = vals(significance, :);
-    nsigVals = vals(~significance, :);
-    
-    sigxE  = xE(significance, :);      
-    nsigxE = xE(~significance, :);
-    
-    sigValErrs = errs(significance, :, :);
-    nsigValErrs = errs(~significance, :, :);
-    
-    
+    sigSaturation = 0.5;
+        
     if (nCnd > 1)
         % for two conditions, compute latencies and display
         % regression line. Shade non-significant frequencies
@@ -40,48 +31,28 @@ function f = rcaExtra_latplot_freq_stats(frequencies, vals, errs, colors, labels
         err_Lo = squeeze(errs(:, :, 1));
         err_Hi = squeeze(errs(:, :, 2));
         
-    else
-        % if there's one condition, compute latency estimate 
-        % only if there are 2 or more significant freqencies
-        % 
-        err_Lo = squeeze(errs(:, 1));
-        err_Hi = squeeze(errs(:, 2));   
+        for c = 1:nCnd
+            color1 = colors(c, :);
+            color0 = color1 + (1 - color1)*(1 - sigSaturation);
+            
+            sigF = frequencies(significance);
+            sigVals = values_unwrapped(significance, 1)';
         
-        
-        
-    end
-    
-    
-    
-    % display all errormarkers first to store legend info
-    
-    ebh = errorbar(x, values_unwrapped, err_Lo, err_Hi, 'LineStyle', 'none', ...
-        'LineWidth', 2, 'MarkerSize', 12, 'CapSize', 0); hold on;   
-    
-    sigSaturation = 0.5;    
-    p = cell(nCnd, 1);
-    
-    % loop over conditions to redraw significant markers
-    % and fit regression line if 3 or more harmnic multiples are
-    % significant
-    for c = 1:nCnd
-        % define significant/ non significant colors
-        color1 = colors(c, :);
-        color0 = color1 + (1 - color1)*(1 - sigSaturation);
-        
-        % color all markers as non-significant 
-        set(ebh(c), 'color', color0, 'Marker', markerOpts{c}, ...
-            'MarkerFaceColor', color0, 'MarkerEdgeColor', color0);
-        
-        % set significant and non-significant colors
-        set(ebh(c), 'color', colors(c, :), 'Marker', markerOpts{c}, ...
-            'MarkerFaceColor', colors(c, :), 'MarkerEdgeColor', colors(c, :));
-
-        set(ebh(c), 'color', colors(c, :), 'Marker', markerOpts{c}, ...
-            'MarkerFaceColor', colors(c, :), 'MarkerEdgeColor', colors(c, :));
-        
-        % interpolate over number of significant frequencies
-        if (nF > 2)
+            nsigF = frequencies(~significance);
+            nsigVals =  values_unwrapped(~significance, 1)';
+            % display all errormarkers first to store legend info
+            if (~isempty(sigF))
+                ebh_sig = errorbar(sigF, sigVals, err_Lo(significance)', err_Hi(significance)', ...
+                    errorBarOpts{:}); hold on;   
+                set(ebh_sig, 'color', color1, 'Marker', markerOpts{1}, ...
+                    'MarkerFaceColor', color1, 'MarkerEdgeColor', color1);
+            end
+            if (~isempty(nsigF))       
+                ebh_nsig = errorbar(nsigF, nsigVals, err_Lo(~significance)', err_Hi(~significance)', ...
+                    errorBarOpts{:}); hold on;   
+                set(ebh_nsig, 'color', color0, 'Marker', markerOpts{1}, ...
+                    'MarkerFaceColor', color0, 'MarkerEdgeColor', color0);
+            end
             [Pc, ~] = polyfit(x(:, c), values_unwrapped(:, c), 1);    
             yfit = Pc(1)*x(:, c) + Pc(2);
     
@@ -92,20 +63,73 @@ function f = rcaExtra_latplot_freq_stats(frequencies, vals, errs, colors, labels
         
             %dd = sqrt(sum(d)/(nF - 2)); 
             dd = sqrt(sum(dMs)/(nF - 2)); 
+            
             % compute middle point for values
-            middle = mean(values_unwrapped, 1);
-            t1 = text(mean(x), middle, sprintf('%.2f \\pm %.1f (msec)', latency, dd), ...
-            'FontSize', 30, 'Interpreter', 'tex', 'color',  colors(c, :)); hold on
+            middle = mean(values_unwrapped(:, c));
+            t1 = text(mean(x(:, 1)), middle, sprintf('%.2f \\pm %.1f (msec)', latency, dd), ...
+                'FontSize', 30, 'Interpreter', 'tex', 'color',  color1); hold on
             % alternate filled/unfilled
             markerStyle = strcat(':');
-            p{c} = plot(gca, x(:, c), yfit, markerStyle, 'LineWidth', 4, 'color', colors(c, :)); hold on;
+            p{c} = plot(gca, x(:, c), yfit, markerStyle, 'LineWidth', 4, 'color', color1); hold on;       
         end
+        legend([p{:}], labels{:}, 'Interpreter', 'none', 'FontSize', 30, ...
+            'EdgeColor', 'none', 'Color', 'none');
+    else
+        % if there's one condition, compute latency estimate 
+        % only if there are 2 or more significant freqencies
+        % 
+        err_Lo = squeeze(errs(:, 1));
+        err_Hi = squeeze(errs(:, 2));   
+        
+        color1 = colors(1, :);
+        color0 = color1 + (1 - color1)*(1 - sigSaturation);
+
+        sigF = frequencies(significance);
+        sigVals = values_unwrapped(significance, 1)';
+        
+        nsigF = frequencies(~significance);
+        nsigVals =  values_unwrapped(~significance, 1)';
+        % display all errormarkers first to store legend info
+        if (~isempty(sigF))
+            ebh_sig = errorbar(sigF, sigVals, err_Lo(significance)', err_Hi(significance)', ...
+                errorBarOpts{:}); hold on;   
+            set(ebh_sig, 'color', color1, 'Marker', markerOpts{1}, ...
+                'MarkerFaceColor', color1, 'MarkerEdgeColor', color1);
+        end
+        if (~isempty(nsigF))       
+            ebh_nsig = errorbar(nsigF, nsigVals, err_Lo(~significance)', err_Hi(~significance)', ...
+                errorBarOpts{:}); hold on;   
+            set(ebh_nsig, 'color', color0, 'Marker', markerOpts{1}, ...
+                'MarkerFaceColor', color0, 'MarkerEdgeColor', color0);
+        end
+        % interpolate over number of significant frequencies
+        nFSig = numel(sigF);
+        
+        if (nFSig > 1)
+            [Pc, ~] = polyfit(sigF, sigVals, 1);    
+            yfit = Pc(1)*sigF + Pc(2);
+    
+            % display slope
+            latency = 1000*Pc(1)/(2*pi);    
+            d = (yfit - sigVals).^2;
+            dMs = 1000*d/(2*pi);
+        
+            %dd = sqrt(sum(d)/(nF - 2)); 
+            dd = sqrt(sum(dMs)/(nFSig - 2)); 
+            
+            % compute middle point for values
+            middle = mean(values_unwrapped(significance, 1));
+            t1 = text(mean(x), middle, sprintf('%.2f \\pm %.1f (msec)', latency, dd), ...
+            'FontSize', 30, 'Interpreter', 'tex', 'color',  colors(1, :)); hold on
+            % alternate filled/unfilled
+            markerStyle = strcat(':');
+            p = plot(gca, sigF, yfit, markerStyle, 'LineWidth', 4, 'color', colors(1, :)); hold on;
+            
+            legend(p, labels{:}, 'Interpreter', 'none', 'FontSize', 30, ...
+                'EdgeColor', 'none', 'Color', 'none'); 
+        end        
     end
     title('Latency Estimate', 'Interpreter', 'tex');  
-    if ~isempty(labels)
-        legend(ebh(:), labels{:}, 'Interpreter', 'none', 'FontSize', 30, ...
-            'EdgeColor', 'none', 'Color', 'none'); 
-    end
     try
         xticks(frequencies);
         xticklabels(xlabels);

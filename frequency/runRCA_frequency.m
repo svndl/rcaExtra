@@ -22,8 +22,7 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
         noiseData.higherSideBand = rcaProject(cellNoiseData2(:, rcaSettings.useCnds), W);
         
         %% generate final output struct
-        rcaResult.projectedData = rcaData;
-        %rcaResult.sourceData = dataSlice;
+        rcaResult.projectedData = rcaData';
 
         rcaResult.W = W;
         rcaResult.A = A;
@@ -33,7 +32,7 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
         save(savedFile, 'rcaResult');        
     else
         try
-            load(savedFile, 'rcaResult');
+            load(savedFile, 'rcaResult');           
             % compare runtime settings
             if (~rcaExtra_compareRCASettings_freq(rcaResult.rcaSettings, rcaSettings))
                 % if settings don't match, save old file and re-run the analysis
@@ -44,6 +43,12 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
                 rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, cellNoiseData2);
             end
             
+            % transpose and overwrite projectedData for old structures
+            nSubjs = numel(rcaSettings.subjList);
+            if (size(rcaResult.projectedData, 2) == nSubjs)
+                rcaResult.projectedData = rcaResult.projectedData';
+                save(savedFile, 'rcaResult');                  
+            end
         catch err
             disp('Failed to load stored data, re-running RCA ...');
             rcaExtra_displayError(err);
@@ -60,7 +65,7 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
     rcaResult.subjAvg = subjAvg;
  
     statSettings = rcaExtra_getStatsSettings(rcaSettings);
-    subjRCMean = rcaExtra_prepareDataArrayForStats(rcaResult.projectedData', statSettings);
+    subjRCMean = rcaExtra_prepareDataArrayForStats(rcaResult.projectedData, statSettings);
     
     % add stats   
     try

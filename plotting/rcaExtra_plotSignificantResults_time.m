@@ -1,12 +1,12 @@
-function rcaExtra_plotSignificantResults_time(rcaResul1, rcaResult2, statData, plotSettings)
+function rcaExtra_plotSignificantResults_time(rcaResult1, rcaResult2, statData, plotSettings)
 
 % create default plot settings
 % 
     if (isempty(plotSettings))
        % fill settings template
-       plotSettings = rcaExtra_getPlotSettings(rcaResul1.rcaSettings);
+       plotSettings = rcaExtra_getPlotSettings(rcaResult1.rcaSettings);
        plotSettings.legendLabels = arrayfun(@(x) strcat('Condition ', num2str(x)), ...
-           1:size(rcaResul1.projectedData, 2), 'uni', false);
+           1:size(rcaResult1.projectedData, 2), 'uni', false);
        % default settings for all plotting: 
        % font type, font size
        
@@ -22,7 +22,7 @@ function rcaExtra_plotSignificantResults_time(rcaResul1, rcaResult2, statData, p
     % compute average waveforms for each structure
 
     % create template structure from first rcRresult input 
-    rcaResultCondition_template = rcaResul1{1};
+    rcaResultCondition_template = rcaResult1;
     
     hasSecondDataset = ~isempty(rcaResult2);
     rcResult1_avg = rcaExtra_computeAverages(rcaResult1);    
@@ -32,6 +32,10 @@ function rcaExtra_plotSignificantResults_time(rcaResul1, rcaResult2, statData, p
     if (hasSecondDataset)
         rcResult2_avg = rcaExtra_computeAverages(rcaResult2);
         rcaResultGroups = {rcResult1_avg, rcResult2_avg};
+        
+        % change to Group labels
+        plotSettings.legendLabels = arrayfun(@(x) strcat('Group ', num2str(x)), ...
+           1:2, 'uni', false);     
     end
     
     % number of conditions per group

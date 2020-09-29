@@ -12,7 +12,7 @@ function rcaSubsetOut = rcaExtra_selectConditionsSubset(rcaResult, conditionVect
 
 
     % check that requested subset is within the dataset range:
-    nAvailableConditions = size(rcaResult.projectedData, 1);
+    nAvailableConditions = size(rcaResult.projectedData, 2);
     maxrequestedConditions = max(conditionVector);
     
     % if condition index is outside of range, display error and return
@@ -31,5 +31,5 @@ function rcaSubsetOut = rcaExtra_selectConditionsSubset(rcaResult, conditionVect
     rcaSubsetOut.rcaSettings.useCnds = numel(conditionVector);
     
     % select subset of conditions from projectedData
-    rcaSubsetOut.projectedData = rcaResult.projectedData(conditionVector, :);
+    rcaSubsetOut.projectedData = rcaResult.projectedData(:, conditionVector);
 end

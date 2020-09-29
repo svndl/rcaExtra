@@ -31,5 +31,5 @@ function rcaSubsetOut = rcaExtra_selectConditionsSubset(rcaResult, conditionVect
     rcaSubsetOut.rcaSettings.useCnds = numel(conditionVector);
     
     % select subset of conditions from projectedData
-    rcaSubsetOut.projectedData = rcaResult.projectedData(:, conditionVector);
+    rcaSubsetOut.projectedData = rcaResult.projectedData(conditionVector, :);
 end

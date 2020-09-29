@@ -14,7 +14,7 @@ function statData = rcaExtra_runStatsAnalysis(rcaResult1, rcaResult2)
     
     if (hasSecondResultStruct)
         % make sure both results were computed in same domain        
-        if (~srcmp(rcaResult2.rcaSettings.domain, ...
+        if (~strcmp(rcaResult2.rcaSettings.domain, ...
                 rcaResult1.rcaSettings.domain))
             fprintf('Both results have to be computed in same domain \n');
             return;

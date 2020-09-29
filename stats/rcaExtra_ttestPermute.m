@@ -106,7 +106,7 @@ function [h0, realP, corrT, critVal, clustDistrib] = rcaExtra_ttestPermute(inDat
         end
         
     else     
-        dataSlice2 = inData2(timeMask, :);
+        dataSlice2 = inData2(ttestSettings.timeMask, :);
         [h0, realP, ~, ~] = fcnCall(dataSlice1, dataSlice2, ttestSettings.tParams{:});
         % create pooled list and keep true group indicies
         

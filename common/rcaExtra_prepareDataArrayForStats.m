@@ -14,7 +14,7 @@ function subjMean = rcaExtra_prepareDataArrayForStats(dataMat, dataSettings)
                 subjMean = permute(subjMean, [1 2 4 3]);
             end
         case 'freq'
-            [nSubj, nCnd] = size(dataMat);            
+            [nSubj, nCnd] = size(dataMat);                        
             % for frequency, need to know nB, nF and nRCs
             % subjSensorMean: nF x nRCs x nCnd x nSubj  
             [data_Re, data_Im] = getRealImag_byBin(dataMat, ...

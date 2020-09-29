@@ -26,9 +26,8 @@ function statData = rcaExtra_runStatsAnalysis(rcaResult1, rcaResult2)
             return;
         end
         % numer of conditions should match
-        
-        if (size(rcaResult2.projectedData, 1) ~= ...
-                size(rcaResult1.projectedData, 1))
+        if (size(rcaResult2.projectedData, 2) ~= ...
+                size(rcaResult1.projectedData, 2))
             fprintf('Both results need to have same number of condition\n');
             return;
         end
@@ -49,13 +48,13 @@ function statData = rcaExtra_runStatsAnalysis(rcaResult1, rcaResult2)
     statSettings = rcaExtra_getStatsSettings(rcaResult1.rcaSettings);
     
     % compute mean for rc1
-    subjRCMean1 = rcaExtra_prepareDataArrayForStats(rcaResult1.projectedData', statSettings);
+    subjRCMean1 = rcaExtra_prepareDataArrayForStats(rcaResult1.projectedData, statSettings);
     % init mean for optional second rc result structure
     subjRCMean2 = [];
     % if not empty, compute across subj mean 
     if (hasSecondResultStruct)
         statSettings2 = rcaExtra_getStatsSettings(rcaResult2.rcaSettings);
-        subjRCMean2 = rcaExtra_prepareDataArrayForStats(rcaResult2.projectedData', statSettings2);
+        subjRCMean2 = rcaExtra_prepareDataArrayForStats(rcaResult2.projectedData, statSettings2);
     end
     
     % compute stats   

@@ -23,34 +23,43 @@ function f = rcaExtra_latplot_freq_stats(frequencies, vals, errs, colors, labels
     errorBarOpts = {'LineStyle', 'none', 'LineWidth', 2, 'MarkerSize', 12, 'CapSize', 0};
         
     sigSaturation = 0.5;
-        
+    
+    if (nCnd > 1)
+        err_Lo = squeeze(errs(:, :, 1));
+        err_Hi = squeeze(errs(:, :, 2));
+    else
+        err_Lo = squeeze(errs(:, 1));
+        err_Hi = squeeze(errs(:, 2));   
+    end
+    
+    % display all errormarkers first to store legend info
+    ebh_sig = errorbar(x, values_unwrapped, err_Lo, err_Hi, ...
+        errorBarOpts{:}); hold on;
+   
+    
     if (nCnd > 1)
         % for two conditions, compute latencies and display
         % regression line. Shade non-significant frequencies
-        
-        err_Lo = squeeze(errs(:, :, 1));
-        err_Hi = squeeze(errs(:, :, 2));
-        
+           
         for nc = 1:nCnd
             color1 = colors(:, nc);
             color0 = color1 + (1 - color1)*(1 - sigSaturation);
                     
             nsigF = frequencies(~significance);
             nsigVals =  values_unwrapped(~significance, nc)';
-            % display all errormarkers first to store legend info
             
-            ebh_sig = errorbar(x(:, nc), values_unwrapped(:, nc), err_Lo(:, nc), err_Hi(:, nc), ...
-                errorBarOpts{:}); hold on;
-            
-            set(ebh_sig, 'color', color1, 'Marker', markerOpts{1}, ...
+            % color significant (all) markers
+            set(ebh_sig(nc), 'color', color1, 'Marker', markerOpts{1}, ...
                 'MarkerFaceColor', color1, 'MarkerEdgeColor', color1);
             
+            % saturate non-significant
             if (~isempty(nsigF))       
-                ebh_nsig = errorbar(nsigF, nsigVals, err_Lo(~significance)', err_Hi(~significance)', ...
+                ebh_nsig = errorbar(nsigF, nsigVals, err_Lo(~significance, nc)', err_Hi(~significance, nc)', ...
                     errorBarOpts{:}); hold on;   
                 set(ebh_nsig, 'color', color0, 'Marker', markerOpts{1}, ...
                     'MarkerFaceColor', color0, 'MarkerEdgeColor', color0);
             end
+            % fit regression line for all points
             [Pc, ~] = polyfit(x(:, nc), values_unwrapped(:, nc), 1);    
             yfit = Pc(1)*x(:, nc) + Pc(2);
     
@@ -68,30 +77,24 @@ function f = rcaExtra_latplot_freq_stats(frequencies, vals, errs, colors, labels
                 'FontSize', 30, 'Interpreter', 'tex', 'color',  color0); hold on
             % alternate filled/unfilled
             markerStyle = strcat(':');
-            p{nc} = plot(gca, x(:, nc), yfit, markerStyle, 'LineWidth', 4, 'color', color0); hold on;       
+            plot(gca, x(:, nc), yfit, markerStyle, 'LineWidth', 4, 'color', color0); hold on;       
         end
-        legend([p{:}], labels{:}, 'Interpreter', 'none', 'FontSize', 30, ...
-            'EdgeColor', 'none', 'Color', 'none');
     else
         % if there's one condition, compute latency estimate 
         % only if there are 2 or more significant freqencies
         % 
-        err_Lo = squeeze(errs(:, 1));
-        err_Hi = squeeze(errs(:, 2));   
         
         color1 = colors(:, 1);
         color0 = color1 + (1 - color1)*(1 - sigSaturation);
         
         nsigF = frequencies(~significance);
         nsigVals =  values_unwrapped(~significance, 1)';
-        % display all errormarkers first to store legend info
         
-        ebh_sig = errorbar(x(:, 1), values_unwrapped(:, 1), err_Lo(:, 1), err_Hi(:, 1), ...
-            errorBarOpts{:}); hold on;
-        
+        % color significant bar
         set(ebh_sig, 'color', color1, 'Marker', markerOpts{1}, ...
             'MarkerFaceColor', color1, 'MarkerEdgeColor', color1);
         
+        % saturate non-significant points
         if (~isempty(nsigF))       
             ebh_nsig = errorbar(nsigF, nsigVals, err_Lo(~significance)', err_Hi(~significance)', ...
                 errorBarOpts{:}); hold on;   
@@ -126,7 +129,7 @@ function f = rcaExtra_latplot_freq_stats(frequencies, vals, errs, colors, labels
         end        
     end
     
-    legend(ebh_sig, labels{:}, 'Interpreter', 'none', 'FontSize', 30, ...
+    legend(ebh_sig(:), labels{:}, 'Interpreter', 'none', 'FontSize', 30, ...
         'EdgeColor', 'none', 'Color', 'none');
     
     title('Latency Estimate', 'Interpreter', 'tex');  

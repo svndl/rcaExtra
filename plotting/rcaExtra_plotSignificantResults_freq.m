@@ -2,8 +2,7 @@ function rcaExtra_plotSignificantResults_freq(rcaResult1, rcaResult2, statData, 
     if (isempty(plotSettings))
        % fill settings template
        plotSettings = rcaExtra_getPlotSettings(rcaResult1.rcaSettings);
-       plotSettings.legendLabels = arrayfun(@(x) strcat('Condition ', num2str(x)), ...
-           1:size(rcaResult1.projectedData, 1), 'uni', false);
+       plotSettings.legendLabels = {'Group 1'};
        % default settings for all plotting: 
        % font type, font size
        plotSettings.Title = 'Frequency analysis plots';
@@ -25,8 +24,7 @@ function rcaExtra_plotSignificantResults_freq(rcaResult1, rcaResult2, statData, 
         rcResult2_avg = rcaExtra_computeAverages(rcaResult2);
         rcaResultGroups = {rcResult1_avg, rcResult2_avg};
         % change default labels
-        plotSettings.legendLabels = arrayfun(@(x) strcat('Group ', num2str(x)), ...
-           1:size(rcaResult1.projectedData, 1), 'uni', false);        
+        plotSettings.legendLabels = {'Group 1', 'Group 2'};        
     end
     
     % frequency values
@@ -60,8 +58,10 @@ function rcaExtra_plotSignificantResults_freq(rcaResult1, rcaResult2, statData, 
         
         plotSettings_cnd = plotSettings;
         plotSettings_cnd.useColors = squeeze(plotSettings.colors.interleaved(nc, :, :));
-        plotSettings_cnd.legendLabels = cellfun(@(x) strcat(x, ' Condition ', num2str(nc)), ...
+        
+        plotSettings_cnd.legendLabels = cellfun(@(x) strcat(x, 'Condition ', num2str(nc)), ...
             plotSettings.legendLabels, 'uni', false);
+        
         % next loop over components and plot conditions (combined) individually 
         for cp = 1:numel(plotSettings.RCsToPlot)
         
@@ -82,7 +82,7 @@ function rcaExtra_plotSignificantResults_freq(rcaResult1, rcaResult2, statData, 
                 % special barplot 
                 ampPlot_rc_Cnd = rcaExtra_barplot_stats_freq(freqVals, ...
                     amps, ampErrs, ...
-                    plotSettings_cnd.useColors(), plotSettings_cnd.legendLabels, sigIdx, pValues);
+                    plotSettings_cnd.useColors, plotSettings_cnd.legendLabels, sigIdx, pValues);
                     
                 ampAxes = get(ampPlot_rc_Cnd, 'CurrentAxes');
                 ampAxes.Title.String = strcat('Amplitude RC:', num2str(rc),' Cnd: ', num2str(nc));
@@ -112,7 +112,7 @@ function rcaExtra_plotSignificantResults_freq(rcaResult1, rcaResult2, statData, 
             %% plot latencies with significance
             try
                 latPlot_rc_Cnd = rcaExtra_latplot_freq_stats(freqVals, lats, latErrs, ...
-                    plotSettings_cnd.useColors(), plotSettings_cnd.legendLabels, sigIdx);
+                    plotSettings_cnd.useColors, plotSettings_cnd.legendLabels, sigIdx);
             
                 latPlot_rc_Cnd.Name = strcat('RC ', num2str(rc),'Cnd ', num2str(nc), ...
                     ' F = ', num2str(rcaResult1.rcaSettings.useFrequenciesHz));

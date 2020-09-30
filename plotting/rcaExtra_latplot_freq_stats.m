@@ -32,7 +32,7 @@ function f = rcaExtra_latplot_freq_stats(frequencies, vals, errs, colors, labels
         err_Hi = squeeze(errs(:, :, 2));
         
         for c = 1:nCnd
-            color1 = colors(c, :);
+            color1 = colors(:, c);
             color0 = color1 + (1 - color1)*(1 - sigSaturation);
             
             sigF = frequencies(significance);
@@ -81,7 +81,7 @@ function f = rcaExtra_latplot_freq_stats(frequencies, vals, errs, colors, labels
         err_Lo = squeeze(errs(:, 1));
         err_Hi = squeeze(errs(:, 2));   
         
-        color1 = colors(1, :);
+        color1 = colors(:, 1);
         color0 = color1 + (1 - color1)*(1 - sigSaturation);
 
         sigF = frequencies(significance);
@@ -108,7 +108,8 @@ function f = rcaExtra_latplot_freq_stats(frequencies, vals, errs, colors, labels
         if (nFSig > 1)
             [Pc, ~] = polyfit(sigF, sigVals, 1);    
             yfit = Pc(1)*sigF + Pc(2);
-    
+            % for plotting
+            yPlot = Pc(1)*x(:, 1) + Pc(2);
             % display slope
             latency = 1000*Pc(1)/(2*pi);    
             d = (yfit - sigVals).^2;
@@ -123,7 +124,8 @@ function f = rcaExtra_latplot_freq_stats(frequencies, vals, errs, colors, labels
             'FontSize', 30, 'Interpreter', 'tex', 'color',  colors(1, :)); hold on
             % alternate filled/unfilled
             markerStyle = strcat(':');
-            p = plot(gca, sigF, yfit, markerStyle, 'LineWidth', 4, 'color', colors(1, :)); hold on;
+            
+            p = plot(gca, x(:, 1), yPlot, markerStyle, 'LineWidth', 2, 'color', colors(1, :)); hold on;
             
             legend(p, labels{:}, 'Interpreter', 'none', 'FontSize', 30, ...
                 'EdgeColor', 'none', 'Color', 'none'); 

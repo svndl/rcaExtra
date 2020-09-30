@@ -20,33 +20,29 @@ function f = rcaExtra_barplot_stats_freq(frequencies, vals, errs, colors, labels
     
     %% splitting into significant/non-significant
         
-    sigVals = vals(significance, :);
-    nsigVals = vals(~significance, :);
-    
-    sigxE  = xE(significance, :);      
+    nsigVals = vals(~significance, :);    
     nsigxE = xE(~significance, :);
-    
-    sigValErrs = errs(significance, :, :);
     nsigValErrs = errs(~significance, :, :);
-    legendHandle = [];    
     
     %% plotting bar errors
+    % display all (significant, non-significant) for legend purposes
+    % then draw non-significant on top
+    
     if (nCnd > 1)
-        beh_sig = errorbar(sigxE, sigVals, squeeze(sigValErrs(:, :, 1)), squeeze(sigValErrs(:, :, 2)), ...
+        beh_sig = errorbar(xE, vals, squeeze(errs(:, :, 1)), squeeze(errs(:, :, 2)), ...
             'LineStyle', 'none', 'LineWidth', 2); hold on;
+        
         beh_nsig = errorbar(nsigxE, nsigVals, squeeze(nsigValErrs(:, :, 1)), squeeze(nsigValErrs(:, :, 2)), ...
             'LineStyle', 'none', 'LineWidth', 2); hold on;
         %select the one with 2 conditions
-        legendHandle = beh_sig;
-        if(numel(beh_nsig)) == 2
-            legendHandle = beh_nsig;            
-        end         
     else
-        beh_sig = errorbar(sigxE, sigVals, squeeze(sigValErrs(:, 1)), squeeze(sigValErrs(:, 2)), ...
+        beh_sig = errorbar(xE, vals, squeeze(errs(:, 1)), squeeze(errs(:, 2)), ...
             'LineStyle', 'none', 'LineWidth', 2); hold on;
+        
         beh_nsig = errorbar(nsigxE, nsigVals, squeeze(nsigValErrs(:, 1)), squeeze(nsigValErrs(:, 2)), ...
             'LineStyle', 'none', 'LineWidth', 2); hold on;
     end
+    legendHandle = beh_sig;
     
     %% plot bars and errors for each condition in a loop
     % workaround, since bar(x, y) cannot have duplicate x
@@ -55,7 +51,7 @@ function f = rcaExtra_barplot_stats_freq(frequencies, vals, errs, colors, labels
     sigSaturation = 0.5;
     for nc = 1:nCnd
         % define significant/ non significant colors
-        color1 = colors(nc, :);
+        color1 = colors(:, nc);
         color0 = color1 + (1 - color1)*(1 - sigSaturation);                
         patchColor0 = color0 + (1 - color0)*(1 - patchSaturation);        
         patchColor1 = color1 + (1 - color1)*(1 - patchSaturation);
@@ -63,17 +59,14 @@ function f = rcaExtra_barplot_stats_freq(frequencies, vals, errs, colors, labels
         nsigBarProps = {'LineWidth', 2, 'EdgeColor', color0, 'FaceColor', patchColor0, 'FaceAlpha', 0.5};
         sigBarProps = {'LineWidth', 2, 'EdgeColor', color1, 'FaceColor', patchColor1, 'FaceAlpha', 0.5};
         
+        bar(xE(:, nc), vals(:, nc), 0.8*groupWidth/nCnd, sigBarProps{:}); hold on; 
         bar(nsigxE(:, nc), nsigVals(:, nc), 0.8*groupWidth/nCnd,  nsigBarProps{:}); hold on;        
-        bar(sigxE(:, nc), sigVals(:, nc), 0.8*groupWidth/nCnd, sigBarProps{:}); hold on; 
         
-        try
+        if (~isempty(beh_nsig(nc)))
             set(beh_nsig(nc), 'color', color0); 
-        catch err
-            % missing condition
         end
-        try
+        if (~isempty(beh_sig(nc)))
             set(beh_sig(nc), 'color', color1);
-        catch err
             % missing condition
         end
     end    

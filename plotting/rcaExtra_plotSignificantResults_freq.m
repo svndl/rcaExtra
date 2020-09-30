@@ -6,7 +6,6 @@ function rcaExtra_plotSignificantResults_freq(rcaResult1, rcaResult2, statData, 
            1:size(rcaResult1.projectedData, 1), 'uni', false);
        % default settings for all plotting: 
        % font type, font size
-       
        plotSettings.Title = 'Frequency analysis plots';
        plotSettings.RCsToPlot = 1:3;
        % legend background (transparent)
@@ -27,8 +26,7 @@ function rcaExtra_plotSignificantResults_freq(rcaResult1, rcaResult2, statData, 
         rcaResultGroups = {rcResult1_avg, rcResult2_avg};
         % change default labels
         plotSettings.legendLabels = arrayfun(@(x) strcat('Group ', num2str(x)), ...
-           1:size(rcaResult1.projectedData, 1), 'uni', false);
-        
+           1:size(rcaResult1.projectedData, 1), 'uni', false);        
     end
     
     % frequency values
@@ -61,8 +59,9 @@ function rcaExtra_plotSignificantResults_freq(rcaResult1, rcaResult2, statData, 
         rcaResultCondition_template.projAvg.errP = cat(3, groupsErrP{:});
         
         plotSettings_cnd = plotSettings;
-        plotSettings_cnd.useColors = plotSettings.colors.interleaved(:, :, nc);
-        
+        plotSettings_cnd.useColors = squeeze(plotSettings.colors.interleaved(nc, :, :));
+        plotSettings_cnd.legendLabels = cellfun(@(x) strcat(x, ' Condition ', num2str(nc)), ...
+            plotSettings.legendLabels, 'uni', false);
         % next loop over components and plot conditions (combined) individually 
         for cp = 1:numel(plotSettings.RCsToPlot)
         
@@ -98,7 +97,7 @@ function rcaExtra_plotSignificantResults_freq(rcaResult1, rcaResult2, statData, 
                 ampPlot_rc_Cnd.Name = strcat('RC ', num2str(rc), 'Cnd ', num2str(nc), ...
                     ' F = ', num2str(rcaResult1.rcaSettings.useFrequenciesHz));
                 saveas(ampPlot_rc_Cnd, ...
-                    fullfile(rcaResult1.rcaSettings.destDataDir_FIG, [ampPlot_rc_Cnd.Name '.fig']));
+                    fullfile(rcaResult1.rcaSettings.destDataDir_FIG, [ampPlot_rc_Cnd.Name '_amplitude.fig']));
                 
                 %% link previous bar chart for uniform yLim scaling 
                 if (~isempty(prevAxHandleAmp))
@@ -130,7 +129,7 @@ function rcaExtra_plotSignificantResults_freq(rcaResult1, rcaResult2, statData, 
                 
                 %% save latency plots
                 saveas(latPlot_rc_Cnd, ...
-                    fullfile(rcaResult1.rcaSettings.destDataDir_FIG, [latPlot_rc_Cnd.Name '.fig']));
+                    fullfile(rcaResult1.rcaSettings.destDataDir_FIG, [latPlot_rc_Cnd.Name '_latency.fig']));
                 
                 %% link with previous plot for uniform yLim scaling
                 if (~isempty(prevAxHandleLat))

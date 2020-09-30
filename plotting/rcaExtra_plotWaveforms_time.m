@@ -7,7 +7,7 @@ function figureHandle = rcaExtra_plotWaveforms_time(timeArray, waveformMeans, wa
     plotHandles = cell(nConditions, 1);
     for nc = 1:nConditions
         h = shadedErrorBar(timeArray', ...
-            waveformMeans(:, nc), waveformErrs(:, nc), {'color', colors(nc, :), 'LineWidth', 2}); hold on;
+            waveformMeans(:, nc), waveformErrs(:, nc), {'color', colors(:, nc), 'LineWidth', 2}); hold on;
         plotHandles{nc} = h.mainLine;
     end
     % set legend labels if not empty

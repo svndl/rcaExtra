@@ -61,5 +61,5 @@ function plotSettings = rcaExtra_getPlotSettings(infoStruct)
     plotSettings.resultsDir = infoStruct.destDataDir_FIG;
     % type of plot: exploratory or comparison    
     plotSettings.plotType = {};
-    plotSettings.useColors = plotSettings.colors.accents;
+    plotSettings.useColors = plotSettings.colors.accents';
 end

@@ -30,19 +30,19 @@ function f = rcaExtra_latplot_freq(frequencies, vals, errs, colors, labels)
         'LineWidth', 2, 'MarkerSize', 12, 'CapSize', 0); hold on;   
     
     p = cell(nCnd, 1);
-    for c = 1:nCnd
+    for nc = 1:nCnd
         
-        set(ebh(c), 'color', colors(c, :), 'Marker', markerOpts{c}, ...
-            'MarkerFaceColor', colors(c, :), 'MarkerEdgeColor', colors(c, :));
+        set(ebh(nc), 'color', colors(:, nc), 'Marker', markerOpts{nc}, ...
+            'MarkerFaceColor', colors(:, nc), 'MarkerEdgeColor', colors(:, nc));
         
         % interpolate over number of significant frequencies
         if (nF > 2)
-            [Pc, ~] = polyfit(x(:, c), values_unwrapped(:, c), 1);    
-            yfit = Pc(1)*x(:, c) + Pc(2);
+            [Pc, ~] = polyfit(x(:, nc), values_unwrapped(:, nc), 1);    
+            yfit = Pc(1)*x(:, nc) + Pc(2);
     
             % display slope
             latency = 1000*Pc(1)/(2*pi);    
-            d = (yfit - values_unwrapped(:, c)).^2;
+            d = (yfit - values_unwrapped(:, nc)).^2;
             dMs = 1000*d/(2*pi);
         
             %dd = sqrt(sum(d)/(nF - 2)); 
@@ -50,10 +50,10 @@ function f = rcaExtra_latplot_freq(frequencies, vals, errs, colors, labels)
             % compute middle point for values
             middle = mean(values_unwrapped, 1);
             t1 = text(mean(x), middle, sprintf('%.2f \\pm %.1f (msec)', latency, dd), ...
-            'FontSize', 30, 'Interpreter', 'tex', 'color',  colors(c, :)); hold on
+            'FontSize', 30, 'Interpreter', 'tex', 'color',  colors(:, nc)); hold on
             % alternate filled/unfilled
             markerStyle = strcat(':');
-            p{c} = plot(gca, x(:, c), yfit, markerStyle, 'LineWidth', 4, 'color', colors(c, :)); hold on;
+            p{nc} = plot(gca, x(:, nc), yfit, markerStyle, 'LineWidth', 4, 'color', colors(:, nc)); hold on;
         end
     end
     title('Latency Estimate', 'Interpreter', 'tex');  

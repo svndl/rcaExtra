@@ -70,7 +70,7 @@ function rcaExtra_plotSignificantResults_time(rcaResult1, rcaResult2, statData, 
         rcaResultCondition_template.s_cnd = cat(3, groupsStd{:});
           
         plotSettings_cnd = plotSettings;
-        plotSettings_cnd.useColors = plotSettings.colors.interleaved(:, :, nc);
+        plotSettings_cnd.useColors = squeeze(plotSettings.colors.interleaved(nc, :, :));
         
         
         % create groups+condition labels for legends

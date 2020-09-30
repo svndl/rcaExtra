@@ -18,7 +18,7 @@ function fh_SinCos = rcaExtra_sincos_freq(freqs, ampVals, freqVals, ellipseErr, 
     legendRef_im = cell(nCnd, 1);
     
     for nc = 1:nCnd
-        colorGroup = colors(nc, :);
+        colorGroup = colors(:, nc);
         
         cndPlotStyle = {'o', 'Color', colorGroup, 'LineStyle', 'None', ...
             'MarkerSize', 12, 'MarkerEdgeColor', colorGroup, 'MarkerFaceColor', colorGroup};

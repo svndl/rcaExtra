@@ -23,11 +23,11 @@ function f = rcaExtra_barplot_freq(frequencies, vals, errs, colors, labels)
             'LineStyle', 'none', 'LineWidth', 2);
     end    
     patchSaturation = 0.15;
-    for c = 1:nCnd
-        patchColor = colors(c, :) + (1 - colors(c, :))*(1 - patchSaturation);
-        set(barsHandle(c), 'EdgeColor', colors(c, :));
-        set(barsHandle(c), 'FaceColor', patchColor);
-        set(beh(c), 'color', colors(c, :));
+    for nc = 1:nCnd
+        patchColor = colors(:, nc) + (1 - colors(:, nc))*(1 - patchSaturation);
+        set(barsHandle(nc), 'EdgeColor', colors(:, nc));
+        set(barsHandle(nc), 'FaceColor', patchColor);
+        set(beh(nc), 'color', colors(:, nc));
     end
     
     try

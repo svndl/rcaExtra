@@ -6,7 +6,7 @@ function fh_Lolliplots = rcaExtra_loliplot_freq(freqs, ampVals, freqVals, ellips
     for nf = 1:nFreqs 
         ax{nf} = subplot(1, nFreqs, nf, 'Parent', fh_Lolliplots);
         for nc = 1:nCnd
-            colorGroup = colors(nc, :);
+            colorGroup = colors(:, nc);
             
             alpha = freqVals(nf, nc);
             L = ampVals(nf, nc);

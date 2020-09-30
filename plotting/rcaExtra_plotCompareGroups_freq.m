@@ -17,13 +17,29 @@ function rcaExtra_plotCompareGroups_freq(plotSettings, varargin)
         fprintf('Use rcaExtra_plotCompareConditions_freq for condition comparison within a group \n');
         return;
     end
-    
     % re-arrange data between groups into new rcResult structures
     % each new structure would be storing rcResult for each condition
     % combined across groups.
     
     % create template structure from first rcRresult input 
     rcaResultCondition_template = varargin{1};
+    if (isempty(plotSettings))
+       % fill settings template
+       plotSettings = rcaExtra_getPlotSettings(rcaResultCondition_template.rcaSettings);
+       plotSettings.legendLabels = arrayfun(@(x) strcat('Condition ', num2str(x)), ...
+           1:size(rcaResultCondition_template.projAvg.ellipseErr, 1), 'uni', false);
+       % default settings for all plotting: 
+       % font type, font size
+       
+       plotSettings.Title = '';
+       plotSettings.RCsToPlot = 1:3;
+       % legend background (transparent)
+       % xTicks labels
+       % xAxis, yAxis labels
+       % hatching (yes/no) 
+       % plot title       
+    end        
+
     rcaResultGroups = varargin;
     
     % number of conditions per group
@@ -58,7 +74,9 @@ function rcaExtra_plotCompareGroups_freq(plotSettings, varargin)
         rcaResultCondition_template.projAvg.errP = cat(3, groupsErrP{:});
         
         plotSettings_cnd = plotSettings;
-        plotSettings_cnd.useColors = plotSettings.colors.interleaved(:, :, nc);
+        
+        % won't work for more than 2 groups, need to fix
+        plotSettings_cnd.useColors = squeeze(plotSettings.colors.interleaved(nc, :, :));
         
         % group 1 Condition A, B
         % group 2 Condition A, B

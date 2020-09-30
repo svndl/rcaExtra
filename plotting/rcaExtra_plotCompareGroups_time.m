@@ -57,7 +57,7 @@ function rcaExtra_plotCompareGroups_time(plotSettings, varargin)
         rcaResultCondition_template.s_cnd = cat(3, groupsStd{:});
           
         plotSettings_cnd = plotSettings;
-        plotSettings_cnd.useColors = plotSettings.colors.interleaved(:, :, nc);
+        plotSettings_cnd.useColors = squeeze(plotSettings.colors.interleaved(nc, :, :));
         
         
         % create groups+condition labels for legends

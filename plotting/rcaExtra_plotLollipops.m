@@ -16,8 +16,7 @@ function fh_Lolliplots = rcaExtra_plotLollipops(rcaResult, plotSettings)
        % xTicks labels
        % xAxis, yAxis labels
        % hatching (yes/no) 
-       % plot title 
-        
+       % plot title        
     end        
     fh_Lolliplots = cell(numel(plotSettings.RCsToPlot), 1);
     

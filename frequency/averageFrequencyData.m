@@ -1,4 +1,4 @@
-function [proj, subj] = averageFrequencyData(inputData, nBs, nFs)
+function [proj, subj, projectedMeanSubj] = averageFrequencyData(inputData, nBs, nFs)
 % Alexandra Yakovleva, Stanford University 2012-2020.    
     nComps = size(inputData{1, 1}, 2);
      
@@ -28,8 +28,14 @@ function [proj, subj] = averageFrequencyData(inputData, nBs, nFs)
     
     %% Step 7. Get rid of cells?
     proj = projectProjData(ampProj, phaseProj, ampErrP, phaseErrP);
+    proj.avgRe = cat(3, avgProj_Re{:});
+    proj.avgIm = cat(3, avgProj_Im{:}); 
     proj.ellipseErr = ellipse;
     proj.subjsRe = cat(3, avgSubj_Re(:, :));
     proj.subjsIm = cat(3, avgSubj_Im(:, :));
-    subj = projectSubjData(ampSubj, phaseSubj, errSubj);    
+    subj = projectSubjData(ampSubj, phaseSubj, errSubj);
+    
+    %% Step 8. Add projected mean subject data
+    projectedMeanSubj = projectSubjectAmplitudes(proj);
+    projectedMeanSubj.err = subj.err;
 end

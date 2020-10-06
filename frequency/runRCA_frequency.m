@@ -59,10 +59,11 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
     end
     
     % compute average data
-    [projAvg, subjAvg] = averageFrequencyData(rcaResult.projectedData, ...
+    [projAvg, subjAvg, subjProj] = averageFrequencyData(rcaResult.projectedData, ...
         numel(rcaSettings.useBins), numel(rcaSettings.useFrequencies));
     rcaResult.projAvg = projAvg;
     rcaResult.subjAvg = subjAvg;
+    rcaResult.subjProj = subjProj;
  
     statSettings = rcaExtra_getStatsSettings(rcaSettings);
     subjRCMean = rcaExtra_prepareDataArrayForStats(rcaResult.projectedData, statSettings);

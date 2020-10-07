@@ -3,20 +3,21 @@ function projectedSubj = projectSubjectAmplitudes(proj)
 
     % concatenate subjects's real/imaginary data
     
-    [nSubj, nCnd] = size( proj.subjsRe);    
+    [nSubj, nCnd] = size(proj.subjsRe);    
     subjAvgReal = cat(4, proj.subjsRe{:});
     subjAvgImag = cat(4, proj.subjsIm{:});
     [nF, nRcs, ~, ~] = size(subjAvgReal);
-    if (nCnd > 1)
-        subjAvgReal = reshape(subjAvgReal, [nF nRcs nSubj nCnd]);
-        subjAvgImag = reshape(subjAvgImag, [nF nRcs nSubj nCnd]);
-    end
+    
+    subjAvgReal = reshape(subjAvgReal, [nF nRcs nCnd nSubj]);
+    subjAvgImag = reshape(subjAvgImag, [nF nRcs nCnd nSubj]);
+    
     % subjMean has two fields, each nF x nComponents n nConditions x nSubjects
     
     projectedRe = zeros(size(subjAvgReal));
     projectedIm = zeros(size(subjAvgImag));
     projectedAmp = zeros(size(subjAvgImag));
     projectedPhase = zeros(size(subjAvgImag));
+    
     % for each harmonic multiple 
     for f = 1:nF
         % for each rc
@@ -24,8 +25,8 @@ function projectedSubj = projectSubjectAmplitudes(proj)
             % for each condition
             for c = 1:nCnd
                 % select real and imaginary data from each subset
-                real_in = squeeze(subjAvgReal(f, rc, :, c));
-                imag_in = squeeze(subjAvgImag(f, rc, :, c));
+                real_in = squeeze(subjAvgReal(f, rc, c, :));
+                imag_in = squeeze(subjAvgImag(f, rc, c, :));
                 % concatenate and remove NaNs
                 
                 xyData = cat(2, real_in, imag_in);
@@ -43,11 +44,11 @@ function projectedSubj = projectSubjectAmplitudes(proj)
                 xyOut = bsxfun(@times, lenC, xyMean);
                 
                 % recompute real and imaginary data 
-                projectedRe(f, rc, :, c) = xyOut(:, 1);
-                projectedIm(f, rc, :, c) = xyOut(:, 2);
+                projectedRe(f, rc, c, :) = xyOut(:, 1);
+                projectedIm(f, rc, c, :) = xyOut(:, 2);
                 % compute amp and phase
-                projectedAmp(f, rc, :, c) = sign(lenC).*sqrt(xyOut(:, 1).^2 + xyOut(:, 2).^2);
-                projectedPhase(f, rc, :, c) =  angle(complex(xyOut(:, 1), xyOut(:, 2)));
+                projectedAmp(f, rc, c, :) = sign(lenC).*sqrt(xyOut(:, 1).^2 + xyOut(:, 2).^2);
+                projectedPhase(f, rc, c, :) =  angle(complex(xyOut(:, 1), xyOut(:, 2)));
             end
         end
     end

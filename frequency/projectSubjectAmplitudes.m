@@ -46,7 +46,7 @@ function projectedSubj = projectSubjectAmplitudes(proj)
                 projectedRe(f, rc, :, c) = xyOut(:, 1);
                 projectedIm(f, rc, :, c) = xyOut(:, 2);
                 % compute amp and phase
-                projectedAmp(f, rc, :, c) = sqrt(xyOut(:, 1).^2 + xyOut(:, 2).^2);
+                projectedAmp(f, rc, :, c) = sign(lenC).*sqrt(xyOut(:, 1).^2 + xyOut(:, 2).^2);
                 projectedPhase(f, rc, :, c) =  angle(complex(xyOut(:, 1), xyOut(:, 2)));
             end
         end

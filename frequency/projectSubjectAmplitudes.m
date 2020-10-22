@@ -8,8 +8,8 @@ function projectedSubj = projectSubjectAmplitudes(proj)
     subjAvgImag = cat(4, proj.subjsIm{:});
     [nF, nRcs, ~, ~] = size(subjAvgReal);
     
-    subjAvgReal = reshape(subjAvgReal, [nF nRcs nCnd nSubj]);
-    subjAvgImag = reshape(subjAvgImag, [nF nRcs nCnd nSubj]);
+    subjAvgReal = reshape(subjAvgReal, [nF nRcs nSubj nCnd]);
+    subjAvgImag = reshape(subjAvgImag, [nF nRcs nSubj nCnd]);
     
     % subjMean has two fields, each nF x nComponents n nConditions x nSubjects
     
@@ -25,8 +25,8 @@ function projectedSubj = projectSubjectAmplitudes(proj)
             % for each condition
             for c = 1:nCnd
                 % select real and imaginary data from each subset
-                real_in = squeeze(subjAvgReal(f, rc, c, :));
-                imag_in = squeeze(subjAvgImag(f, rc, c, :));
+                real_in = squeeze(subjAvgReal(f, rc, :, c));
+                imag_in = squeeze(subjAvgImag(f, rc, :, c));
                 % concatenate and remove NaNs
                 
                 xyData = cat(2, real_in, imag_in);
@@ -44,20 +44,18 @@ function projectedSubj = projectSubjectAmplitudes(proj)
                 xyOut = bsxfun(@times, lenC, xyMean);
                 
                 % recompute real and imaginary data 
-                projectedRe(f, rc, c, :) = xyOut(:, 1);
-                projectedIm(f, rc, c, :) = xyOut(:, 2);
+                projectedRe(f, rc, :, c) = xyOut(:, 1);
+                projectedIm(f, rc, :, c) = xyOut(:, 2);
                 % compute amp and phase
-                projectedAmp(f, rc, c, :) = sign(lenC).*sqrt(xyOut(:, 1).^2 + xyOut(:, 2).^2);
-                projectedPhase(f, rc, c, :) =  angle(complex(xyOut(:, 1), xyOut(:, 2)));
+                projectedAmp(f, rc, :, c) = sign(lenC).*sqrt(xyOut(:, 1).^2 + xyOut(:, 2).^2);
+                projectedPhase(f, rc, :, c) =  angle(complex(xyOut(:, 1), xyOut(:, 2)));
             end
         end
     end
-    % reshape to match subj dims
-    
-    projectedSubj.amp = projectedAmp;
-    projectedSubj.phase = projectedPhase;
-    projectedSubj.subjRe = projectedRe;
-    projectedSubj.subjIm = projectedIm;
-    
+    % permute to move subj dims in last place
+    projectedSubj.amp = permute(projectedAmp, [1 2 4 3]);
+    projectedSubj.phase = permute(projectedPhase, [1 2 4 3]);
+    projectedSubj.subjRe = permute(projectedRe, [1 2 4 3]);
+    projectedSubj.subjIm = permute(projectedIm, [1 2 4 3]);  
 end
 

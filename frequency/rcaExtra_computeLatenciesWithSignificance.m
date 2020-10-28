@@ -30,10 +30,10 @@ function [latencyVals, latencyErrs] = rcaExtra_computeLatenciesWithSignificance(
         values_unwrapped = unwrapPhases(rcaAngles);
         for c = 1:nCnd
             significance_RC = statData.sig(:, rc, c);            
-            significantIdx = freqIdx(significance_RC > 0)';
+            significantIdx = (significance_RC > 0)';
             significantFreqs = freqVals(significantIdx);
-            nF = numel(significantIdx);
-            if (nF > 2)
+            nF = sum(significantIdx);
+            if (nF >= 2)
                 try
                     [Pc, ~] = polyfit(significantFreqs, values_unwrapped(significantIdx, c), 1);
        

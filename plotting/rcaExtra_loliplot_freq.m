@@ -27,7 +27,7 @@ function fh_Lolliplots = rcaExtra_loliplot_freq(freqs, ampVals, freqVals, ellips
             if (~isempty(e0))
 %                 e_x = e0(:, 1) + x;
 %                 e_y = e0(:, 2) + y;
-                e_x = e0(:, 1); edNeuro's data fix
+                e_x = e0(:, 1); % EdNeuro's data fix
                 e_y = e0(:, 2);
             end
             props = { 'linewidth', 2, 'color', colorGroup};

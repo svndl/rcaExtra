@@ -1,4 +1,4 @@
-function rcaExtra_plotSignificantResults_freq(rcaResult1, rcaResult2, statData, plotSettings)
+function rcaExtra_plotSignificantResults_freq_beta(rcaResult1, rcaResult2, statData, plotSettings)
     hasSecondDataset = ~isempty(rcaResult2);
     nGroups = 1;
     if (isempty(plotSettings))
@@ -84,17 +84,15 @@ function rcaExtra_plotSignificantResults_freq(rcaResult1, rcaResult2, statData, 
             sigIdx = statData.sig(:, rc, nc) > 0;
             pValues = statData.pValues(:, rc, nc);
             
-            figureName = strcat('RC ', num2str(rc), ' ', plotSettings.legendLabels{nc}, ...
-                    ' F = ', num2str(rcaResult1.rcaSettings.useFrequenciesHz));
             %% Plot amplitudes with significance
             try                
                 % special barplot 
                 ampPlot_rc_Cnd = rcaExtra_barplot_stats_freq(freqVals, ...
                     amps, ampErrs, ...
-                    useColors, legendLabels, pValues);
-                                
+                    useColors, legendLabels, sigIdx, pValues);
+                
                 ampAxes = get(ampPlot_rc_Cnd, 'CurrentAxes');
-                ampAxes.Title.String = strcat('Amplitude RC: ', num2str(rc), ' ', plotSettings.legendLabels(nc));
+                ampAxes.Title.String = strcat('Amplitude RC:', num2str(rc),' Cnd: ', num2str(nc));
             
                 % add back labels
                 if (numel(ampAxes.XTick) < numel(freqIdx))
@@ -103,7 +101,8 @@ function rcaExtra_plotSignificantResults_freq(rcaResult1, rcaResult2, statData, 
                 end
             
                 %% rename and save
-                ampPlot_rc_Cnd.Name = figureName;
+                ampPlot_rc_Cnd.Name = strcat('RC ', num2str(rc), 'Cnd ', num2str(nc), ...
+                    ' F = ', num2str(rcaResult1.rcaSettings.useFrequenciesHz));
                 saveas(ampPlot_rc_Cnd, ...
                     fullfile(rcaResult1.rcaSettings.destDataDir_FIG, [ampPlot_rc_Cnd.Name '_amplitude.fig']));
                 
@@ -122,12 +121,13 @@ function rcaExtra_plotSignificantResults_freq(rcaResult1, rcaResult2, statData, 
                 latPlot_rc_Cnd = rcaExtra_latplot_freq_stats(freqVals, lats, latErrs, ...
                     useColors, legendLabels, sigIdx);
             
-                latPlot_rc_Cnd.Name = figureName;
+                latPlot_rc_Cnd.Name = strcat('RC ', num2str(rc),'Cnd ', num2str(nc), ...
+                    ' F = ', num2str(rcaResult1.rcaSettings.useFrequenciesHz));
             
                 latAxes = get(latPlot_rc_Cnd, 'CurrentAxes');
             
                 % update title latencies
-                latAxes.Title.String = strcat('Latency RC:', num2str(rc),' ', plotSettings.legendLabels(nc));                      
+                latAxes.Title.String = strcat('Latency RC:', num2str(rc),' Cnd: ', num2str(nc));                      
                 % update xLabels
                 if (numel(latAxes.XTick) < numel(freqIdx))
                     latAxes.XTick = freqVals;

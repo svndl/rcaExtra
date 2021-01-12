@@ -1,24 +1,26 @@
-function f = rcaExtra_compareTopoMaps(topoMaps1, topoMaps2)
+function f = rcaExtra_compareTopoMaps(varargin)
 
-    nComp = size(topoMaps1, 2);
+    nTopoMaps = nargin;
+    
+    
+    nComp = size(varargin{1}, 2);
     % averaging RC data
     
-    % set colorbar limits across all components
-    colorbarLimits = [min([topoMaps1(:); topoMaps2(:)]), ...
-        max([topoMaps1(:); topoMaps2(:)])];
+    % set colorbar limits across all topomaps
+    combinedTopo = cat(3, varargin{:});
+    
+    colorbarLimits = [min(combinedTopo(:)), max(combinedTopo(:))];
 
-    nRows = 2;
+    nRows = nTopoMaps;
     f = figure;
     % plotting topos
     try
         for c = 1:nComp
-            subplot(nRows, nComp, c);
-            plotOnEgi(topoMaps1(:, c), colorbarLimits);
-            title(['Old RC' num2str(c)], 'FontSize', 25, 'fontname', 'helvetica', 'FontAngle', 'italic');            
-            
-            subplot(nRows, nComp, c + nComp);
-            plotOnEgi(topoMaps2(:, c), colorbarLimits);
-            title(['New RC' num2str(c)], 'FontSize', 25, 'fontname', 'helvetica', 'FontAngle', 'italic');            
+            for ntopos = 1:nTopoMaps
+                subplot(nRows, nComp, (ntopos - 1)*nComp + c);
+                plotOnEgi(combinedTopo(:, c, ntopos), colorbarLimits);
+                title(['RC' num2str(c)], 'FontSize', 25, 'fontname', 'helvetica', 'FontAngle', 'italic'); 
+            end
         end
     catch err
         fprintf('call to plotOnEgi() failed \n');

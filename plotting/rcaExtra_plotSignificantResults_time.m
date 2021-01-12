@@ -4,19 +4,9 @@ function rcaExtra_plotSignificantResults_time(rcaResult1, rcaResult2, statData, 
 % 
     if (isempty(plotSettings))
        % fill settings template
-       plotSettings = rcaExtra_getPlotSettings(rcaResult1.rcaSettings);
-       plotSettings.legendLabels = arrayfun(@(x) strcat('Condition ', num2str(x)), ...
-           1:size(rcaResult1.projectedData, 2), 'uni', false);
-       % default settings for all plotting: 
-       % font type, font size
-       
+       plotSettings = rcaExtra_getPlotSettings(rcaResult1);       
        plotSettings.Title = 'Waveforms';
        plotSettings.RCsToPlot = 1:3;
-       % legend background (transparent)
-       % xTicks labels
-       % xAxis, yAxis labels
-       % hatching (yes/no) 
-       % plot title 
     end
 
     % compute average waveforms for each structure

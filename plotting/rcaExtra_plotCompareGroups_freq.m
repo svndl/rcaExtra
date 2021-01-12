@@ -25,14 +25,10 @@ function rcaExtra_plotCompareGroups_freq(plotSettings, varargin)
     rcaResultCondition_template = varargin{1};
     if (isempty(plotSettings))
        % fill settings template
-       plotSettings = rcaExtra_getPlotSettings(rcaResultCondition_template.rcaSettings);
-       plotSettings.legendLabels = arrayfun(@(x) strcat('Condition ', num2str(x)), ...
-           1:size(rcaResultCondition_template.projAvg.ellipseErr, 1), 'uni', false);
-       % default settings for all plotting: 
-       % font type, font size
-       
+       plotSettings = rcaExtra_getPlotSettings(rcaResultCondition_template);
        plotSettings.Title = '';
        plotSettings.RCsToPlot = 1:3;
+       plotSettings.groupLegends = cellfun(@(x) strcat('Group ', num2str(x)), 1:nargin, 'uni', false);
        % legend background (transparent)
        % xTicks labels
        % xAxis, yAxis labels
@@ -76,7 +72,7 @@ function rcaExtra_plotCompareGroups_freq(plotSettings, varargin)
         plotSettings_cnd = plotSettings;
         
         % won't work for more than 2 groups, need to fix
-        plotSettings_cnd.useColors = squeeze(plotSettings.colors.interleaved(nc, :, :));
+        plotSettings_cnd.useColors = squeeze(plotSettings.useColors(ng, :, :));
         
         % group 1 Condition A, B
         % group 2 Condition A, B
@@ -90,9 +86,12 @@ function rcaExtra_plotCompareGroups_freq(plotSettings, varargin)
         
         % create groups+condition labels for legends
         if (~isempty(plotSettings) && ~isempty(plotSettings.legendLabels))
-            %plotSettings_cnd.legendLabels = cellfun(@(x) strcat(x, ' ', num2str(nc)))
+            
+            plotSettings_cnd.legendLabels = cellfun(@(x, y) strcat(x, y), ...
+                plotSettings.groupLegends, ...
+                repmat(plotSettings.legendLabels(nc), [1 numel(rcaResultGroups)]), ...
+                'uni', false);
         end
-                
         % call condition plotting
         rcaExtra_plotCompareConditions_freq(plotSettings_cnd, rcaResultCondition_template);
         

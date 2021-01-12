@@ -14,13 +14,15 @@ function f = rcaExtra_barplot_freq(frequencies, vals, errs, colors, labels)
     end
     f = figure('units', 'normalized', 'outerposition', [0 0 1 1]);
     
+    errorLineProps = {'LineStyle', 'none', 'LineWidth', 2};
+   
     barsHandle = bar(x, vals, 'LineWidth', 2); hold on;
     if (nCnd > 1)
         beh = errorbar(xE, vals, squeeze(errs(:, :, 1)), squeeze(errs(:, :, 2)), ...
-            'LineStyle', 'none', 'LineWidth', 2);
+            errorLineProps{:});
     else
        beh = errorbar(xE, vals, squeeze(errs(:, 1)), squeeze(errs(:, 2)), ...
-            'LineStyle', 'none', 'LineWidth', 2);
+            errorLineProps{:});
     end    
     patchSaturation = 0.15;
     for nc = 1:nCnd

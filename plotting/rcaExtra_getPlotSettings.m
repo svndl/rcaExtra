@@ -1,37 +1,58 @@
-function plotSettings = rcaExtra_getPlotSettings(infoStruct)
+function plotSettings = rcaExtra_getPlotSettings(rcaResult)
 % Function generates template structure for plotting RCA
 
-% Alexandra Yakovleva, Stanford University 2020
+    % Alexandra Yakovleva, Stanford University 2020
 
-   plotSettings.domain = infoStruct.domain;
-   plotSettings.lineStyles = {'-', '-', '-', '-', '-', '-', '-', '-'};
-   plotSettings.fontSize = 25;
-   defaultaxesprops = {'FontSize',  plotSettings.fontSize + 5, 'fontname', 'helvetica', 'fontangle', 'italic', ...
-        'LineWidth', 2, 'box', 'off', 'color', 'none'};
+    plotSettings.domain = rcaResult.rcaSettings.domain;
+    lineStyles = {'-', '--', '-.', ':', 'none'};
+    markerStyles = {'none', 'o', '+', '*', '.', 'x', '_',...
+        '|', 's', 'd', '^', 'v', '>', '<', 'p', 'h', 'none'};
     
-   load('colorbrewer');
+    plotSettings.fontSize = 25;
 
-    switch infoStruct.domain
+    defaultaxesprops = {'FontSize',  plotSettings.fontSize + 5, 'fontname', 'helvetica', 'fontangle', 'italic', ...
+    'LineWidth', 2, 'box', 'off', 'color', 'none'};
+
+    load('colorbrewer');
+    
+    nConditions = size(rcaResult.projectedData, 2);
+    
+    plotSettings.lineStyles = repmat(lineStyles(1), [nConditions 1]);
+    plotSettings.markerStyles = repmat(markerStyles(end), [nConditions, 1]);
+    
+    switch plotSettings.domain
         case 'time'
             % plot settings time
             plotSettings.showLegends = true;
             plotSettings.xLabel = 'Time (msec)';
-            plotSettings.yLabel = 'Amplitude (\muV)';          
+            plotSettings.yLabel = 'Amplitude (\muV)';
             plotSettings.axesSettings = [defaultaxesprops, 'XMinorTick', 'on', 'XAxisLocation', 'bottom', 'TickLength', [.05 .01]];
             % settings for stats
-            plotSettings.statsSettings = {};          
+            plotSettings.statsSettings = {};
         case 'freq'
             % plot settings frequency
             plotSettings.xLabel = 'Harmonics';
             plotSettings.yLabel = 'Amplitude (\muV)';
             plotSettings.showLegends = true;
             plotSettings.axesSettings = defaultaxesprops;
+            freqIdx = cellfun(@(x) str2double(x(1)), rcaResult.rcaSettings.useFrequencies, 'uni', true);
+            freqVals = rcaResult.rcaSettings.useFrequenciesHz*freqIdx;
+            plotSettings.xLabels = num2str(freqVals);
             % settings for stats
             plotSettings.statsSettings = {'HorizontalAlignment', 'center','VerticalAlignment','top', ...
-                'FontSize',  plotSettings.fontSize + 5, 'fontname', 'helvetica', 'fontangle', 'italic' };  
+                'FontSize',  plotSettings.fontSize + 5, 'fontname', 'helvetica', 'fontangle', 'italic' };
+            
+            % settings for markers
+            plotSettings.ampPlotSettings = rcaExtra_generateBarPlotSettings;
+            plotSettings.latPotSettings = rcaExtra_generateLatPlotSettings;
         otherwise
     end
+    
+    plotSettings.legendLabels = arrayfun(@(x) strcat('Condition ', num2str(x)), 1:nConditions, ...
+        'uni', false);
     %% colors for various plotting styles
+    
+    
     % 'accents' colormap        
     plotSettings.colors.accents = [colorbrewer.qual.Dark2{8}; colorbrewer.qual.Accent{4}]/255;
     
@@ -42,8 +63,7 @@ function plotSettings = rcaExtra_getPlotSettings(infoStruct)
     plotSettings.colors.bluered = interleave(1, blues(end:-1:1, :), ...
         reds(end:-1:1, :));
             
-    % 'interleaved' colormaps
-            
+    % 'interleaved' colormaps            
     PaletteN = 9;
     blues = colorbrewer.seq.Blues{PaletteN}/255;
     reds = colorbrewer.seq.Reds{PaletteN}/255;
@@ -58,8 +78,8 @@ function plotSettings = rcaExtra_getPlotSettings(infoStruct)
     % plot general settings
     
     %plotSettings.runDate = runDate; % runtime info
-    plotSettings.resultsDir = infoStruct.destDataDir_FIG;
-    % type of plot: exploratory or comparison    
-    plotSettings.plotType = {};
+    plotSettings.resultsDir = rcaResult.rcaSettings.destDataDir_FIG;
+%     % type of plot: exploratory or comparison    
+%     plotSettings.plotType = {};
     plotSettings.useColors = plotSettings.colors.accents';
 end

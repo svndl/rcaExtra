@@ -1,7 +1,7 @@
 function [results] = t2FC(xyData1, xyData2, varargin)
 % Alexandra Yakovleva, Stanford University 2012-2020.
 
-    % Syntax: [results] = tSquaredFourierCoefs(xyData,testMu,alphaVal)
+    % Syntax: [results] = t2FC(xyData,testMu,alphaVal)
     %
     % Returns the results of running Hotelling's t-squared test that the mean
     % of the 2D data in xyData is the same as the mean specified in testMu at

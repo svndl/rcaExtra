@@ -16,7 +16,7 @@ function varargout = rcaExtra_projectDataSubset(rcaResult, varargin)
 % Alexandra Yakovleva, Stanford University 2020
 
 
-    nDataSets = nargin;
+    nDataSets = nargin - 1;
     W = rcaResult.W;
     varargout = cell(nargin, 1);
     % loop over input datasets

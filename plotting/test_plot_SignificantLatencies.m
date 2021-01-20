@@ -80,25 +80,33 @@ function test_plot_SignificantLatencies
     plotContainerStruct_LOW.patchSaturation = 0.15;
     
     % plot individual (conditions together)
-    
-    out = rcaExtra_plotSignificantLatencies(plotContainerStruct_LOW, plotContainerStruct_HIGH);    
-    statsBetween = rcaExtra_runStatsAnalysis(cnd123_high, cnd123_low);
-    % add between-stats
-    
-    
-    for nc = 1:numel(cndsToPlot)
-        nc0 = cndsToPlot(nc);
-        for rc = 1:numel(rcsToPlot)
-            rc0 = rcsToPlot(rc);
-            figHandle = out{rc, nc};
-            currAxisHandle = get(figHandle, 'CurrentAxes');
-            plot_addStatsBar_freq(currAxisHandle, statsBetween.pValues(:, rc0, nc0), ...
-                freqVals');
-        end
-    end
-    
-    % plot Amplitude
     % plot Latency
+    
+    out = rcaExtra_plotSignificantLatencies(plotContainerStruct_LOW, plotContainerStruct_HIGH);  
+    
+    
+    % Amplitude
+%     out = rcaExtra_plotSignificantAmplitudes(plotContainerStruct_LOW, plotContainerStruct_HIGH);    
+%     statsBetween = rcaExtra_runStatsAnalysis(cnd123_high, cnd123_low);
+%     % add between-stats
+%     
+%     
+%     
+%     for nc = 1:numel(cndsToPlot)
+%         nc0 = cndsToPlot(nc);
+%         for rc = 1:numel(rcsToPlot)
+%             rc0 = rcsToPlot(rc);
+%             figHandle = out{rc, nc};
+%             currAxisHandle = get(figHandle, 'CurrentAxes');
+%             plot_addStatsBar_freq(currAxisHandle, statsBetween.pValues(:, rc0, nc0), ...
+%                 freqVals');
+%         end
+%     end
+        
+    
+    
+    
+    
     % plot Lolliplots
 end
 

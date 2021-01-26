@@ -1,4 +1,4 @@
-function test_plot_SignificantLatencies
+function test_plot_SignificantAmplitudesLatencies
 
 
     load('~/Downloads/rcResultStruct_cnd_123_HIGH.mat');
@@ -86,9 +86,9 @@ function test_plot_SignificantLatencies
     
     
     % Amplitude
-%     out = rcaExtra_plotSignificantAmplitudes(plotContainerStruct_LOW, plotContainerStruct_HIGH);    
-%     statsBetween = rcaExtra_runStatsAnalysis(cnd123_high, cnd123_low);
-%     % add between-stats
+    out = rcaExtra_plotSignificantAmplitudes(plotContainerStruct_LOW, plotContainerStruct_HIGH);
+    statsBetween = rcaExtra_runStatsAnalysis(cnd123_high, cnd123_low);
+    % add between-stats
 %     
 %     
 %     
@@ -104,7 +104,7 @@ function test_plot_SignificantLatencies
 %     end
         
     
-    
+    % add noise ceiling to amplitude plots:
     
     
     % plot Lolliplots

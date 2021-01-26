@@ -21,7 +21,16 @@ function fh_AmplitudesFreqs = rcaExtra_plotAmplitudes(rcaResult, plotSettings)
         fh_AmplitudesFreqs{cp} = rcaExtra_barplot_freq(freqVals, groupAmps, groupAmpErrs, ...
             plotSettings.useColors, plotSettings.legendLabels);
         fh_AmplitudesFreqs{cp}.Name = strcat('Amplitudes RC ', num2str(rc),...
-            ' F = ', num2str(rcaResult.rcaSettings.useFrequenciesHz));        
+            ' F = ', num2str(rcaResult.rcaSettings.useFrequenciesHz)); 
+        
+        % add noise floor
+        ampLo = squeeze(rcaResult.noiseLowAvg.amp(:, rc, :));
+        ampHi = squeeze(rcaResult.noiseHighAvg.amp(:, rc, :));
+        ampNoiseAvg = (ampLo + ampHi)/2;
+        x = xlim;
+    
+        area([x(1) freqIdx x(2)]', [ampNoiseAvg(1); ampNoiseAvg; ampNoiseAvg(end)], 'EdgeColor','none','FaceColor','y', 'FaceAlpha', 0.1)
+        
         title(fh_AmplitudesFreqs{cp}.Name);
         try
             saveas(fh_AmplitudesFreqs{cp}, ...

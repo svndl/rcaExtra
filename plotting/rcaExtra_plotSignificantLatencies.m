@@ -44,7 +44,7 @@ function figureHandles = rcaExtra_plotSignificantLatencies(varargin)
                     conditionLabel = groups{ng}.conditionLabels{nc};
                     
                     % data values, errors, significance
-                    freqVals = cellfun(@(x) str2double(x(:, end-2)), xLabel, 'uni', true);
+                    freqVals = cellfun(@(x) str2double({x(1:end-2)}), xLabel, 'uni', true);
                     dataToPlot_lat = groups{ng}.dataToPlot.phase(:, rcIdx, cndIdx, :);
                     significance = boolean(groups{ng}.statData.sig(:, rcIdx, cndIdx));
                     
@@ -53,11 +53,11 @@ function figureHandles = rcaExtra_plotSignificantLatencies(varargin)
                     
                     % significant color
                     cndColor = groups{ng}.conditionColors(nc, :);
-                    patchColor = cndColor + (1 - cndColor)*(1 - groups{ng}.patchSaturation);
+                    %patchColor = cndColor + (1 - cndColor)*(1 - groups{ng}.patchSaturation);
                     
                     % non-significant color
                     satColor = cndColor + (1 - cndColor)*(1 - groups{ng}.significanceSaturation);
-                    patchSatColor = satColor + (1 - satColor)*(1 - groups{ng}.patchSaturation);
+                    %patchSatColor = satColor + (1 - satColor)*(1 - groups{ng}.patchSaturation);
                     
                     % unwrap before plotting and fit linear function with                   
                     valsUnwrapped = unwrapPhases(dataToPlot_lat);
@@ -72,6 +72,7 @@ function figureHandles = rcaExtra_plotSignificantLatencies(varargin)
                         [Pc, ~] = polyfit(freqsSig, phasesSig, 1);
                         yfit = Pc(1)*freqsSig + Pc(2);
                         
+                        yPlot = Pc(1)*freqVals + Pc(2);
                         %
                         latencyEstimate = 1000*Pc(1)/(2*pi);
                         d = (yfit(:) - phasesSig(:)).^2;
@@ -85,18 +86,33 @@ function figureHandles = rcaExtra_plotSignificantLatencies(varargin)
                         t1 = text(middle_x, middle_y, sprintf('%.2f \\pm %.1f (msec)', latencyEstimate, latencyError), ...
                             'FontSize', 30, 'Interpreter', 'tex', 'color',  cndColor); hold on;
                         % display line full color
-                        plot(freqsSig, yfit, 'LineWidth', groups{ng}.LineWidths, 'color', cndColor); hold on;                        
+                        plot(freqVals, yPlot, '--', 'LineWidth', groups{ng}.LineWidths, 'color', cndColor); hold on;                        
                     end
                     
+                    % compile marker options
+                    switch (groups{ng}.markerStyles{nc})
+                        case 'filled'
+                            MarkerEdgeColor = cndColor;
+                            MarkerEdgeSatColor = satColor;
+                        case 'open'
+                            MarkerEdgeColor = 'none';
+                            MarkerEdgeSatColor = 'none';
+                    end
+                    markerOpts = {'MarkerSize', groups{ng}.markerSize};
+
                     % plot all values (significat settings)
                     dataToPlot_larErr = squeeze(groups{ng}.dataToPlot.errP(:, rcIdx, cndIdx, :));                    
                     try                    
                         legendHandles{ng} = errorbar(freqVals, valsUnwrapped, ...
                             dataToPlot_larErr(:, 1), dataToPlot_larErr(:, 2),...   
-                            'Color', cndColor, ...
+                            groups{ng}.conditionMarkers{nc}, 'Color', cndColor, ...
                             'LineWidth', groups{ng}.LineWidths, ...
-                            'LineStyle', 'none'); hold on;        
-                    catch 
+                            'LineStyle', 'none', 'CapSize', 0, ...
+                            markerOpts{:}, ...
+                            'MarkerEdgeColor', MarkerEdgeColor,...
+                            'MarkerFaceColor', cndColor); hold on;        
+                    catch err
+                        rcaExtra_displayError(err);
                         % no significant values, pass error handle to
                         % non-significant 
                         % 
@@ -105,16 +121,22 @@ function figureHandles = rcaExtra_plotSignificantLatencies(varargin)
                    try                       
                         legendHandles{ng} = errorbar(freqVals(~significance), valsUnwrapped(~significance),...
                            dataToPlot_larErr(~significance, 1), dataToPlot_larErr(~significance, 2),...
-                           'Color', satColor, ...
+                           groups{ng}.conditionMarkers{nc}, 'Color', satColor, ...
                            'LineWidth', groups{ng}.LineWidths, ...
-                           'LineStyle', 'none'); hold on;
-                   catch
+                           'LineStyle', 'none', 'CapSize', 0, ...
+                           markerOpts{:}, ...
+                            'MarkerEdgeColor', MarkerEdgeSatColor,...
+                            'MarkerFaceColor', satColor); hold on;
+                   catch err
+                       rcaExtra_displayError(err);
                    end
                 end
+                
                 % update axes, vert limits, add legends
                 figureHandles{rc, nc}.Name = sprintf('Phase Values RC %d', rc);
                 try
-                    set(gca, 'XTick', 1:numel(xLabel))
+                    xticks(freqVals)
+                    %set(gca, 'XTick', 1:numel(xLabel))
                     set(gca, 'XTickLabel', xLabel);
                 catch
                     xlabel(xLabel);

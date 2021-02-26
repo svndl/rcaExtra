@@ -7,6 +7,7 @@ function fh_AmplitudesFreqs = rcaExtra_plotAmplitudes(rcaResult, plotSettings)
        plotSettings = rcaExtra_getPlotSettings(rcaResult);       
        plotSettings.Title = 'Amplitude Plot';
        plotSettings.RCsToPlot = 1:3;
+       plotSettings.displayNoise = 0;
     end
     
     freqIdx = cellfun(@(x) str2double(x(1)), rcaResult.rcaSettings.useFrequencies, 'uni', true);
@@ -20,17 +21,22 @@ function fh_AmplitudesFreqs = rcaExtra_plotAmplitudes(rcaResult, plotSettings)
         groupAmpErrs = squeeze(rcaResult.projAvg.errA(:, rc, :, :));
         fh_AmplitudesFreqs{cp} = rcaExtra_barplot_freq(freqVals, groupAmps, groupAmpErrs, ...
             plotSettings.useColors, plotSettings.legendLabels);
+        
+        % if noise avg exists 
+        if (plotSettings.displayNoise)
+            try
+                noiseAmpLow = squeeze(rcaResult.noiseLowAvg.amp(:, rc, :, :));
+                noiseAmpHigh = squeeze(rcaResult.noiseHighAvg.amp(:, rc, :, :));
+                rcaExtra_noiseplot_freq(fh_AmplitudesFreqs{cp}, ...
+                    noiseAmpLow, noiseAmpHigh, plotSettings.useColors, plotSettings.legendLabels);
+            catch err
+                disp('Noise plotting failed');
+            end
+        end
+        
         fh_AmplitudesFreqs{cp}.Name = strcat('Amplitudes RC ', num2str(rc),...
             ' F = ', num2str(rcaResult.rcaSettings.useFrequenciesHz)); 
-        
-        % add noise floor
-        ampLo = squeeze(rcaResult.noiseLowAvg.amp(:, rc, :));
-        ampHi = squeeze(rcaResult.noiseHighAvg.amp(:, rc, :));
-        ampNoiseAvg = (ampLo + ampHi)/2;
-        x = xlim;
-    
-        area([x(1) freqIdx x(2)]', [ampNoiseAvg(1); ampNoiseAvg; ampNoiseAvg(end)], 'EdgeColor','none','FaceColor','y', 'FaceAlpha', 0.1)
-        
+               
         title(fh_AmplitudesFreqs{cp}.Name);
         try
             saveas(fh_AmplitudesFreqs{cp}, ...

@@ -5,7 +5,7 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
         dataSlice = sensorData(:, rcaSettings.useCnds)';
     else
         dataSlice = sensorData';
-        rcaSettings.useCnds = size(sensorData, 2);
+        rcaSettings.useCnds = 1:size(sensorData, 2);
     end
     fprintf('Running RCA frequency for dataset %s number of components: %d ...\n', rcaSettings.label, rcaSettings.nComp);
     % file with results

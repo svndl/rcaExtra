@@ -16,13 +16,18 @@ function dataOut = readRawData(dataPath, removeEyes, nanArtifacts)
         try
             dataFile = fullfile(dataPath, list_rawFiles(z).name);
             load(dataFile);
-            rawtrial = double(RawTrial).*repmat(Ampl.', size(RawTrial, 1), 1) + repmat(Shift.' ,size(RawTrial, 1), 1);
+            
+            % remove prelude/postlude
+            nSamples = size(RawTrial, 1)/NmbEpochs;
+            RawTrial_core = RawTrial(nSamples*NmbPreludeEpochs+1:end - nSamples*NmbPreludeEpochs, :);
+            IsEpochOK_core = IsEpochOK(NmbPreludeEpochs+1:end - NmbPreludeEpochs, :);      
+            rawtrial = double(RawTrial_core).*repmat(Ampl.', size(RawTrial_core, 1), 1) + repmat(Shift.',size(RawTrial_core, 1), 1);
         
             if nanArtifacts %make epochs with Artifacts to nan
-                [rowE, colE] = find(IsEpochOK == 0);
+                [rowE, colE] = find(IsEpochOK_core == 0);
                 for idx = 1:length(rowE)
-                    rowIdx = ((rowE(idx) - 1)*round(FreqHz) + 1):((rowE(idx) - 1)*round(FreqHz) + round(FreqHz));
-                    rawtrial(rowIdx,colE(idx)) = NaN;
+                    rowIdx = ((rowE(idx) - 1)*round(nSamples) + 1):((rowE(idx) - 1)*round(nSamples) + round(nSamples));
+                    rawtrial(rowIdx, colE(idx)) = NaN;
                 end
             end
             % Format is 'Raw_cxxN_tyyM.mat';
@@ -34,6 +39,7 @@ function dataOut = readRawData(dataPath, removeEyes, nanArtifacts)
                 rawdata{1, cndN}(:, :, trlN) = rawtrial;
             catch err
                 display(['oops, something went wrong loading ' list_rawFiles(z).name]);
+                fprintf('At %d %d \n', cndN, trlN);
             end
         catch err
             sprintf("Error loading %s", dataFile);
@@ -64,8 +70,8 @@ function dataOut = readRawData(dataPath, removeEyes, nanArtifacts)
     end
     %% take out prelude/postlude
     %% won't work for conditions with diff frequencies
-%     binLength = size(RawTrial, 1)/NmbEpochs;
-%     dataOut = cellfun( @(x) x(binLength + 1:end - binLength, :, :), cellData, 'uni', false);
-
+    %     binLength = size(RawTrial, 1)/NmbEpochs;
+    %     dataOut = cellfun( @(x) x(binLength + 1:end - binLength, :, :), cellData, 'uni', false);
+    
     dataOut = cellData;
 end

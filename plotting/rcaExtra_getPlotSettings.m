@@ -13,12 +13,40 @@ function plotSettings = rcaExtra_getPlotSettings(rcaResult)
     defaultaxesprops = {'FontSize',  plotSettings.fontSize + 5, 'fontname', 'helvetica', 'fontangle', 'italic', ...
     'LineWidth', 2, 'box', 'off', 'color', 'none'};
 
-    load('colorbrewer');
+    try
+        load('colorbrewer');
+        % 'accents' colormap        
+        plotSettings.colors.accents = [colorbrewer.qual.Dark2{8}; colorbrewer.qual.Accent{4}]/255;
     
-    nConditions = size(rcaResult.projectedData, 2);
+        % 'bluered' colormap
+        PaletteN = 9;
+        blues = colorbrewer.seq.Blues{PaletteN}/255;
+        reds = colorbrewer.seq.Reds{PaletteN}/255;
+        plotSettings.colors.bluered = interleave(1, blues(end:-1:1, :), ...
+            reds(end:-1:1, :));
+            
+        % 'interleaved' colormaps            
+        PaletteN = 9;
+        blues = colorbrewer.seq.Blues{PaletteN}/255;
+        reds = colorbrewer.seq.Reds{PaletteN}/255;
+        oranges = colorbrewer.seq.Oranges{PaletteN}/255;
+        greens = colorbrewer.seq.Greens{PaletteN}/255;
     
-    plotSettings.lineStyles = repmat(lineStyles(1), [nConditions 1]);
-    plotSettings.markerStyles = repmat(markerStyles(end), [nConditions, 1]);
+        warmColors = interleave(1 ,reds(end:-2:3, :), oranges(end:-2:3, :));
+        coldColors = interleave(1, blues(end:-2:3, :), greens(end:-2:3, :));
+    
+        plotSettings.colors.interleaved = cat(3, coldColors(1:end - 1, :), ...
+            warmColors(2:end, :));
+    
+        nConditions = size(rcaResult.projectedData, 2);
+    
+        plotSettings.lineStyles = repmat(lineStyles(1), [nConditions 1]);
+        plotSettings.markerStyles = repmat(markerStyles(end), [nConditions, 1]);
+        plotSettings.useColors = plotSettings.colors.accents';
+        
+    catch
+         plotSettings.useColors = [];
+    end
     
     switch plotSettings.domain
         case 'time'
@@ -53,33 +81,7 @@ function plotSettings = rcaExtra_getPlotSettings(rcaResult)
     %% colors for various plotting styles
     
     
-    % 'accents' colormap        
-    plotSettings.colors.accents = [colorbrewer.qual.Dark2{8}; colorbrewer.qual.Accent{4}]/255;
-    
-    % 'bluered' colormap
-    PaletteN = 9;
-    blues = colorbrewer.seq.Blues{PaletteN}/255;
-    reds = colorbrewer.seq.Reds{PaletteN}/255;
-    plotSettings.colors.bluered = interleave(1, blues(end:-1:1, :), ...
-        reds(end:-1:1, :));
-            
-    % 'interleaved' colormaps            
-    PaletteN = 9;
-    blues = colorbrewer.seq.Blues{PaletteN}/255;
-    reds = colorbrewer.seq.Reds{PaletteN}/255;
-    oranges = colorbrewer.seq.Oranges{PaletteN}/255;
-    greens = colorbrewer.seq.Greens{PaletteN}/255;
-    
-    warmColors = interleave(1 ,reds(end:-2:3, :), oranges(end:-2:3, :));
-    coldColors = interleave(1, blues(end:-2:3, :), greens(end:-2:3, :));
-    
-    plotSettings.colors.interleaved = cat(3, coldColors(1:end - 1, :), ...
-        warmColors(2:end, :));
     % plot general settings
     
-    %plotSettings.runDate = runDate; % runtime info
     plotSettings.resultsDir = rcaResult.rcaSettings.destDataDir_FIG;
-%     % type of plot: exploratory or comparison    
-%     plotSettings.plotType = {};
-    plotSettings.useColors = plotSettings.colors.accents';
 end

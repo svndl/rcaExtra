@@ -44,19 +44,30 @@ function main_Standard_Oddball_analysis_time
     rcResult_condition = cell(nConditions, 1);
     
     % run RC analysis for each condition
-    plotSettings = rcaExtra_getPlotSettings(analysisStruct);
-    %statSettings = rcaExtra_getStatsSettings(rcSettings);
-    plotSettings.plotType = 'exploratory';
+%     for nc = 1:nConditions
+%         % copy runtime settings from 1Hz template
+%         runSettings_1hz_condition{nc} = runSettings_1hz;
+%         runSettings_1hz_condition{nc}.useCnds = nc;
+%         % add condition-specific label 
+%         runSettings_1hz_condition{nc}.label = analysisStruct.info.conditionLabels{nc};
+%         
+%         % select subset of raw data        
+%         rcResult_condition{nc} = rcaExtra_runAnalysis(runSettings_1hz_condition{nc}, EEGData);
+%     end
     
-    for nc = 1:nConditions
-        % copy runtime settings from 1Hz template
-        runSettings_1hz_condition{nc} = runSettings_1hz;
-        runSettings_1hz_condition{nc}.useCnds = 1;
-        % add condition-specific label 
-        runSettings_1hz_condition{nc}.label = analysisStruct.info.conditionLabels{nc};
-        
-        % select subset of raw data        
-        rcResult_condition{nc} = rcaExtra_runAnalysis(runSettings_1hz_condition{nc}, EEGData);
-        % plot results
-    end
+    
+    % run RC on all conditions and project
+    runSettings_1hz.label = 'AllConditions';
+    
+    rcResult_all = rcaExtra_runAnalysis(runSettings_1hz, EEGData);
+    
+    plotSettings_all = rcaExtra_getPlotSettings(rcResult_all);
+    plotSettings_all.RCsToPlot = 1:3;
+    
+    % plotting all conditions:
+    rcaExtra_plotCompareConditions_time(plotSettings_all, rcResult_all)    
+    
+    % comparing two conditions 
+%     statSettings = rcaExtra_getStatsSettings(rcSettings);
+%     rcaExtra_plotCompareGroups_time(rcResult_condition{1}, rcResult_condition{2})
 end

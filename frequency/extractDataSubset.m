@@ -40,30 +40,39 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
     noise1Sel = cell(nConds, 1);
     noise2Sel = cell(nConds, 1);
     
-    
+    indB_ToSave = cell(nConds, 1);
+    indF_ToSave = cell(nConds, 1);
+    freqLabelsSel = cell(nConds, 1);
+    binLabelsSel = cell(nConds, 1);
     for c = 1:nConds
         if condsToUse(c) > size(signalData, 1) || isempty(signalData{condsToUse(c)})
             signalDataSel{c} = [];
             noise1Sel{c} = [];
             noise2Sel{c} = [];
         else
+            if isempty(freqsToUse)
+                % use all available frequencies
+                % (note: cannot differ across conditions)
+                settings.useFrequencies = unique(info.freqLabels{condsToUse(c)});
+                freqsToUse = unique(info.indF{condsToUse(c)});
+                indF_ToSave{c} = info.indF{condsToUse(c)};
+                hasFrequencies = unique(ismember(info.indF{condsToUse(c)}), settings.useFrequencies);
+            else
+                [~, hasFrequencies] = ismember(settings.useFrequencies, info.freqLabels{condsToUse(c)});
+                freqsToUse = freqsToUse(hasFrequencies); 
+            end           
             if isempty(binsToUse)
                 % use all available bins
                 % (note: canmot differ across conditions)
                 binsToUse = unique(info.indB{condsToUse(c)});
                 binsToUse = binsToUse(binsToUse>0); % use all bins except the average bin
             else
-                
             end
-            if isempty(freqsToUse)
-                % use all available frequencies
-                % (note: cannot differ across conditions)
-                settings.useFrequencies = unique(info.freqLabels{condsToUse(c)});
-                freqsToUse = unique(info.indF{condsToUse(c)});
-            else
-                [~, freqsToUse] = ismember(settings.useFrequencies, info.freqLabels{condsToUse(c)});
-            end
-            selRowIx = ismember(info.indB{condsToUse(c)}, binsToUse) & ismember(info.indF{condsToUse(c)}, freqsToUse);
+            
+            indF_ToSave{c} = repmat(hasFrequencies', [numel(binsToUse) 1]);
+            indB_ToSave{c} = repmat(binsToUse', [numel(hasFrequencies) 1]);
+
+            selRowIx = ismember(info.indB{condsToUse(c)}, binsToUse) & ismember(info.indF{condsToUse(c)}, hasFrequencies);
             if isempty(trialsToUse)
                 % use all available trials 
                 % (note: can differ across conditions)
@@ -104,8 +113,14 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
 %                 binLabelsSel{c}  = binLabels{condsToUse(c)}(binsToUse); % add one, because bin level 0 = average
 %             end  
 %             % grap frequency labels
-              freqLabelsSel{c}  = info.freqLabels{condsToUse(c)}(freqsToUse);
-              binLabelsSel{c}  = info.binLabels{condsToUse(c)}(binsToUse + 1); % add one, because bin level 0 = average              
+             
+             freqLabelsSel{c}  = info.freqLabels{condsToUse(c)}(hasFrequencies);
+             try
+                binLabelsSel{c}  = info.binLabels{condsToUse(c)}(binsToUse + 1); % add one, because bin level 0 = average
+             catch 
+                binLabelsSel{c}  = info.binLabels{condsToUse(c)}(binsToUse);
+             end
+                 
 %             % grap frequency labels
 %             trialsSel{c}  = curTrials;
         end
@@ -116,10 +131,10 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
     signalDataSel = replaceEmpty(signalDataSel);
     noise1Sel = replaceEmpty(noise1Sel);
     noise2Sel = replaceEmpty(noise2Sel);
-    info.indF = freqsToUse;
-    info.indB = binsToUse;
-    info.freqLabels = unique(cat(1, freqLabelsSel{:}));
-    info.binLabels = unique(cat(1, binLabelsSel{:}));
+    info.indF = indF_ToSave;
+    info.indB = indB_ToSave;
+    info.freqLabels = freqLabelsSel;
+    info.binLabels = binLabelsSel;
     
 %     indFSel = replaceEmpty(indFSel);
 %     indBSel = replaceEmpty(indBSel);

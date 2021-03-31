@@ -76,7 +76,7 @@ function out = rcaExtra_adjustRCWeights(rcaResult, order)
         
         % where to save the updated RC results struct
         savedFile = fullfile(rcaResult.rcaSettings.destDataDir_RCA, ...
-            ['rcaResult_' newStr '_' rcaResult.rcaSettings.label '.mat']);
+            ['rcaResults_' newStr '_' rcaResult.rcaSettings.label '.mat']);
         save(savedFile, 'rcaResult');
     end
 end

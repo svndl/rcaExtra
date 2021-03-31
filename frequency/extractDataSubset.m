@@ -69,8 +69,10 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
             else
             end
             
-            indF_ToSave{c} = repmat(hasFrequencies', [numel(binsToUse) 1]);
-            indB_ToSave{c} = repmat(binsToUse', [numel(hasFrequencies) 1]);
+            indF_updated = repmat(hasFrequencies', [numel(binsToUse) 1]);
+            indB_updated = repmat(binsToUse', [numel(hasFrequencies) 1]);
+            indF_ToSave{c} = indF_updated(:);
+            indB_ToSave{c} = indB_updated(:);
 
             selRowIx = ismember(info.indB{condsToUse(c)}, binsToUse) & ismember(info.indF{condsToUse(c)}, hasFrequencies);
             if isempty(trialsToUse)

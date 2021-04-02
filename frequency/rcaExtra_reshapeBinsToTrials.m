@@ -45,28 +45,28 @@ function binData = rcaExtra_reshapeBinsToTrials(trialData, nFreqs)
 %    nBins = 10;
 % end
 
-[nFeature, nElectrode, nTrial] = size(trialData);
+    [nFeature, nElectrode, nTrial] = size(trialData);
 
-nBins = (nFeature / 2) / nFreqs;
-%%
+    nBins = (nFeature / 2) / nFreqs;
+    %%
 
-% Initialize the output data matrix
-binData = nan([nFreqs * 2, nElectrode, nTrial * nBins]);
-assert(numel(trialData) == numel(binData), 'Mismatched input and output data sizes.')
+    % Initialize the output data matrix
+    binData = nan([nFreqs * 2, nElectrode, nTrial * nBins]);
+    assert(numel(trialData) == numel(binData), 'Mismatched input and output data sizes.')
 
-% tic
-% Outer loop: Iterate through the trials
-for t = 1:nTrial
+    % tic
+    % Outer loop: Iterate through the trials
+    for t = 1:nTrial
    
-    % Inner loop: Iterate through the bins
-    for b = 1:nBins
+        % Inner loop: Iterate through the bins
+        for b = 1:nBins
         
-        % Dim 3 idx of current single-bin output
-        outIdx = (t - 1) * nBins + b;
+            % Dim 3 idx of current single-bin output
+            outIdx = (t - 1) * nBins + b;
         
-        % Move the current nFreq*2 x channel matrix to the output
-        binData(:, :, outIdx) = squeeze(trialData(b:nBins:end, :, t));
+            % Move the current nFreq*2 x channel matrix to the output
+            binData(:, :, outIdx) = squeeze(trialData(b:nBins:end, :, t));
+        end
     end
-end
 % toc
 

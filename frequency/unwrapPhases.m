@@ -1,9 +1,13 @@
 function out = unwrapPhases(values)
-    out = values;
+    out = unwrap(values);
+    
     [nF, nCnd] = size(values);
+    if (out(1)) < 0
+        out = out +2*pi;
+    end
     for c = 1:nCnd
         for f = 2:nF
-            while (out(f, c) < out(f-1, c))
+            while (out(f, c) < out(f - 1, c))
                 out(f, c) = out(f, c) + 2*pi;
             end
         end

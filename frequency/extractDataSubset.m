@@ -59,7 +59,7 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
                 hasFrequencies = unique(ismember(info.indF{condsToUse(c)}), settings.useFrequencies);
             else
                 [~, hasFrequencies] = ismember(settings.useFrequencies, info.freqLabels{condsToUse(c)});
-                freqsToUse = freqsToUse(hasFrequencies); 
+                freqsToUse = info.freqLabels{condsToUse(c)}(hasFrequencies); 
             end           
             if isempty(binsToUse)
                 % use all available bins

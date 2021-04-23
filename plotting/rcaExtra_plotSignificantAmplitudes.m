@@ -1,7 +1,6 @@
 function figureHandles = rcaExtra_plotSignificantAmplitudes(varargin)
     
 % function plots amplitudes against each other
-% tests for significanse when varargin is 2 plot containters
 
     nGroups = nargin;
     groups = varargin;
@@ -57,8 +56,15 @@ function figureHandles = rcaExtra_plotSignificantAmplitudes(varargin)
                     xPos = xBarsPos(:, ng);
                     dataToPlot_amp = groups{ng}.dataToPlot.amp(:, rcIdx, cndIdx, :);
                     dataToPlot_ampErr = groups{ng}.dataToPlot.errA(:, rcIdx, cndIdx, :);
-                    significance = boolean(groups{ng}.statData.sig(:, rcIdx, cndIdx));
                     
+                    % try-catch for stats, if they are not added  
+                    try
+                        significance = boolean(groups{ng}.statData.sig(:, rcIdx, cndIdx)); 
+                    catch 
+                        disp('No significance found, all data points would be trated as significant');
+                        significance = ones(size(dataToPlot_amp));
+                    end
+                        
                     % labels for legend/figure title
                     legendLabels{ng} = sprintf('%s %s RC %d', groupLabel, conditionLabel, rcIdx);
                     
@@ -96,11 +102,21 @@ function figureHandles = rcaExtra_plotSignificantAmplitudes(varargin)
                            'EdgeColor', satColor, ...
                            'FaceColor', patchSatColor, 'FaceAlpha',0.3); hold on;
                        
-                        legendHandles{ng} = errorbar(xPos(~significance), dataToPlot_amp(~significance),...
+%                         legendHandles{ng} = errorbar(xPos(~significance), dataToPlot_amp(~significance),...
+%                            dataToPlot_ampErr(~significance, 1), dataToPlot_ampErr(~significance, 2),...
+%                            'Color', satColor, ...
+%                            'LineWidth', groups{ng}.LineWidths, ...
+%                            'LineStyle', 'none'); hold on;
+
+                       % do not store non-significant error intervals
+                       
+                        errorbar(xPos(~significance), dataToPlot_amp(~significance),...
                            dataToPlot_ampErr(~significance, 1), dataToPlot_ampErr(~significance, 2),...
                            'Color', satColor, ...
                            'LineWidth', groups{ng}.LineWidths, ...
                            'LineStyle', 'none'); hold on;
+
+
                    catch
                    end
                 end

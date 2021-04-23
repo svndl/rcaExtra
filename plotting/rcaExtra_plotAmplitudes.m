@@ -25,11 +25,15 @@ function fh_AmplitudesFreqs = rcaExtra_plotAmplitudes(rcaResult, plotSettings)
         % if noise avg exists 
         if (plotSettings.displayNoise)
             try
+                if ~isfield(rcaResult, 'noiseLowAvg')
+                    rcaResult = rcaExtra_computeAverages(rcaResult);
+                end
                 noiseAmpLow = squeeze(rcaResult.noiseLowAvg.amp(:, rc, :, :));
                 noiseAmpHigh = squeeze(rcaResult.noiseHighAvg.amp(:, rc, :, :));
                 rcaExtra_noiseplot_freq(fh_AmplitudesFreqs{cp}, ...
                     noiseAmpLow, noiseAmpHigh, plotSettings.useColors, plotSettings.legendLabels);
             catch err
+                rcaExtra_displayError(err);
                 disp('Noise plotting failed');
             end
         end

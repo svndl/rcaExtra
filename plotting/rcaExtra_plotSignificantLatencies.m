@@ -1,7 +1,7 @@
 function figureHandles = rcaExtra_plotSignificantLatencies(varargin)
     
-% function plots amplitudes against each other
-% tests for significanse when varargin is 2 plot containters
+% function plots amplitudes against each other per condition
+% Alexandra Yakovleva, Stanford University 2021
 
     nGroups = nargin;
     groups = varargin;
@@ -46,7 +46,15 @@ function figureHandles = rcaExtra_plotSignificantLatencies(varargin)
                     % data values, errors, significance
                     freqVals = cellfun(@(x) str2double({x(1:end-2)}), xLabel, 'uni', true);
                     dataToPlot_lat = groups{ng}.dataToPlot.phase(:, rcIdx, cndIdx, :);
-                    significance = boolean(groups{ng}.statData.sig(:, rcIdx, cndIdx));
+                    
+                    %try-catch for significant/stat testing  
+                    try
+                        significance = boolean(groups{ng}.statData.sig(:, rcIdx, cndIdx));
+                    catch 
+                        disp('No significance found, all data points would be trated as significant');
+                        significance = ones(size(dataToPlot_lat));
+                    end
+                    
                     
                     % labels for legend/figure title
                     legendLabels{ng} = sprintf('%s %s RC %d', groupLabel, conditionLabel, rcIdx);
@@ -118,8 +126,9 @@ function figureHandles = rcaExtra_plotSignificantLatencies(varargin)
                         % 
                     end
                    % saturate non-significant phase values;
-                   try                       
-                        legendHandles{ng} = errorbar(freqVals(~significance), valsUnwrapped(~significance),...
+                   try   
+                        %legendHandles{ng} = 
+                        errorbar(freqVals(~significance), valsUnwrapped(~significance),...
                            dataToPlot_larErr(~significance, 1), dataToPlot_larErr(~significance, 2),...
                            groups{ng}.conditionMarkers{nc}, 'Color', satColor, ...
                            'LineWidth', groups{ng}.LineWidths, ...

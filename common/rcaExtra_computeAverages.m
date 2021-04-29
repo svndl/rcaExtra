@@ -36,14 +36,21 @@ function out = rcaExtra_computeAverages(rcaResult)
             out.subjAvg = subjAvg;
             out.subjProj = subjProjected;
             
-            % add noise averaging as well
-            [noiseLowAvg, ~, ~] = averageFrequencyData(rcaResult.noiseData.lowerSideBand, ...
-                numel(rcaResult.rcaSettings.useBins), numel(rcaResult.rcaSettings.useFrequencies));
+            % add noise averaging, old structures might not have the field
+            if (isfield(rcaResult, 'noiseData'))
+                try
+                    [noiseLowAvg, ~, ~] = averageFrequencyData(rcaResult.noiseData.lowerSideBand, ...
+                        numel(rcaResult.rcaSettings.useBins), numel(rcaResult.rcaSettings.useFrequencies));
             
-            [noiseHighAvg, ~, ~] = averageFrequencyData(rcaResult.noiseData.higherSideBand, ...
-                numel(rcaResult.rcaSettings.useBins), numel(rcaResult.rcaSettings.useFrequencies));
-            
-            out.noiseLowAvg = noiseLowAvg;
-            out.noiseHighAvg = noiseHighAvg;                        
+                    [noiseHighAvg, ~, ~] = averageFrequencyData(rcaResult.noiseData.higherSideBand, ...
+                        numel(rcaResult.rcaSettings.useBins), numel(rcaResult.rcaSettings.useFrequencies));
+                    noiseLowAvg = projAvg;
+                    noiseHighAvg = projAvg;
+                catch err
+                    rcaExtra_displayError(err)
+                end
+                out.noiseLowAvg = noiseLowAvg;
+                out.noiseHighAvg = noiseHighAvg;
+            end
     end
 end

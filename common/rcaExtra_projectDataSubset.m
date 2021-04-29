@@ -29,7 +29,7 @@ function varargout = rcaExtra_projectDataSubset(rcaResult, varargin)
         newData_rcaResult.rcaSettings.useCnds = size(varargin{n}, 2);
         
         % project data through weights
-        newData_rcaResult.projectedData = rcaProject(varargin{n}, W);
+        newData_rcaResult.projectedData = rcaExtra_projectCellData(varargin{n}, W);
         
         % compute averages for projected data
         varargout{n} = rcaExtra_computeAverages(newData_rcaResult);

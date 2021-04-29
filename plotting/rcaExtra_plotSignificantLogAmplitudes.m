@@ -29,7 +29,7 @@ function figureHandles = rcaExtra_plotSignificantLogAmplitudes(varargin)
             legendHandles = cell(nGroups, 1);
             for nc = 1:nCnds
                 %for each RC/condition, new figure                
-                figureHandles{rc, nc} = figure;
+                figureHandles{rc, nc} = figure('units','normalized','outerposition',[0 0 1 1]);
                 for ng = 1:nGroups
                     % extract data index and data labels
                     

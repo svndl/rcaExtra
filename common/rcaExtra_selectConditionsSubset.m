@@ -19,17 +19,30 @@ function rcaSubsetOut = rcaExtra_selectConditionsSubset(rcaResult, conditionVect
     % empty result
     if (nAvailableConditions < maxrequestedConditions)
         fprintf('ERROR, condition %d id out of availavle range %d\n', maxrequestedConditions, nAvailableConditions);
-        rcaSubsetOut = [];
+        rcaSubset = [];
         return;
     end
     
     
     % copy input to output
-    rcaSubsetOut = rcaResult;
+    rcaSubset = rcaResult;
     
     % adjust number of conditions
-    rcaSubsetOut.rcaSettings.useCnds = numel(conditionVector);
+    rcaSubset.rcaSettings.useCnds = numel(conditionVector);
     
     % select subset of conditions from projectedData
-    rcaSubsetOut.projectedData = rcaResult.projectedData(:, conditionVector);
+    rcaSubset.projectedData = rcaResult.projectedData(:, conditionVector);
+    
+    % if frequency, select subset from noise
+    
+    switch (rcaResult.rcaSettings.domain )
+        case 'freq'
+            rcaSubset.noiseData.lowerSideBand = rcaResult.noiseData.lowerSideBand(:, conditionVector);
+            rcaSubset.noiseData.higherSideBand = rcaResult.noiseData.higherSideBand(:, conditionVector);  
+        otherwise
+    end
+    
+    % recompute averages
+    
+    rcaSubsetOut = rcaExtra_computeAverages(rcaSubset);
 end

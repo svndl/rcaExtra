@@ -1,4 +1,4 @@
-function statData = rcaExtra_runStatsAnalysis(rcaResult1, rcaResult2)
+function statData = rcaExtra_runStatsAnalysis(rcaResult1, rcaResult2, varargin)
 
 % Function runs statistical analysis and displays results
 % Input arguments:
@@ -46,6 +46,11 @@ function statData = rcaExtra_runStatsAnalysis(rcaResult1, rcaResult2)
         end       
     end
     statSettings = rcaExtra_getStatsSettings(rcaResult1.rcaSettings);
+    
+    if (~isempty(varargin))
+        statSettings.testWithin = 1;
+    end
+        
     
     % compute mean for rc1
     subjRCMean1 = rcaExtra_prepareDataArrayForStats(rcaResult1.projectedData, statSettings);

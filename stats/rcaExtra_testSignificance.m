@@ -38,7 +38,7 @@ function statResults = rcaExtra_testSignificance(dataSet1, dataSet2, testSetting
             end
 
             
-            % frequecny domain testing:
+            % frequency domain testing:
         case 'freq'
             [nF, nRc, nCnd, nSubj] = size(dataSet1.subjAvgImag);
             
@@ -61,8 +61,13 @@ function statResults = rcaExtra_testSignificance(dataSet1, dataSet2, testSetting
                         
                         data2Slice.subjAvgReal = reshape(d3, [nF 1 nSubj2]);
                         data2Slice.subjAvgImag = reshape(d4, [nF 1 nSubj2]);
-                    end                     
-                    [h0(:, r, c), pVal(:, r, c), ~] = rcaExtra_tSquared(data1Slice, data2Slice);
+                    end
+                    if (isfield(testSettings, 'testWithin'))
+                        [h0(:, r, c), pVal(:, r, c), ~] = rcaExtra_tSquaredWithin(data1Slice, data2Slice);                        
+                    else
+                        [h0(:, r, c), pVal(:, r, c), ~] = rcaExtra_tSquared(data1Slice, data2Slice);
+                    end
+                    
                 end
             end
         otherwise

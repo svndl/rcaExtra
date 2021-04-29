@@ -1,4 +1,4 @@
-function [sig, pVal, stat] = rcaExtra_tSquared(dataSet1, dataSet2)
+function [sig, pVal, stat] = rcaExtra_tSquaredWithin(dataSet1, dataSet2)
 % Alexandra Yakovleva, Stanford University 2012-2020.
 
     nFreqs  = size(dataSet1.subjAvgReal, 1);  
@@ -26,16 +26,9 @@ function [sig, pVal, stat] = rcaExtra_tSquared(dataSet1, dataSet2)
             % create real-imaginary pair for each condition/harmonic multiple
             
             xyData1(:, :, cnd) = [squeeze(dataSet1.subjAvgReal(f, cnd, :)), squeeze(dataSet1.subjAvgImag(f, cnd, :))];
-            
-            % if there are two datasets, test one against the other (should be flagged for two options)
-            if (~isempty(dataSet2))   
-            
-                xyData2(:, :, cnd) = [squeeze(dataSet2.subjAvgReal(f, cnd, :)), squeeze(dataSet2.subjAvgImag(f, cnd, :))];                
-                stats = t2FC(xyData1, xyData2);
-            else
-                % defailt is test afainst 0
-                stats = tSquaredFourierCoefs(xyData1);                
-            end           
+            xyData2(:, :, cnd) = [squeeze(dataSet2.subjAvgReal(f, cnd, :)), squeeze(dataSet2.subjAvgImag(f, cnd, :))];                
+            stats = tSquaredFourierCoefs(cat(3, xyData1, xyData2));                
+
             sig(f, cnd) = stats.H;
             pVal(f, cnd) = stats.pVal;
             stat(f, cnd) = stats.tSqrd;

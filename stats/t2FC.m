@@ -46,14 +46,14 @@ function [results] = t2FC(xyData1, xyData2, varargin)
         error('input data must contain at least 2 samples');
     end
     if dims(2) ~= 2
-        error('input data must be a matrix of 2D row samples');
+        warning('input data must be a matrix of 2D row samples');
     end
     if length(dims) < 3 % if no third dimension
-        xyData1(:,:,2 ) = zeros(size(xyData1));
+        xyData1(:,:, 2) = zeros(size(xyData1));
         xyData2(:,:, 2) = zeros(size(xyData2));
         
     elseif dims(3) > 2
-         error('length of third dimension of input data may not exceed two')
+         warning('length of third dimension of input data may not exceed two')
     else
     end
 

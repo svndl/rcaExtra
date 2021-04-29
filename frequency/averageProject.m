@@ -1,4 +1,4 @@
-function [proj, subj, w] = averageProject(dataIn, nBins)
+function [proj, subj, weights] = averageProject(dataIn, nBins)
 % Alexandra Yakovleva, Stanford University 2012-1020
     nCnd = size(dataIn, 2);
     proj = cell(nCnd, 1);
@@ -13,8 +13,6 @@ function [proj, subj, w] = averageProject(dataIn, nBins)
     % cat together all subjects's trials 
     for c = 1:nCnd
         [proj{c}, ~] = averageBinsTrials(cat(catDim, dataIn{:, c}));
-        [s, w] = cellfun(@(x) averageBinsTrials(x), dataIn(:, c), 'uni', false);
-        subj(:, c) = s;
-        weights(:, c) = w;
+        [subj(:, c), weights(:, c)] = cellfun(@(x) averageBinsTrials(x), dataIn(:, c), 'uni', false);
     end   
 end

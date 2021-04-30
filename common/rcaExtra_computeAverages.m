@@ -44,10 +44,10 @@ function out = rcaExtra_computeAverages(rcaResult)
             
                     [noiseHighAvg, ~, ~] = averageFrequencyData(rcaResult.noiseData.higherSideBand, ...
                         numel(rcaResult.rcaSettings.useBins), numel(rcaResult.rcaSettings.useFrequencies));
-                    noiseLowAvg = projAvg;
-                    noiseHighAvg = projAvg;
                 catch err
-                    rcaExtra_displayError(err)
+                    rcaExtra_displayError(err);
+                    noiseLowAvg = projAvg;
+                    noiseHighAvg = projAvg;                    
                 end
                 out.noiseLowAvg = noiseLowAvg;
                 out.noiseHighAvg = noiseHighAvg;

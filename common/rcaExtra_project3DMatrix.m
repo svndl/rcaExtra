@@ -3,20 +3,22 @@ function dataOut = rcaExtra_project3DMatrix(dataIn, w)
 % Alexandra Yakovleva, Stanford University 2021.
 
     
-    [nSamples, nW0, nTrials] = size(dataIn);
+    [nSamples, nCh0, nTrials] = size(dataIn);
     
     [nCh, nW] = size(w);
     
     % initiate output:
-    dataOut = nan(nSamples, nCh, nTrials);
+    dataOut = nan(nSamples, nW, nTrials);
     
     % compare number of weights in original data and input w  
-    if (nW0 == nW)
+    if (nCh0 == nCh)
     
         for nt = 1:nTrials
             for ns = 1:nSamples
-                in_s = repmat(squeeze(dataIn(ns, :, nt))', [1 nW]);
-                dataOut(ns, :, nt) =  nansum(in_s.*w);
+                dataSlice = squeeze(dataIn(ns, :, nt));
+                dataOut(ns, :, nt) = dataSlice*w;
+%                 in_s = repmat(squeeze(dataIn(ns, :, nt))', [1 nW]);
+%                 dataOut(ns, :, nt) =  nansum(in_s.*w);
             end
         end
     end

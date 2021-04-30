@@ -18,7 +18,7 @@ function varargout = rcaExtra_projectDataSubset(rcaResult, varargin)
 
     nDataSets = nargin - 1;
     W = rcaResult.W;
-    varargout = cell(nargin, 1);
+    varargout = cell(nDataSets, 1);
     % loop over input datasets
     for n = 1:nDataSets
     
@@ -28,9 +28,14 @@ function varargout = rcaExtra_projectDataSubset(rcaResult, varargin)
         % update number of conditions for each data subset
         newData_rcaResult.rcaSettings.useCnds = size(varargin{n}, 2);
         
-        % project data through weights
+        % project source data through weights
         newData_rcaResult.projectedData = rcaExtra_projectCellData(varargin{n}, W);
         
+        % remove noise averages, as they belong to old data
+        % should be re-done in thge future
+        if (isfield(newData_rcaResult, 'noiseData'))
+            newData_rcaResult = rmfield( newData_rcaResult , 'noiseData');        
+        end
         % compute averages for projected data
         varargout{n} = rcaExtra_computeAverages(newData_rcaResult);
     end

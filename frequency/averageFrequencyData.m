@@ -36,6 +36,12 @@ function [proj, subj, projectedMeanSubj] = averageFrequencyData(inputData, nBs, 
     subj = projectSubjData(ampSubj, phaseSubj, errSubj);
     
     %% Step 8. Add projected mean subject data
-    projectedMeanSubj = projectSubjectAmplitudes(proj);
-    projectedMeanSubj.err = subj.err;
+    try
+        projectedMeanSubj = projectSubjectAmplitudes(proj);
+        projectedMeanSubj.err = subj.err;
+    catch err
+        projectedMeanSubj = [];
+        projectedMeanSubj.err = [];        
+        rcaExtra_displayError(err);
+    end
 end

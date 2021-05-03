@@ -34,12 +34,15 @@ function rcaSubsetOut = rcaExtra_selectConditionsSubset(rcaResult, conditionVect
     rcaSubset.projectedData = rcaResult.projectedData(:, conditionVector);
     
     % if frequency, select subset from noise
-    
-    switch (rcaResult.rcaSettings.domain )
-        case 'freq'
-            rcaSubset.noiseData.lowerSideBand = rcaResult.noiseData.lowerSideBand(:, conditionVector);
-            rcaSubset.noiseData.higherSideBand = rcaResult.noiseData.higherSideBand(:, conditionVector);  
-        otherwise
+    try
+        switch (rcaResult.rcaSettings.domain )
+            case 'freq'
+                rcaSubset.noiseData.lowerSideBand = rcaResult.noiseData.lowerSideBand(:, conditionVector);
+                rcaSubset.noiseData.higherSideBand = rcaResult.noiseData.higherSideBand(:, conditionVector);  
+            otherwise
+        end
+    catch err
+        rcaExtra_displayError(err);
     end
     
     % recompute averages

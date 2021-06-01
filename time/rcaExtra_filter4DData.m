@@ -1,4 +1,4 @@
-function [cleanEpochTrialData, filteredTrialData] = rcaExtra_filter3DData(array4D, binIdxFilterVector)
+function [cleanEpochTrialData, filteredTrialData] = rcaExtra_filter4DData(array4D, binIdxFilterVector)
 % Function will split input 4D data into two datasets, one without
 % frequency components defined in binIdxFilterVector,
 % and one with frequency comnponents set in binIdxFilterVector

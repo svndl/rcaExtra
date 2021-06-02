@@ -21,7 +21,7 @@ function dataOut = rcaExtra_filterData(rawData, freqsPresentHz, harmonicSelectio
     if (~iscell(rawData))
         rawData = {rawData};
     end
-    cleanSignal =cell(size(rawData));
+    cleanSignal = cell(size(rawData));
     nFSignal = cell(size(rawData));
     
     cycleSizeSamplesPresent = round(DAQ_Rate./freqsPresentHz);

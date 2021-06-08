@@ -73,6 +73,15 @@ elseif size(data,1) == 32
     tEGIfaces = mrC.EGInetFaces32( false );
     
     nChan = 32;
+elseif size(data,1) == 7
+    
+    data = expandAMatrixto128Channels(data);
+    tEpos = load('defaultFlatNet.mat');
+    tEpos = [ tEpos.xy, zeros(128,1) ];
+    
+    tEGIfaces = mrC.EGInetFaces( false );
+    
+    nChan = 128;
     
 else
     error('Only good for 3 montages: Must input a 32, 128 or 256 vector')

@@ -1,8 +1,7 @@
 function f = rcaExtra_compareTopoMaps(varargin)
 
     nTopoMaps = nargin;
-    
-    
+     
     nComp = size(varargin{1}, 2);
     % averaging RC data
     

@@ -138,6 +138,7 @@ function figureHandles = rcaExtra_plotSignificantAmplitudes(varargin)
                 pbaspect(gca, [1 1 1]);
             end 
         end
-    catch 
+    catch err
+        rcaExtra_displayError(err);
     end
 end

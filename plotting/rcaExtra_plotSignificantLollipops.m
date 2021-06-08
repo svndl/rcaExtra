@@ -60,8 +60,8 @@ function figureHandles = rcaExtra_plotSignificantLollipops(varargin)
                                 
                             alpha = dataToPlot_lat(nf);
                             L = dataToPlot_amp(nf);
-                            x = -L.*cos(alpha);
-                            y = -L.*sin(alpha);
+                            x = L.*cos(alpha);
+                            y = L.*sin(alpha);
                             e_x = 0;
                             e_y = 0;
                             try

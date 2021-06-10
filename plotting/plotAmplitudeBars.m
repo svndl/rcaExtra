@@ -1,9 +1,9 @@
-function plotAmplitudeBars(fighandle, rcaDataIn, statData, nSubplotsRow)
+function plotAmplitudeBars(fighandle, xLabel, rcaDataIn, statData, nSubplotsRow)
     % plotting amplitude
     % use black colors
     
     nComp = size(rcaDataIn.amp, 2);
-    default_color = [0 0 0];
+    default_color = [0; 0 ; 0];
     
     AxesHandle = cell(nComp, 1);
     try
@@ -16,7 +16,11 @@ function plotAmplitudeBars(fighandle, rcaDataIn, statData, nSubplotsRow)
             groupAmpErrs = rcaDataIn.errA(:, c, :);
             % plot all bars first
             %bar_label = {strcat('RC #', num2str(c))};
-            freqplotBar(AxesHandle{c}, groupAmp, groupAmpErrs, default_color, {});
+            
+            xLabel_num = cellfun(@(x) str2double(x(1)), xLabel, 'uni', true);
+            
+            rcaExtra_barplot_freq(AxesHandle{c}, xLabel_num, groupAmp, groupAmpErrs, ...
+            default_color, {});
     
             % add significance
             asterisk_1 = repmat({'*'}, size(groupAmp, 1), 1);
@@ -41,8 +45,8 @@ function plotAmplitudeBars(fighandle, rcaDataIn, statData, nSubplotsRow)
                 text_sigAsterick_2 = asterisk_2(currRC_sig_2 > 0);
                 text_sigAsterick_3 = asterisk_3(currRC_sig_3 > 0);
     
-                text(AxesHandle{c}, 1:length(currPValue), ...
-                    text_maxY, num2str(currPValue, '%0.4f'), 'FontSize', 30);
+%                 text(AxesHandle{c}, 1:length(currPValue), ...
+%                     text_maxY, num2str(currPValue, '%0.4f'), 'FontSize', 30);
    
                 % preset settings for stats
                 text(AxesHandle{c}, find(currRC_sig_1 > 0), ...

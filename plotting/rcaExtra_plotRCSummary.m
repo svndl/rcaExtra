@@ -12,9 +12,11 @@ function rcaExtra_plotRCSummary(rcResult, rcStats)
     
     switch rcResult.rcaSettings.domain
         case 'time'
+            % supply timeline
             plotRCWaveforms(f, rcResult, rcStats, nRows);
         case 'freq'
-            plotAmplitudeBars(f, rcResult.projAvg, rcStats, nRows);
+            plotAmplitudeBars(f, rcResult.rcaSettings.useFrequencies, ...
+                rcResult.projAvg, rcStats, nRows);
         otherwise
     end
     

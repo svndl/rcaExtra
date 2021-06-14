@@ -1,4 +1,4 @@
-function figureHandles = rcaExtra_plotSignificantLatencies(varargin)
+function figureHandles = rcaExtra_plotLatencies_freq(varargin)
     
 % function plots amplitudes against each other per condition
 % Alexandra Yakovleva, Stanford University 2021
@@ -6,7 +6,6 @@ function figureHandles = rcaExtra_plotSignificantLatencies(varargin)
     nGroups = nargin;
     groups = varargin;
     
-    figureHandles = cell(nGroups, 1);
        
 
     %% argcheck 1, make sure we have same number of conditions and RCs to loop over
@@ -25,14 +24,15 @@ function figureHandles = rcaExtra_plotSignificantLatencies(varargin)
     % labels for x-axis
        
     % adjusting bar width according to number of conditions
-    figureHandles = cell(nRCs, nCnds);
+    nPages = nCnds;
+    figureHandles = gobjects(nRCs, nPages);
     try
         for rc = 1:nRCs
             legendLabels = cell(nGroups, 1);
             legendHandles = cell(nGroups, 1);
             for nc = 1:nCnds
                 %for each RC/condition, new figure                
-                figureHandles{rc, nc} = figure;
+                figureHandles(rc, nc) = figure('units','normalized','outerposition',[0 0 1 1]);
                 for ng = 1:nGroups
                     
                     % index
@@ -142,7 +142,7 @@ function figureHandles = rcaExtra_plotSignificantLatencies(varargin)
                 end
                 
                 % update axes, vert limits, add legends
-                figureHandles{rc, nc}.Name = sprintf('Phase Values RC %d', rc);
+                figureHandles(rc, nc).Name = sprintf('Phase Values RC %d', rc);
                 try
                     xticks(freqVals)
                     %set(gca, 'XTick', 1:numel(xLabel))
@@ -160,6 +160,7 @@ function figureHandles = rcaExtra_plotSignificantLatencies(varargin)
                 pbaspect(gca, [1 1 1]);
             end 
         end
-    catch 
+    catch err
+        rcaExtra_displayError(err);
     end
 end

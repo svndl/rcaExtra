@@ -1,10 +1,9 @@
-function figureHandles = rcaExtra_plotSignificantLollipops(varargin)
+function figureHandles = rcaExtra_plotLollipops_freq(varargin)
 % function plots loliplots against each other
 
     nGroups = nargin;
     groups = varargin;
     
-    figureHandles = cell(nGroups, 1);     
 
     %% argcheck 1, make sure we have same number of conditions and RCs to loop over
     nRCs = unique(cellfun(@(x) numel(x.rcsToPlot), groups, 'uni', true));
@@ -14,21 +13,22 @@ function figureHandles = rcaExtra_plotSignificantLollipops(varargin)
     
     xLabel = groups{1}.xDataLabel;
     yLabel = groups{1}.yDataLabel;
+
+    nPages = nCnds;
+    figureHandles = gobjects(nRCs, nPages);
     
     if (numel(nRCs) > 1 || numel(nCnds) > 1)
         disp('Number of conditions or RCs to use must be the same for each dataArray, quitting \n');
         return;
     end
     % labels for x-axis
-
-    figureHandles = cell(nRCs, nCnds);
     try
         for rc = 1:nRCs
             legendLabels = cell(nGroups, 1);
             legendHandles = cell(nGroups, 1);
             for nc = 1:nCnds
                 %for each RC/condition, new figure                
-                figureHandles{rc, nc} = figure('units','normalized','outerposition',[0 0 1 1]);
+                figureHandles(rc, nc) = figure('units','normalized','outerposition',[0 0 1 1]);
                 
                 for ng = 1:nGroups
                     % extract data index and data labels
@@ -56,7 +56,7 @@ function figureHandles = rcaExtra_plotSignificantLollipops(varargin)
                     try              
                         ax = cell(nFreqs, 1);
                         for nf = 1:nFreqs
-                            ax{nf} = subplot(1, nFreqs, nf, 'Parent', figureHandles{rc, nc});
+                            ax{nf} = subplot(1, nFreqs, nf, 'Parent', figureHandles(rc, nc));
                                 
                             alpha = dataToPlot_lat(nf);
                             L = dataToPlot_amp(nf);
@@ -102,7 +102,7 @@ function figureHandles = rcaExtra_plotSignificantLollipops(varargin)
                 
                 legend([legendHandles{:}], legendLabels{:}, legendArgs{:});
                 
-                figureHandles{rc, nc}.Name = sprintf('Lolliplot Values RC %d', rc);
+                figureHandles(rc, n).Name = sprintf('Lolliplot Values RC %d', rc);
             end 
         end
     catch err

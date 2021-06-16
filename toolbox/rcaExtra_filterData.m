@@ -33,6 +33,7 @@ function dataOut = rcaExtra_filterData(rawData, freqsPresentHz, harmonicSelectio
     nEpochsMax = min(trialSizeSamples./cycleSizeSamplesPresent);
     minEpochDurationSamples = trialSizeSamples/nEpochsMax;
     
+    freqsPresentHz_2F = freqsPresentHz;
     % workaround for only one frequency present
     if( numel(freqsPresentHz) == 1)
         freqsPresentHz_2F = [freqsPresentHz, freqsPresentHz];

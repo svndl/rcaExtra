@@ -80,7 +80,7 @@ function dataOut = rcaExtra_filterData(rawData, freqsPresentHz, harmonicSelectio
     % return clean or filtered out data  
     switch filterOperation
         case 'keep'
-            dataOut = nFSignal;
+            dataOut = cellfun(@(x) reshapeEpochsToTrial(x), nFSignal, 'uni', false);
         case 'remove'
             dataOut = cellfun(@(x) reshapeEpochsToTrial(x), cleanSignal, 'uni', false);
         otherwise

@@ -15,6 +15,7 @@ function figureHandles = rcaExtra_plotAmplitudes_freq(varargin)
     
     % same x and y-labels for all data plots
     
+    
     xLabel = groups{1}.xDataLabel;
     yLabel = groups{1}.yDataLabel;
     

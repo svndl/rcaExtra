@@ -1,6 +1,6 @@
 function plotContainerStruct = rcaExtra_addPlotOptionsToData(dataArray)
 % function will add several plotting-related fields
-% to rcaData
+% to a given dataArray
 
     % data dims: nF x nRC x nC x nS (optional number of subjects)
     plotContainerStruct.dataToPlot = dataArray;

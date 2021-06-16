@@ -1,23 +1,86 @@
-function figureHandle = rcaExtra_plotWaveforms_time(timeArray, waveformMeans, waveformErrs, colors, labels)
+function rcaExtra_plotWaveforms_time(varargin)
 
-    nConditions = size(waveformMeans, 2);
+% function plots group waveforms against each other for each condition if
+% there's more than one group in varargin is present 
+
+% if varargin is one structure, all conditions will be plotted
+
+    nGroups = nargin;
+    groups = varargin;
+         
+    %% argcheck 1, make sure we have same number of conditions and RCs to loop over
+    nRCs = unique(cellfun(@(x) numel(x.rcsToPlot), groups, 'uni', true));
+    nCnds = unique(cellfun(@(x) numel(x.cndsToPlot), groups, 'uni', true));
     
-    figureHandle = figure('units', 'normalized', 'outerposition', [0 0 1 1]);
-
-    plotHandles = cell(nConditions, 1);
-    for nc = 1:nConditions
-        h = shadedErrorBar(timeArray', ...
-            waveformMeans(:, nc), waveformErrs(:, nc), {'color', colors(:, nc), 'LineWidth', 2}); hold on;
-        plotHandles{nc} = h.mainLine;
+    % same x and y-labels for all data plots
+    
+    
+    xLabel = groups{1}.xDataLabel;
+    yLabel = groups{1}.yDataLabel;
+    timecourse = groups{1}.xDataValues;
+    
+    if (numel(nRCs) > 1 || numel(nCnds) > 1)
+        disp('Number of conditions or RCs to use must be the same for each dataArray, quitting \n');
+        return;
+    end    
+    figureHandles = gobjects(nRCs, nPages);
+    
+    try
+        % each RC to plot would yield a new figure
+        for rc = 1:nRCs           
+            legendLabels = cell(nGroups, 1);
+            legendHandles = cell(nGroups, 1);
+            
+            % nPages is the number of conditions for two or more groups
+            % for one group, nPages is ONE (each condition treated as group)
+            
+            for np = 1:nPages                
+                % create figure page            
+                figureHandles(rc, np) = figure('units','normalized','outerposition',[0 0 1 1]);
+                % nItems is the number of groups, for two or more input arguments;
+                % nItems is the number of , for two or more input arguments;
+                for ni = 1:nItems
+                    % extract data index and data labels
+                    
+                    % double
+                    rcIdx = groups{ni}.rcsToPlot(rc);
+                    cndIdx = groups{ni}.cndsToPlot(np);
+                    
+                    % char
+                    groupLabel = groups{ni}.dataLabel{:};
+                    conditionLabel = groups{ni}.conditionLabels{np};
+                    legendLabels{ni} = sprintf('%s %s RC %d', groupLabel, conditionLabel, rcIdx);
+                    
+                    cndColor = groups{ni}.conditionColors(np, :);
+                                     
+                    groupMu = squeeze(groups{ni}.mu_cnd(:, rcIdx, cndIdx));
+                    groupStd = squeeze(groups{ni}.s_cnd(:, rcIdx, cndIdx));
+                    
+                    h = shadedErrorBar(timecourse', ...
+                        groupMu, groupStd, ...
+                        {'Color', cndColor, 'LineWidth',  groups{ni}.LineWidths}); hold on;
+                    legendHandles{nc} = h.mainLine;
+%                     significance_RC = statData.sig(:, rc, nc);
+%                     pValues = statData.pValues(:, rc, nc);
+%             
+%                     plot_addStatsBar_time(currAxisHandle, pValues, significance_RC, rcaResultCondition_template.timecourse);
+                    
+                end
+                % update axes, vert limits, add legends
+                figureHandles(rc, np).Name = sprintf('Amplitude Values RC %d', rc);
+                xlabel(xLabel);
+                
+                legend([legendHandles{:}], legendLabels{:}, ...
+                    'Interpreter', 'none',  'FontSize', 30, 'EdgeColor', 'none', 'Color', 'none');
+                
+                currYLimit = ylim(gca);
+                ylim([0, 1.2*currYLimit(2)]);
+                set(gca,'FontSize', 30, 'fontname', 'helvetica', 'FontAngle', 'italic');
+                ylabel(yLabel);
+            end
+        end
+    catch err
+        rcaExtra_displayError(err)
     end
-    % set legend labels if not empty
-    if (~isempty(labels))
-        legend([plotHandles{:}], labels, 'Interpreter', 'none', 'FontSize', 30, ...
-            'EdgeColor', 'none', 'Color', 'none'); 
-    end
-        
-    % set axes props
-    set(gca,'FontSize', 30, 'fontname', 'helvetica', 'FontAngle', 'italic');
-    xlabel('Time, (msec)');
-    ylabel('Amplitude, (\muV)');
 end
+

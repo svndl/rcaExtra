@@ -7,7 +7,6 @@ function figureHandles = rcaExtra_plotLatencies_freq(varargin)
     groups = varargin;
     
        
-
     %% argcheck 1, make sure we have same number of conditions and RCs to loop over
     nRCs = unique(cellfun(@(x) numel(x.rcsToPlot), groups, 'uni', true));
     nCnds = unique(cellfun(@(x) numel(x.cndsToPlot), groups, 'uni', true));
@@ -15,6 +14,7 @@ function figureHandles = rcaExtra_plotLatencies_freq(varargin)
     % same x and y-labels for all data plots
     
     xLabel = groups{1}.xDataLabel;
+    xValues = groups{1}.xDataValues;
     yLabel = groups{1}.yDataLabel;
     
     if (numel(nRCs) > 1 || numel(nCnds) > 1)
@@ -44,7 +44,9 @@ function figureHandles = rcaExtra_plotLatencies_freq(varargin)
                     conditionLabel = groups{ng}.conditionLabels{nc};
                     
                     % data values, errors, significance
-                    freqVals = cellfun(@(x) str2double({x(1:end-2)}), xLabel, 'uni', true);
+                    %freqVals = cellfun(@(x) str2double({x(1:end-2)}), xLabel, 'uni', true);
+                    freqVals = xValues;
+                    
                     dataToPlot_lat = groups{ng}.dataToPlot.phase(:, rcIdx, cndIdx, :);
                     
                     %try-catch for significant/stat testing  

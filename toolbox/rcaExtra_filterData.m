@@ -23,16 +23,16 @@ function dataOut = rcaExtra_filterData(rawData, freqsPresentHz, harmonicSelectio
     end
     % pre-allocate/define the return values
     
-    cleanSignal = cell(size(rawData));
-    nFSignal = cell(size(rawData));
+%     cleanSignal = cell(size(rawData));
+%     nFSignal = cell(size(rawData));
     
     cycleSizeSamplesPresent = round(DAQ_Rate./freqsPresentHz);
-    trialSizeSamples = size(rawData{1, 1}, 1);
+%    trialSizeSamples = size(rawData{1, 1}, 1);
     
     % shortest epoch to contain integer cycles of all frequencies
-    nEpochsMax = min(trialSizeSamples./cycleSizeSamplesPresent);
-    minEpochDurationSamples = trialSizeSamples/nEpochsMax;
-    
+%     nEpochsMax = min(trialSizeSamples./cycleSizeSamplesPresent);
+%     minEpochDurationSamples = trialSizeSamples/nEpochsMax;
+    minEpochDurationSamples = lcm(cycleSizeSamplesPresent(1), cycleSizeSamplesPresent(2));
     freqsPresentHz_2F = freqsPresentHz;
     % workaround for only one frequency present
     if( numel(freqsPresentHz) == 1)

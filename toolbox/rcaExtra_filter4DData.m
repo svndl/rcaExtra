@@ -70,17 +70,17 @@ function [cleanEpochTrialData, filteredTrialData] = rcaExtra_filter4DData(array4
     end
     
     % plot signals
-    chanelToPlot = 76;
-    
-    avgFilteredSignal = squeeze(nanmean(nanmean(filteredTrialData, 4), 2));
-    avgCleanEpoch = squeeze(nanmean(nanmean(cleanEpochTrialData, 4), 2));
-    figure;
-    
-    plot(squeeze(avgFilteredSignal(:, chanelToPlot)),  '-r', 'LineWidth', 3); hold on;
-    plot(squeeze(avgCleanEpoch(:, chanelToPlot)), '-b', 'LineWidth', 3); hold on;
-    set(gca, 'FontSize', 24);
-    title(strcat ('Channel ', num2str(chanelToPlot)));
-    legend({'Average Filtered', 'Average Epoch Cleaned'});
-    xlabel('Samples, Epoch');
-    ylabel('Amplitude, \muV');
-    
+%     chanelToPlot = 76;
+%     
+%     avgFilteredSignal = squeeze(nanmean(nanmean(filteredTrialData, 4), 2));
+%     avgCleanEpoch = squeeze(nanmean(nanmean(cleanEpochTrialData, 4), 2));
+%     figure;
+%     
+%     plot(squeeze(avgFilteredSignal(:, chanelToPlot)),  '-r', 'LineWidth', 3); hold on;
+%     plot(squeeze(avgCleanEpoch(:, chanelToPlot)), '-b', 'LineWidth', 3); hold on;
+%     set(gca, 'FontSize', 24);
+%     title(strcat ('Channel ', num2str(chanelToPlot)));
+%     legend({'Average Filtered', 'Average Epoch Cleaned'});
+%     xlabel('Samples, Epoch');
+%     ylabel('Amplitude, \muV');
+%     

@@ -21,7 +21,7 @@ function plotContainer = rcaExtra_initPlottingContainer(rcAverageStruct, rcAnaly
             plotContainer.dataToPlot.s = rcAverageStruct.s_cnd;
             % use rcAnalysisInfo timecourse
             plotContainer.xDataLabel = 'Time, msec';
-            plotContainer.xDataValues = rcAnalysisInfo.timecourse;
+            plotContainer.xDataValues = rcAverageStruct.timecourse;
         otherwise
             
     end

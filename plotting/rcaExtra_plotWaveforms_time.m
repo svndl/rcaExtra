@@ -5,12 +5,12 @@ function rcaExtra_plotWaveforms_time(varargin)
 
 % if varargin is one structure, all conditions will be plotted
 
-    nGroups = nargin;
+    nItems = nargin;
     groups = varargin;
          
     %% argcheck 1, make sure we have same number of conditions and RCs to loop over
     nRCs = unique(cellfun(@(x) numel(x.rcsToPlot), groups, 'uni', true));
-    nCnds = unique(cellfun(@(x) numel(x.cndsToPlot), groups, 'uni', true));
+    nPages = unique(cellfun(@(x) numel(x.cndsToPlot), groups, 'uni', true));
     
     % same x and y-labels for all data plots
     
@@ -19,7 +19,7 @@ function rcaExtra_plotWaveforms_time(varargin)
     yLabel = groups{1}.yDataLabel;
     timecourse = groups{1}.xDataValues;
     
-    if (numel(nRCs) > 1 || numel(nCnds) > 1)
+    if (numel(nRCs) > 1 || numel(nPages) > 1)
         disp('Number of conditions or RCs to use must be the same for each dataArray, quitting \n');
         return;
     end    
@@ -28,8 +28,8 @@ function rcaExtra_plotWaveforms_time(varargin)
     try
         % each RC to plot would yield a new figure
         for rc = 1:nRCs           
-            legendLabels = cell(nGroups, 1);
-            legendHandles = cell(nGroups, 1);
+            legendLabels = cell(nPages, 1);
+            legendHandles = cell(nPages, 1);
             
             % nPages is the number of conditions for two or more groups
             % for one group, nPages is ONE (each condition treated as group)
@@ -52,18 +52,18 @@ function rcaExtra_plotWaveforms_time(varargin)
                     legendLabels{ni} = sprintf('%s %s RC %d', groupLabel, conditionLabel, rcIdx);
                     
                     cndColor = groups{ni}.conditionColors(np, :);
-                                     
-                    groupMu = squeeze(groups{ni}.mu_cnd(:, rcIdx, cndIdx));
-                    groupStd = squeeze(groups{ni}.s_cnd(:, rcIdx, cndIdx));
+                    % convert to microvolts                 
+                    groupMu = 1e+06*squeeze(groups{ni}.dataToPlot.mu(:, rcIdx, cndIdx));
+                    groupStd = 1e+06*squeeze(groups{ni}.dataToPlot.s(:, rcIdx, cndIdx));
                     
                     h = shadedErrorBar(timecourse', ...
                         groupMu, groupStd, ...
                         {'Color', cndColor, 'LineWidth',  groups{ni}.LineWidths}); hold on;
-                    legendHandles{nc} = h.mainLine;
-%                     significance_RC = statData.sig(:, rc, nc);
-%                     pValues = statData.pValues(:, rc, nc);
+                    legendHandles{ni} = h.mainLine;
+%                     significance_RC = groups{ni}.statData.sig(:, rc, ni);
+%                     pValues = groups{ni}.statData.pValues(:, rc, ni);
 %             
-%                     plot_addStatsBar_time(currAxisHandle, pValues, significance_RC, rcaResultCondition_template.timecourse);
+%                     plot_addStatsBar_time(gca, pValues, significance_RC, timecourse');
                     
                 end
                 % update axes, vert limits, add legends
@@ -73,8 +73,8 @@ function rcaExtra_plotWaveforms_time(varargin)
                 legend([legendHandles{:}], legendLabels{:}, ...
                     'Interpreter', 'none',  'FontSize', 30, 'EdgeColor', 'none', 'Color', 'none');
                 
-                currYLimit = ylim(gca);
-                ylim([0, 1.2*currYLimit(2)]);
+                %currYLimit = ylim(gca);
+                %ylim([0, 1.2*currYLimit(2)]);
                 set(gca,'FontSize', 30, 'fontname', 'helvetica', 'FontAngle', 'italic');
                 ylabel(yLabel);
             end

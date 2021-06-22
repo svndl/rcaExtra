@@ -1,4 +1,4 @@
-function plotAmplitudeBars(fighandle, xLabel, rcaDataIn, statData, nSubplotsRow)
+function plotSummary_AmplitudeBars(fighandle, xLabel, rcaDataIn, statData, nSubplotsRow)
     % plotting amplitude
     % use black colors
     

@@ -1,10 +1,9 @@
-function plotRCTopoMaps(axHandle, topoMaps, nRows)
+function plotSummary_TopoMaps(axHandle, topoMaps, nRows)
     nComp = size(topoMaps, 2);
     % averaging RC data
     
     % set colorbar limits across all components
     colorbarLimits = [min(topoMaps(:)), max(topoMaps(:))];
-    extremeVals = [min(topoMaps); max(topoMaps)];
 
     %% flip signs
     s = ones(1, nComp);

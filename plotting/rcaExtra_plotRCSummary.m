@@ -5,7 +5,7 @@ function rcaExtra_plotRCSummary(rcResult, rcStats)
     f.Name = rcResult.rcaSettings.label;
     nRows = 3;
     %% Row 1: plot Topography
-    plotRCTopoMaps(f, rcResult.A, nRows);
+    plotSummary_TopoMaps(f, rcResult.A, nRows);
     
     %% Row 2: plot waveforms with significance for time domain data 
     %% or amplitude bars/significance for frequency domain data
@@ -13,9 +13,9 @@ function rcaExtra_plotRCSummary(rcResult, rcStats)
     switch rcResult.rcaSettings.domain
         case 'time'
             % supply timeline
-            plotRCWaveforms(f, rcResult, rcStats, nRows);
+            plotSummary_Waveforms(f, rcResult, rcStats, nRows);
         case 'freq'
-            plotAmplitudeBars(f, rcResult.rcaSettings.useFrequencies, ...
+            plotSummary_AmplitudeBars(f, rcResult.rcaSettings.useFrequencies, ...
                 rcResult.projAvg, rcStats, nRows);
         otherwise
     end

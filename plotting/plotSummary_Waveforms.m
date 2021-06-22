@@ -1,4 +1,4 @@
-function plotRCWaveforms(figHandle, rcResult, statData, nSubplotsRow)
+function plotSummary_Waveforms(figHandle, rcResult, statData, nSubplotsRow)
     AxesHandle = cell(rcResult.rcaSettings.nComp, 1);
     lineProps = {'k', 'LineWidth', 1};
     yMax = 1.2*max(rcResult.mu(:));

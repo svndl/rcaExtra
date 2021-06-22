@@ -1,4 +1,4 @@
-function figureHandles = rcaExtra_plotAmplitudes_freq(varargin)
+function figureHandles = rcaExtra_plotAmplitudes(varargin)
 % function plots group amplitudes against each other for each condition if
 % there's more than one group in varargin is present 
 

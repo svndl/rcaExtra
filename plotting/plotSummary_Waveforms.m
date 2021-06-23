@@ -1,12 +1,13 @@
 function plotSummary_Waveforms(figHandle, rcResult, statData, nSubplotsRow)
     AxesHandle = cell(rcResult.rcaSettings.nComp, 1);
     lineProps = {'k', 'LineWidth', 1};
-    yMax = 1.2*max(rcResult.mu(:));
+    
+    yMax = 1e+06*1.2*max(rcResult.mu(:));
     gca(figHandle);
     try
         for c = 1:rcResult.rcaSettings.nComp
             AxesHandle{c} = subplot(nSubplotsRow, rcResult.rcaSettings.nComp, c + rcResult.rcaSettings.nComp);
-            shadedErrorBar(rcResult.timecourse, rcResult.mu(:, c), rcResult.s(:, c), lineProps); hold on;
+            shadedErrorBar(rcResult.timecourse, 1e+06*rcResult.mu(:, c), 1e+06*rcResult.s(:, c), lineProps); hold on;
             AxesHandle{c}.YLim = [-yMax, yMax];
             %axis square;
             set(gca, 'FontSize', 20, 'fontname', 'helvetica');

@@ -34,4 +34,5 @@ function sensorResult = averageSensor_time(currSettings, dataIn)
     tc = linspace(0, currSettings.timecourseLen - 1, currSettings.samplingRate);
     sensorResult.timecourse = tc;
     sensorResult.rcaSettings = currSettings;
+    sensorResult.projectedData = dataIn;
 end

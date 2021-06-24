@@ -1,17 +1,17 @@
-function plotContainer = rcaExtra_initPlottingContainer(rcAverageStruct, rcAnalysisInfo)
+function plotContainer = rcaExtra_initPlottingContainer(rcAverageStruct)
 % quick init function for plotting
 % Alexandra Yakovleva, Stanford University 2021 
 
 
-    switch rcAnalysisInfo.domain
+    switch rcAverageStruct.rcaSettings.domain
         case 'freq'
             % add frequency-specific data
             plotContainer = rcaExtra_addPlotOptionsToData(rcAverageStruct.projAvg);
             
             % create x-axis labels and frequency values
-            freqIdx = cellfun(@(x) str2double(x(1)), rcAnalysisInfo.useFrequencies, 'uni', true);
-            freqVals = rcAnalysisInfo.useFrequenciesHz*freqIdx;
-            plotContainer.xDataLabel = cellfun(@(x) x(1:2), rcAnalysisInfo.useFrequencies, 'uni', false);
+            freqIdx = cellfun(@(x) str2double(x(1)), rcAverageStruct.rcaSettings.useFrequencies, 'uni', true);
+            freqVals = rcAverageStruct.rcaSettings.useFrequenciesHz*freqIdx;
+            plotContainer.xDataLabel = cellfun(@(x) x(1:2), rcAverageStruct.rcaSettings.useFrequencies, 'uni', false);
             plotContainer.xDataValues = freqVals;
         case 'time'
             % init with empty argument 
@@ -25,11 +25,11 @@ function plotContainer = rcaExtra_initPlottingContainer(rcAverageStruct, rcAnaly
         otherwise
             
     end
-    if (isfield(rcAnalysisInfo, 'computeStats'))  
+    if (isfield(rcAverageStruct.rcaSettings, 'computeStats'))  
         plotContainer.statData = rcaExtra_runStatsAnalysis(rcAverageStruct, []);
     end
     plotContainer.yDataLabel = 'Amplitude, \muV';
-    plotContainer.dataLabel = {rcAnalysisInfo.label};
+    plotContainer.dataLabel = {rcAverageStruct.rcaSettings.label};
     
     plotContainer.markerSize = 12; 
     plotContainer.LineWidths = 3;

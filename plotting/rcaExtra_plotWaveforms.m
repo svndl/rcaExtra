@@ -1,4 +1,4 @@
-function rcaExtra_plotWaveforms_time(varargin)
+function figureHandles = rcaExtra_plotWaveforms(varargin)
 
 % function plots group waveforms against each other for each condition if
 % there's more than one group in varargin is present 
@@ -82,5 +82,8 @@ function rcaExtra_plotWaveforms_time(varargin)
     catch err
         rcaExtra_displayError(err)
     end
+    % link axes
+    allaxes = arrayfun(@(x) get(x, 'CurrentAxes'), figureHandles, 'uni', true);
+    linkaxes(allaxes(:), 'xy');    
 end
 

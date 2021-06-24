@@ -15,7 +15,8 @@ function figureHandles = rcaExtra_plotLatencies(varargin)
     
     xLabel = groups{1}.xDataLabel;
     xValues = groups{1}.xDataValues;
-    yLabel = groups{1}.yDataLabel;
+    
+    yLabel = 'Radians, \pi';
     
     if (numel(nRCs) > 1 || numel(nCnds) > 1)
         disp('Number of conditions or RCs to use must be the same for each dataArray, quitting \n');
@@ -74,8 +75,8 @@ function figureHandles = rcaExtra_plotLatencies(varargin)
                     
                     % compute slope and error estimate for significant 
                     
-                    freqsSig = freqVals(significance);
-                    phasesSig = valsUnwrapped(significance);
+                    freqsSig = freqVals(significance>0);
+                    phasesSig = valsUnwrapped(significance>0);
                     
                     % if we have at least two signifant harmonic multiples:
                     if (numel(freqsSig) > 1)                   
@@ -124,25 +125,27 @@ function figureHandles = rcaExtra_plotLatencies(varargin)
                     catch err
                         rcaExtra_displayError(err);
                         % no significant values, pass error handle to
-                        % non-significant 
-                        % 
+                        % non-significant
+                        %
                     end
-                   % saturate non-significant phase values;
-                   try   
-                        %legendHandles{ng} = 
-                        errorbar(freqVals(~significance), valsUnwrapped(~significance),...
-                           dataToPlot_larErr(~significance, 1), dataToPlot_larErr(~significance, 2),...
-                           groups{ng}.conditionMarkers{nc}, 'Color', satColor, ...
-                           'LineWidth', groups{ng}.LineWidths, ...
-                           'LineStyle', 'none', 'CapSize', 0, ...
-                           markerOpts{:}, ...
-                            'MarkerEdgeColor', MarkerEdgeSatColor,...
-                            'MarkerFaceColor', satColor); hold on;
-                   catch err
-                       rcaExtra_displayError(err);
-                   end
+                    % fade non-significant phase values;
+                    if (any(~significance))
+                        
+                        try
+                            %legendHandles{ng} =
+                            errorbar(freqVals(~significance), valsUnwrapped(~significance),...
+                                dataToPlot_larErr(~significance, 1), dataToPlot_larErr(~significance, 2),...
+                                groups{ng}.conditionMarkers{nc}, 'Color', satColor, ...
+                                'LineWidth', groups{ng}.LineWidths, ...
+                                'LineStyle', 'none', 'CapSize', 0, ...
+                                markerOpts{:}, ...
+                                'MarkerEdgeColor', MarkerEdgeSatColor,...
+                                'MarkerFaceColor', satColor); hold on;
+                        catch err
+                            rcaExtra_displayError(err);
+                        end
+                    end
                 end
-                
                 % update axes, vert limits, add legends
                 figureHandles(rc, nc).Name = sprintf('Phase Values RC %d', rc);
                 try
@@ -152,12 +155,15 @@ function figureHandles = rcaExtra_plotLatencies(varargin)
                 catch
                     xlabel(xLabel);
                 end
+                currXLimit = xlim(gca);
+                xlim([0, currXLimit(2)]);
                 legend([legendHandles{:}], legendLabels{:}, ...
                     'Interpreter', 'none',  'FontSize', 30, 'EdgeColor', 'none', 'Color', 'none');
                 
                 currYLimit = ylim(gca);
                 ylim([0, 1.2*currYLimit(2)]);
                 set(gca,'FontSize', 30, 'fontname', 'helvetica', 'FontAngle', 'italic');
+                % use radians
                 ylabel(yLabel);
                 pbaspect(gca, [1 1 1]);
             end 
@@ -165,4 +171,7 @@ function figureHandles = rcaExtra_plotLatencies(varargin)
     catch err
         rcaExtra_displayError(err);
     end
+    % link axes
+    allaxes = arrayfun(@(x) get(x, 'CurrentAxes'), figureHandles, 'uni', true);
+    linkaxes(allaxes(:), 'xy');
 end

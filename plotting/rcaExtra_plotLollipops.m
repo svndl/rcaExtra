@@ -72,8 +72,6 @@ function figureHandles = rcaExtra_plotLollipops(varargin)
                             if (~isempty(e0))
                                 e_x = e0(:, 1) + x;
                                 e_y = e0(:, 2) + y;
-                                %                 e_x = e0(:, 1); % EdNeuro's data fix
-                                %                 e_y = e0(:, 2);
                             end
                             props = { 'linewidth', 2, 'color', cndColor};
                             errLine = line(e_x, e_y, 'LineWidth', 2); hold on;
@@ -101,8 +99,7 @@ function figureHandles = rcaExtra_plotLollipops(varargin)
                 % add legend to first axes only
                 
                 legend([legendHandles{:}], legendLabels{:}, legendArgs{:});
-                
-                figureHandles(rc, n).Name = sprintf('Lolliplot Values RC %d', rc);
+                figureHandles(rc, nc).Name = sprintf('Lolliplot Values RC %d', rc);
             end 
         end
     catch err

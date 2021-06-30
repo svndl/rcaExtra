@@ -67,7 +67,7 @@ function figureHandles = rcaExtra_plotWaveforms(varargin)
                     
                 end
                 % update axes, vert limits, add legends
-                figureHandles(rc, np).Name = sprintf('Amplitude Values RC %d', rc);
+                figureHandles(rc, np).Name = sprintf('Waveforms RC %d', rc);
                 xlabel(xLabel);
                 
                 legend([legendHandles{:}], legendLabels{:}, ...

@@ -59,7 +59,7 @@ function plotSummary_AmplitudeBars(fighandle, xLabel, rcaDataIn, statData, nSubp
                     groupAmp(currRC_sig_3 > 0), text_sigAsterick_3, asterick_plotSettings{:});
                 
             end
-            pbaspect(AxesHandle{c}, [1 1 1]);
+            pbaspect(AxesHandle{c}, [1 2 1]);
         end
         linkaxes([AxesHandle{:}], 'y');
     catch err

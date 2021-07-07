@@ -75,7 +75,7 @@ elseif size(data,1) == 32
     nChan = 32;
 elseif size(data,1) == 7
     
-    data = expandAMatrixto128Channels(data);
+    data = expandAMatrixTo128Channels(data);
     tEpos = load('defaultFlatNet.mat');
     tEpos = [ tEpos.xy, zeros(128,1) ];
     

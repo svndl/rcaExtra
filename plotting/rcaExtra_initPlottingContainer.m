@@ -36,8 +36,11 @@ function plotContainer = rcaExtra_initPlottingContainer(rcAverageStruct)
     plotContainer.significanceSaturation = 0.15;
     plotContainer.patchSaturation = 0.15;
     
-    % by default, two styles of markers and lines 
-    plotContainer.conditionMarkers = {'^', 'v'};
-    plotContainer.markerStyles = {'filled', 'filled'};
-    plotContainer.lineStytles = {'-', '-'};    
+     default_markers = '^';
+%     default_styles = 'filled';
+%     default_lines = '-';
+    % by default, styles of markers and lines 
+    plotContainer.conditionMarkers = {'^', 'v', default_markers, default_markers, default_markers, default_markers};
+    plotContainer.markerStyles = {'filled', 'filled', 'filled', 'filled', 'filled', 'filled'};
+    plotContainer.lineStytles = {'-', '-', '-', '-', '-', '-'};    
 end

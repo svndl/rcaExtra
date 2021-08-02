@@ -111,6 +111,7 @@ function figureHandles = rcaExtra_plotAmplitudes(varargin)
                             'LineWidth', groups{ni}.LineWidths, ...
                             'LineStyle', 'none'); hold on;
                     catch err
+                        rcaExtra_displayError(err);
                         % no significant values, pass error handle to
                         % non-significant
                         %
@@ -130,7 +131,8 @@ function figureHandles = rcaExtra_plotAmplitudes(varargin)
                                 'Color', satColor, ...
                                 'LineWidth', groups{ni}.LineWidths, ...
                                 'LineStyle', 'none'); hold on;
-                        catch
+                        catch err
+                            rcaExtra_displayError(err);        
                         end
                     end
                 end
@@ -149,7 +151,7 @@ function figureHandles = rcaExtra_plotAmplitudes(varargin)
                 ylim([0, 1.2*currYLimit(2)]);
                 set(gca,'FontSize', 30, 'fontname', 'helvetica', 'FontAngle', 'italic');
                 ylabel(yLabel);
-                pbaspect(gca, [1 1 1]);
+                pbaspect(gca, [1 2 1]);
             end 
         end
     catch err

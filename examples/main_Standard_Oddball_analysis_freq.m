@@ -61,19 +61,7 @@ function main_Standard_Oddball_analysis_freq
     % saved (stored) results and requested results
     rcSettings.useFrequencies = loadSettings.useFrequencies;
     
-    %% run analysis on all conditions
     nConditions = size(sensorData, 2);
-    rcSettings_byCondition = cell(1, nConditions);
-    rcResultStruct_byCondition = cell(1, nConditions);
-    
-    for nc = 1:nConditions
-        % create copy of rcSettings for each condition
-        rcSettings_byCondition{nc} = rcSettings;
-        rcSettings_byCondition{nc}.label = analysisStruct.info.conditionLabels{nc};
-        rcSettings_byCondition{nc}.useCnds = nc;
-        
-        rcResultStruct_byCondition{nc} = rcaExtra_runAnalysis(rcSettings_byCondition{nc}, sensorData_1bin, noise_LO_1bin, noise_HI_1bin);
-    end
     
     %% run analysis on pooled dataset
     rcSettings_pooled = rcSettings;
@@ -84,7 +72,6 @@ function main_Standard_Oddball_analysis_freq
         sensorData_1bin_5cnd, noise_LO_1bin_5cnd, noise_HI_1bin_5cnd);
     
     %% run analysis on all conditions
-    
     rcSettings_all = rcSettings;
     rcSettings_all.label = 'all conditions';
     rcSettings_all.useCnds = 1:nConditions;
@@ -117,7 +104,6 @@ function main_Standard_Oddball_analysis_freq
     % sensorData_1bin);
     
     
-    
     %% visualization 
     cndsToPlot = rcSettings_all.useCnds;
     rcsToPlot = 1:3;
@@ -138,7 +124,30 @@ function main_Standard_Oddball_analysis_freq
     plot_all.rcsToPlot = rcsToPlot;
     plot_all.cndsToPlot = cndsToPlot;
     
-    plot_all.conditionColors = 0.65.*colorsToUse;    
-    rcaExtra_plotAmplitudeWithStats(plot_projected, plot_all, rcResultProjected, rcResultStruct_all)
-   
+    plot_all.conditionColors = 0.65.*colorsToUse;
+    
+    % plot amplitudes with stats
+    rcaExtra_plotAmplitudeWithStats(plot_projected, plot_all, rcResultProjected, rcResultStruct_all);
+
+    % split conditions and plot them together
+    [c1, c2, c3, c4, c5] = rcaExtra_splitPlotDataByCondition(plot_projected);
+    rcaExtra_plotAmplitudes(c1, c2, c3, c4, c5);
+    
+    figureLocation = rcResultProjected.rcaSettings.destDataDir_FIG;
+    figHandles = findall(0, 'Type', 'figure');
+    
+    % compare RCs with sensor-space data
+    % Loop through figures 2:end
+    for i = 1:numel(figHandles)
+        %         axes_h = get(figHandles(i), 'CurrentAxes');
+        %         set(axes_h, 'position', [.05 .05 .9 .9])
+        
+        %figHandles(i).WindowState = 'fullscreen';
+        set( figHandles(i) , 'paperpositionmode','auto')
+        %set(figHandles(i), 'PaperSize', [32 18]);
+        
+        print( figHandles(i), '-depsc2', '-loose', fullfile(figureLocation, [figHandles(i).Name '.eps']));
+        close(figHandles(i));
+    end
+    
 end

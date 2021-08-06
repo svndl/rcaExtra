@@ -102,8 +102,7 @@ function main_Standard_Oddball_analysis_freq
     % callback would be 
     % rcresultProjected = rcaExtra_projectDataSubset(rcResultStruct_pooled,
     % sensorData_1bin);
-    
-    
+            
     %% visualization 
     cndsToPlot = rcSettings_all.useCnds;
     rcsToPlot = 1:3;
@@ -116,6 +115,7 @@ function main_Standard_Oddball_analysis_freq
     plot_projected = rcaExtra_initPlottingContainer(rcResultProjected);
     plot_projected.conditionLabels = conditionLabels;
     plot_projected.rcsToPlot = rcsToPlot;
+    plot_projected.dataLabel = {'pooled'};
     plot_projected.cndsToPlot = cndsToPlot;
     plot_projected.conditionColors = colorsToUse;
     
@@ -123,16 +123,45 @@ function main_Standard_Oddball_analysis_freq
     plot_all.conditionLabels = conditionLabels;
     plot_all.rcsToPlot = rcsToPlot;
     plot_all.cndsToPlot = cndsToPlot;
+    plot_all.dataLabel = {'combined'};
     
     plot_all.conditionColors = 0.65.*colorsToUse;
     
-    % plot amplitudes with stats
-    rcaExtra_plotAmplitudeWithStats(plot_projected, plot_all, rcResultProjected, rcResultStruct_all);
-
-    % split conditions and plot them together
+    % split conditions into separate plotting containters 
     [c1, c2, c3, c4, c5] = rcaExtra_splitPlotDataByCondition(plot_projected);
-    rcaExtra_plotAmplitudes(c1, c2, c3, c4, c5);
+    [c11, c12, c13, c14, c15] = rcaExtra_splitPlotDataByCondition(plot_all);
     
+    close all;
+    
+    % plot amplitudes with stats (works with pairwise comparision only)
+    % will plot condition-wise 
+    rcaExtra_plotAmplitudeWithStats(plot_projected, plot_all, rcResultProjected, rcResultStruct_all);
+    rcaExtra_plotAmplitudes(c1, c2, c3, c4, c5);    
+    rcaExtra_plotAmplitudes(c11, c12, c13, c14, c15);
+
+%%  plot lolliplots
+    rcaExtra_plotLollipops(plot_projected, plot_all);
+    rcaExtra_plotLollipops(c1, c2, c3, c4, c5);
+    rcaExtra_plotLollipops(c11, c12, c13, c14, c15);
+    
+%% plot latencies
+    rcaExtra_plotLatencies(plot_projected, plot_all);
+    rcaExtra_plotLatencies(c1, c2, c3, c4, c5);
+    rcaExtra_plotLatencies(c11, c12, c13, c14, c15);
+    
+%     plot_projected = rcaExtra_initPlottingContainer(rcResultProjected);
+%     plot_projected.conditionLabels = conditionLabels;
+%     plot_projected.rcsToPlot = rcsToPlot;
+%     plot_projected.cndsToPlot = cndsToPlot;
+%     plot_projected.conditionColors = colorsToUse;
+%     
+%     
+%     %% average sensor-space for plotting  
+%     sensorResult_all = averageSensor_freq(rcResultStruct_all.rcaSettings, sensorData_1bin);
+%     sensorResult_pooled = averageSensor_freq(rcResultProjected.rcaSettings, sensorData_1bin_5cnd);
+
+    
+    %% 
     figureLocation = rcResultProjected.rcaSettings.destDataDir_FIG;
     figHandles = findall(0, 'Type', 'figure');
     

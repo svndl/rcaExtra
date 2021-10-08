@@ -1,6 +1,5 @@
 function subjMean = rcaExtra_prepareDataArrayForStats(dataMat, dataSettings)
 % Alexandra Yakovleva 2020, Stanford University
-% sweep functionality added by LLV
     switch dataSettings.domain
         case 'time'
             % mean RCs by subject, 
@@ -29,28 +28,8 @@ function subjMean = rcaExtra_prepareDataArrayForStats(dataMat, dataSettings)
                 subjMean.subjAvgReal = reshape(subjMean.subjAvgReal, [nSamples nRcs nSubj nCnd]);
                 subjMean.subjAvgReal = permute(subjMean.subjAvgReal, [1 2 4 3]);
                 subjMean.subjAvgImag = reshape(subjMean.subjAvgImag, [nSamples nRcs nSubj nCnd]);
-                subjMean.subjAvgImag = permute(subjMean.subjAvgImag, [1 2 4 3]);
-             end
-             
-        case 'sweep'
-            % LLV: added
-            % for now, equivalent to frequency
-            [nSubj, nCnd] = size(dataMat);
-            % for frequency, need to know nB, nF and nRCs
-            % subjSensorMean: nBin x nF x nRCs x nCnd x nSubj
-            [data_Re, data_Im] = getRealImag_byBin(dataMat, ...
-                dataSettings.nBins, dataSettings.nFreqs, dataSettings.nComp);
-            [~, AvgReal, ~] = averageProjectSweep(data_Re, dataSettings.nBins);
-            [~, AvgImag, ~] = averageProjectSweep(data_Im, dataSettings.nBins);
-            subjMean.subjAvgReal = cat(4, AvgReal{:});
-            subjMean.subjAvgImag = cat(4, AvgImag{:});
-            [nBins, nFreqs, nRcs, ~] = size(subjMean.subjAvgReal);
-            if (nCnd > 1)
-                subjMean.subjAvgReal = reshape(subjMean.subjAvgReal, [nBins nFreqs nRcs nSubj nCnd]);
-                subjMean.subjAvgReal = permute(subjMean.subjAvgReal, [1 2 3 5 4]);
-                subjMean.subjAvgImag = reshape(subjMean.subjAvgImag, [nBins nFreqs nRcs nSubj nCnd]);
-                subjMean.subjAvgImag = permute(subjMean.subjAvgImag, [1 2 3 5 4]);
+                subjMean.subjAvgImag = permute(subjMean.subjAvgImag, [1 2 4 3]);                
             end
-            
+           
     end
 end

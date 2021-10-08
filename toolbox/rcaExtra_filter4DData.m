@@ -23,63 +23,64 @@ function [cleanEpochTrialData, filteredTrialData] = rcaExtra_filter4DData(array4
 
     % pre-allocate and initiate matrices
     
-    avgCleanEpochTrial = zeros(nSamples, nChannels, nTrials);
     cleanEpochTrialData = zeros(nSamples, nEpochs, nChannels, nTrials);
-    filteredTrialData = zeros(nSamples, nChannels, nTrials);
-    
-    filteredSpectrumTrial = zeros(nSamples, nChannels);
+    filteredTrialData = zeros(nSamples, nEpochs, nChannels, nTrials);
+    filteredSpectrumTrial = zeros(nSamples, nEpochs, nChannels);
     
     % compute average epoch per channel
-    averageEpoch = squeeze(nanmean(nanmean(array4D, 4), 2));
-    
-
+    % averageEpoch = squeeze(nanmean(nanmean(array4D, 4), 2));
+ 
     % operate on trial-to-trial base
     for nt = 1:nTrials
         trialData = squeeze(array4D(:, :, :, nt));
         
         % compute average epoch for each trial
-        averageEpochTrial = squeeze(nanmean(trialData, 2));
-        hasAnyNaNs = sum(isnan(averageEpochTrial(:)));
-        useAverageForFiltering = averageEpochTrial;
-        % if trial has nans
-        if(hasAnyNaNs)
-            % average over all trials
-            useAverageForFiltering = averageEpoch;
-        end
+%         averageEpochTrial = squeeze(nanmean(trialData, 2));
+%         hasAnyNaNs = sum(isnan(averageEpochTrial(:)));
+%         useAverageForFiltering = averageEpochTrial;
+%         % if trial has nans
+%         if(hasAnyNaNs)
+%             % average over all trials
+%             useAverageForFiltering = averageEpoch;
+%         end
+%         % compute FFT2
+%         avgSpectrum = fft(useAverageForFiltering);
+
         % compute FFT2
-        avgSpectrum = fft(useAverageForFiltering);
-        
+        epochSpectrum = fft_epoch(trialData);
         % copy values of filtered out bins and
         % mirror-image negative half of the fft output
         
         % Bin 1 is DC
         idxBinsToSeparate = cat(2, 1 + binIdxFilterVector, nSamples - binIdxFilterVector + 1);
         
-                
-        filteredSpectrumTrial(idxBinsToSeparate, :) = avgSpectrum(idxBinsToSeparate, :);
-        avgSpectrum(idxBinsToSeparate, :) = 0;
+        % spectrum that only has specified bin values
+        filteredSpectrumTrial(idxBinsToSeparate, :, :) = epochSpectrum(idxBinsToSeparate, :, :);
+        
+        % spectrum that does not have the bin values        
+        epochSpectrum(idxBinsToSeparate, :, :) = 0;
         
         % cleaned frequency data in time-domain
-        avgCleanEpochTrial(:, :, nt) = real(ifft(avgSpectrum));
+        cleanEpochTrialData(:, :, :, nt) = ifft_epoch(epochSpectrum);
         
         % filtered frequencies in time-domain
-        filteredData = real(ifft(filteredSpectrumTrial));
-        filteredTrialData(:, :, nt) = filteredData;
-        % subtract data from each epoch
-        cleanEpochTrialData(:, :, :, nt) = trialData - permute(repmat(filteredData, [1 1 nEpochs]), [1 3 2]);       
+        filteredTrialData(:, :, :, nt) = ifft_epoch(filteredSpectrumTrial);
+%         % subtract data from each epoch
+%         cleanEpochTrialData(:, :, :, nt) = trialData - permute(repmat(filteredData, [1 1 nEpochs]), [1 3 2]);       
     end
     
     % plot signals
-    chanelToPlot = 76;
-    avgFilteredSignal = mean(filteredTrialData, 3);
-    avgCleanEpoch = mean(avgCleanEpochTrial, 3);
-    figure;
-    
-    plot(squeeze(avgFilteredSignal(:, chanelToPlot)),  '-r', 'LineWidth', 3); hold on;
-    plot(squeeze(avgCleanEpoch(:, chanelToPlot)), '-b', 'LineWidth', 3); hold on;
-    set(gca, 'FontSize', 24);
-    title(strcat ('Channel ', num2str(chanelToPlot)));
-    legend({'Average Filtered', 'Average Epoch Cleaned'});
-    xlabel('Samples, Epoch');
-    ylabel('Amplitude, \muV');
-    
+%     chanelToPlot = 76;
+%     
+%     avgFilteredSignal = squeeze(nanmean(nanmean(filteredTrialData, 4), 2));
+%     avgCleanEpoch = squeeze(nanmean(nanmean(cleanEpochTrialData, 4), 2));
+%     figure;
+%     
+%     plot(squeeze(avgFilteredSignal(:, chanelToPlot)),  '-r', 'LineWidth', 3); hold on;
+%     plot(squeeze(avgCleanEpoch(:, chanelToPlot)), '-b', 'LineWidth', 3); hold on;
+%     set(gca, 'FontSize', 24);
+%     title(strcat ('Channel ', num2str(chanelToPlot)));
+%     legend({'Average Filtered', 'Average Epoch Cleaned'});
+%     xlabel('Samples, Epoch');
+%     ylabel('Amplitude, \muV');
+%     

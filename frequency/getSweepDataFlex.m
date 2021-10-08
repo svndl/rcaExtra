@@ -124,8 +124,8 @@ function [colHdr, freqsAnalyzed, binIndices, dataMatrix] = getSweepDataFlex(data
     % replace samples with zero amplitudes with NaN because 0 is PowerDiva's
     % indicator of a rejected epoch
     zeroAmpRows = dataMatrix(:, end) == 0;
-%     dataMatrix(zeroAmpRows, 7:end) = nan;
-    dataMatrix(zeroAmpRows, 5:end) = nan; % LLV changing to also include Sr and Si columns in the zero to NaN substitution (coordinating with AY)    colHdr{end + 1} = 'ampl';
+    dataMatrix(zeroAmpRows, 7:end) = nan;
+    colHdr{end + 1} = 'ampl';
 end
 
 

@@ -1,4 +1,4 @@
-function gcfHandles = rcaExtra_plotResults(varargin, plotSettings)
+function gcfHandles = rcaExtra_plotResults(varargin)
 % plotting results of RC analysis
 % Alexandra Yakovleva, Stanford University 2020
 % varargin: cell array of dataStructures: rcaExtra_plotResults(data1,

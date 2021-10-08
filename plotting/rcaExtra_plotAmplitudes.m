@@ -1,52 +1,162 @@
-function fh_AmplitudesFreqs = rcaExtra_plotAmplitudes(rcaResult, plotSettings)
-% Function will plot amplitude bars for a given RC result structure.
-% input arguments: rcaResult structure       
+function figureHandles = rcaExtra_plotAmplitudes(varargin)
+% function plots group amplitudes against each other for each condition if
+% there's more than one group in varargin is present 
+
+% if varargin is one structure, all conditions will be plotted
+
+    nGroups = nargin;
+    groups = varargin;
     
-    if (isempty(plotSettings))
-       % fill settings template
-       plotSettings = rcaExtra_getPlotSettings(rcaResult);       
-       plotSettings.Title = 'Amplitude Plot';
-       plotSettings.RCsToPlot = 1:3;
-       plotSettings.displayNoise = 0;
+    %figureHandles = cell(nGroups, 1);
+     
+    %% argcheck 1, make sure we have same number of conditions and RCs to loop over
+    nRCs = unique(cellfun(@(x) numel(x.rcsToPlot), groups, 'uni', true));
+    nCnds = unique(cellfun(@(x) numel(x.cndsToPlot), groups, 'uni', true));
+    
+    % same x and y-labels for all data plots
+    
+    
+    xLabel = groups{1}.xDataLabel;
+    yLabel = groups{1}.yDataLabel;
+    
+    if (numel(nRCs) > 1 || numel(nCnds) > 1)
+        disp('Number of conditions or RCs to use must be the same for each dataArray, quitting \n');
+        return;
     end
     
-    freqIdx = cellfun(@(x) str2double(x(1)), rcaResult.rcaSettings.useFrequencies, 'uni', true);
-    freqVals = rcaResult.rcaSettings.useFrequenciesHz*freqIdx;
-    fh_AmplitudesFreqs = cell(numel(plotSettings.RCsToPlot), 1);
-    for cp = 1:numel(plotSettings.RCsToPlot)
+    % vary data arrangement according to the number of arguments
         
-        rc = plotSettings.RCsToPlot(cp);
-        
-        groupAmps = squeeze(rcaResult.projAvg.amp(:, rc, :));
-        groupAmpErrs = squeeze(rcaResult.projAvg.errA(:, rc, :, :));
-        fh_AmplitudesFreqs{cp} = rcaExtra_barplot_freq(freqVals, groupAmps, groupAmpErrs, ...
-            plotSettings.useColors, plotSettings.legendLabels);
-        
-        % if noise avg exists 
-        if (plotSettings.displayNoise)
-            try
-                if ~isfield(rcaResult, 'noiseLowAvg')
-                    rcaResult = rcaExtra_computeAverages(rcaResult);
+    barWidthBase = nGroups;
+    nPages = nCnds;
+    nItems = nGroups;
+    
+%     if (nGroups == 1)
+%        barWidthBase = nCnds;
+%        nPages = 1;
+%        nItems = nCnds; 
+%     end
+       
+    % adjusting bar width according to number of conditions
+    groupWidth = min(0.8, barWidthBase/(barWidthBase + 1.5));
+    nF = numel(xLabel);
+    
+    xBarsPos = zeros(nF, barWidthBase);
+    
+    % xE will indicate position and width of the bars 
+    for b = 1:barWidthBase
+        xBarsPos(:, b) = (1:nF) - groupWidth/2 + (2*b -1 )*groupWidth / (2*barWidthBase);
+    end
+    
+    figureHandles = gobjects(nRCs, nPages);
+    try
+        % each RC to plot would yield a new figure
+        for rc = 1:nRCs           
+            legendLabels = cell(nGroups, 1);
+            legendHandles = cell(nGroups, 1);
+            
+            % nPages is the number of conditions for two or more groups
+            % for one group, nPages is ONE (each condition treated as group)
+            
+            for np = 1:nPages                
+                % create figure page            
+                figureHandles(rc, np) = figure('units','normalized','outerposition',[0 0 1 1]);
+                % nItems is the number of groups, for two or more input arguments;
+                % nItems is the number of , for two or more input arguments;
+                for ni = 1:nItems
+                    % extract data index and data labels
+                    
+                    % double
+                    rcIdx = groups{ni}.rcsToPlot(rc);
+                    cndIdx = groups{ni}.cndsToPlot(np);
+                    
+                    % char
+                    groupLabel = groups{ni}.dataLabel{:};
+                    conditionLabel = groups{ni}.conditionLabels{np};
+                    
+                    % data values, errors, significance
+                    xPos = xBarsPos(:, ni);
+                    dataToPlot_amp = groups{ni}.dataToPlot.amp(:, rcIdx, cndIdx, :);
+                    dataToPlot_ampErr = groups{ni}.dataToPlot.errA(:, rcIdx, cndIdx, :);
+                    
+                    % try-catch for stats, if they are not added  
+                    try
+                        significance = boolean(groups{ni}.statData.sig(:, rcIdx, cndIdx)); 
+                    catch 
+                        disp('No significance found, all data points would be trated as significant');
+                        significance = ones(size(dataToPlot_amp));
+                    end
+                        
+                    % labels for legend/figure title
+                    legendLabels{ni} = sprintf('%s %s RC %d', groupLabel, conditionLabel, rcIdx);
+                    
+                    % significant color
+                    cndColor = groups{ni}.conditionColors(np, :);
+                    patchColor = cndColor + (1 - cndColor)*(1 - groups{ni}.patchSaturation);
+                    
+                    % non-significant color
+                    satColor = cndColor + (1 - cndColor)*(1 - groups{ni}.significanceSaturation);
+                    patchSatColor = satColor + (1 - satColor)*(1 - groups{ni}.patchSaturation);
+                    
+                    % plot all amplitudes (significat settings)
+                    try
+                        bar(xPos, dataToPlot_amp, ...
+                            'BarWidth', 0.8*groupWidth/nGroups, ...
+                            'LineWidth', groups{ni}.LineWidths, ...
+                            'EdgeColor', cndColor, ...
+                            'FaceColor', patchColor, 'FaceAlpha',0.3); hold on;
+                        
+                        legendHandles{ni} = errorbar(xPos, dataToPlot_amp,...
+                            dataToPlot_ampErr(:, 1), dataToPlot_ampErr(:, 2),...
+                            'Color', cndColor, ...
+                            'LineWidth', groups{ni}.LineWidths, ...
+                            'LineStyle', 'none'); hold on;
+                    catch err
+                        rcaExtra_displayError(err);
+                        % no significant values, pass error handle to
+                        % non-significant
+                        %
+                    end
+                    % blur non-significant amplitudes;
+                    if (any(~significance))
+                        try
+                            bar(xPos(~significance), dataToPlot_amp(~significance), ...
+                                'BarWidth', 0.8*groupWidth/nGroups, ...
+                                'LineWidth', groups{ni}.LineWidths, ...
+                                'EdgeColor', satColor, ...
+                                'FaceColor', patchSatColor, 'FaceAlpha',0.3); hold on;
+                            
+                            
+                            errorbar(xPos(~significance), dataToPlot_amp(~significance),...
+                                dataToPlot_ampErr(~significance, 1), dataToPlot_ampErr(~significance, 2),...
+                                'Color', satColor, ...
+                                'LineWidth', groups{ni}.LineWidths, ...
+                                'LineStyle', 'none'); hold on;
+                        catch err
+                            rcaExtra_displayError(err);        
+                        end
+                    end
                 end
-                noiseAmpLow = squeeze(rcaResult.noiseLowAvg.amp(:, rc, :, :));
-                noiseAmpHigh = squeeze(rcaResult.noiseHighAvg.amp(:, rc, :, :));
-                rcaExtra_noiseplot_freq(fh_AmplitudesFreqs{cp}, ...
-                    noiseAmpLow, noiseAmpHigh, plotSettings.useColors, plotSettings.legendLabels);
-            catch err
-                rcaExtra_displayError(err);
-                disp('Noise plotting failed');
-            end
+                % update axes, vert limits, add legends
+                figureHandles(rc, np).Name = sprintf('Amplitude Values RC %d', rc);
+                try
+                    set(gca, 'XTick', 1:numel(xLabel))
+                    set(gca, 'XTickLabel', xLabel);
+                catch
+                    xlabel(xLabel);
+                end
+                legend([legendHandles{:}], legendLabels{:}, ...
+                    'Interpreter', 'none',  'FontSize', 30, 'EdgeColor', 'none', 'Color', 'none');
+                
+                currYLimit = ylim(gca);
+                ylim([0, 1.2*currYLimit(2)]);
+                set(gca,'FontSize', 30, 'fontname', 'helvetica', 'FontAngle', 'italic');
+                ylabel(yLabel);
+                pbaspect(gca, [1 2 1]);
+            end 
         end
-        
-        fh_AmplitudesFreqs{cp}.Name = strcat('Amplitudes RC ', num2str(rc),...
-            ' F = ', num2str(rcaResult.rcaSettings.useFrequenciesHz)); 
-               
-        title(fh_AmplitudesFreqs{cp}.Name);
-        try
-            saveas(fh_AmplitudesFreqs{cp}, ...
-                fullfile(rcaResult.rcaSettings.destDataDir_FIG, [fh_AmplitudesFreqs{cp}.Name '.fig']));
-        catch err
-            rcaExtra_displayError(err);
-        end
+    catch err
+        rcaExtra_displayError(err);
     end
+    allaxes = arrayfun(@(x) get(x, 'CurrentAxes'), figureHandles, 'uni', true);
+    linkaxes(allaxes(:), 'xy');    
 end

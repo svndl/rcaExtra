@@ -13,9 +13,6 @@ function statSettings = rcaExtra_getStatsSettings(rcInfoStruct)
         case 'freq'
             statSettings.nBins = numel(rcInfoStruct.useBins);
             statSettings.nFreqs = numel(rcInfoStruct.useFrequencies);
-        case 'sweep'
-            statSettings.nBins = numel(rcInfoStruct.useBins);
-            statSettings.nFreqs = numel(rcInfoStruct.useFrequencies);
         otherwise
     end
     statSettings.nComp = rcInfoStruct.nComp;

@@ -16,6 +16,16 @@ function loadSettings = rcaExtra_getDataLoadingSettings(infoStruct)
             % leave empty, must be defined by user later
             loadSettings.useBins  = 0;
             loadSettings.useFrequencies = {};
+            
+            case 'sweep'
+            % TODO CONTINUE
+            loadSettings.subDirTxt = infoStruct.info.subDirTxt;
+            
+            % LLV: not sure we need the following 2 lines
+            % leave empty, must be defined by user later
+            loadSettings.useBins  = 0;
+            loadSettings.useFrequencies = {};
+            
         otherwise
     end
     % for both time and frequency domain:

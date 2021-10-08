@@ -1,8 +1,8 @@
-function varargout = rcaExtra_barplot_freq(axisHandle, frequencies, vals, errs, colors, labels)
+function f = rcaExtra_barplot_freq(frequencies, vals, errs, colors, labels)
     
     [nF, nCnd] = size(vals);    
     
-    xlabels = arrayfun( @(x) strcat(num2str(x), 'F'), frequencies, 'uni', false);
+    xlabels = arrayfun( @(x) strcat(num2str(x), 'Hz'), frequencies, 'uni', false);
     x = repmat((1:nF)', [1 nCnd]);
    
     nGroups = nF;
@@ -12,13 +12,7 @@ function varargout = rcaExtra_barplot_freq(axisHandle, frequencies, vals, errs, 
     for b = 1:nBars
         xE(:, b) = (1:nGroups) - groupWidth/2 + (2*b -1 )*groupWidth / (2*nBars);
     end
-    if (isempty(axisHandle))    
-        f = figure('units', 'normalized', 'outerposition', [0 0 1 1]);
-        ah = get(f,'CurrentAxes');
-        varargout = f;
-    else
-        gca = axisHandle;
-    end
+    f = figure('units', 'normalized', 'outerposition', [0 0 1 1]);
     
     errorLineProps = {'LineStyle', 'none', 'LineWidth', 2};
    
@@ -48,8 +42,8 @@ function varargout = rcaExtra_barplot_freq(axisHandle, frequencies, vals, errs, 
     end
     currYLimit = ylim(gca);
     ylim([0, 1.2*currYLimit(2)]);
-    %title('Amplitude Values');
+    title('Amplitude Values');
     set(gca,'FontSize', 30, 'fontname', 'helvetica', 'FontAngle', 'italic');
     ylabel('Amplitude (\muV)');
-    %pbaspect(gca, [1 1 1]);
+    pbaspect(gca, [1 1 1]);
 end

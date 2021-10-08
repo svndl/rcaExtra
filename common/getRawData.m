@@ -24,6 +24,15 @@ function varargout = getRawData(info)
                 end
                 varargout{1} = subjList;
                 varargout{2} = sensorData;  
+        case 'sweep'
+                % LLV TODO VERIFY
+                [subjList, sensorData, cellNoiseData1, cellNoiseData2, infoOut]...
+                    = readRawEEG_sweep(info);
+                varargout{1} = subjList;                
+                varargout{2} = sensorData;
+                varargout{3} = cellNoiseData1;
+                varargout{4} = cellNoiseData2;
+                varargout{5} = infoOut;
         end
     else
         %% special loader 

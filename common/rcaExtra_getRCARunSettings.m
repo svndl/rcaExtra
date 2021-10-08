@@ -23,7 +23,7 @@ function runSettings = rcaExtra_getRCARunSettings(infoStruct)
     end
     % common variables
     runSettings.useFrequenciesHz = infoStruct.info.frequenciesHz(1); % default frequency used  
-    runSettings.computeStats = 1;
+   
     % begin parameters that will be checked when loading RC result:
     runSettings.subjList = {}; % List of subjects
     runSettings.nReg = 7; % number of regularizarion params

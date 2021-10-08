@@ -18,21 +18,18 @@ function setSingleAxesAtThe0(gc)
     set(gc, 'YLim', [-maxV maxV]);
     
     % GET TICKS
-%     X = get(gc, 'Xtick');
-%     Y = get(gc, 'Ytick');
+    X = get(gc, 'Xtick');
+    Y = get(gc, 'Ytick');
     
     % GET LABELS
-%     XL = get(gc, 'XtickLabel');
-%     YL = get(gc, 'YtickLabel');
+    XL = get(gc, 'XtickLabel');
+    YL = get(gc, 'YtickLabel');
 
     % SET NEW TICKS
-%     nXTicks = numel(X);
-%     nYTicks = numel(Y);
+    nXTicks = numel(X);
+    nYTicks = numel(Y);
     
-    % old code
-    %nNewTicks = min(nXTicks, nYTicks);
-    
-    nNewTicks = 3;
+    nNewTicks = min(nXTicks, nYTicks);
     newTicks = linspace(-maxV, maxV, nNewTicks)';
     
     % GET OFFSETS

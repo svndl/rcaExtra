@@ -35,7 +35,13 @@ function [cellData,indF,indB,noiseCell1,noiseCell2,freqLabels,binLabels,chanIncl
         end
         
         [~, freqCrnt, binLabelsCrnt, data] = getSweepDataFlex(fullfile(pathname,filenames(f).name));
-
+%         [zeroRows, zeroCols] = find(data == 0); % find zeroes in data matrix
+%         ignoreIdxs = find(zeroCols < 5); % but only consider zeroes in columns 5 to 11
+%         zeroRows(ignoreIdxs) = [];
+%         zeroCols(ignoreIdxs) = [];
+% %         data(zeroRows, zeroCols) = NaN; % remove each individual zero only
+%         data(zeroRows, 5:end) = NaN; % remove all signal and noise values wherever there was one or more zero-valued signal or noise element
+        
         % set values
         tempName = filenames(f).name;
         condIdx = str2num(tempName(end - 6:end - 4)); % grab condition number

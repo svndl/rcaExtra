@@ -133,7 +133,27 @@ function [h0, realP, corrT, critVal, clustDistrib] = rcaExtra_ttestPermute(inDat
     realLength = regionprops(realLocs, 'area');  %length of each span
     realLength = [ realLength.Area];
     corrIdx = find(realLength > critVal);
-    corrT = ismember(realLocs,corrIdx);
+    % old code
+    % corrT = ismember(realLocs,corrIdx);
+    
+    %% MK update October 15 2021
+    %% added by MK 
+    
+    % Find the separate regions - i.e. which elements are clusters of 1s:
+    nonZeroElements = realLocs ~= 0;
+    minSeparation = 1; % The separation required between 2 clusters is just 1 sample
+    nonZeroElements = ~bwareaopen(~nonZeroElements, minSeparation);
+    % Assign labels to each individual cluster (ascending numeric)
+    [labeledRegions, ~] = bwlabel(nonZeroElements);
+    % Use the labeled regions as indices for the corrIdx
+    
+    % Use the labeled regions as indices for the corrIdx
+    corrT = ismember(labeledRegions, corrIdx);
+    
+    if ttestSettings.deletePool
+        delete(poolobj);
+    end
+    
     
     if ttestSettings.deletePool
         delete(poolobj);

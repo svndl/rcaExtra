@@ -1,11 +1,10 @@
-function [colHdr, freqsAnalyzed, binIndices, dataMatrix] = getSweepDataFlex(datafile)
-    %% Imports Sweep Data from a Text File
+function [colHdr, freqsAnalyzed, binIndices, dataMatrix] = readFrequencyDataTXT(datafile)
+    %% Imports frequency data from a Text File
     %
-    % [colHdr, freqsAnalyzed, sweepVals, dataMatrix]=GetSweepDataFlex(datafile, chanToSave)
+    % [colHdr, freqsAnalyzed, sweepVals, dataMatrix] = readFrequencyDataTXT(datafile)
     %
     %% Inputs:
     % datafile     string containing the data file 
-    % chanToSave   the requested electrode(s)
     %
     %% Outputs:
     % colHdr          is a string with column fields
@@ -57,7 +56,7 @@ function [colHdr, freqsAnalyzed, binIndices, dataMatrix] = getSweepDataFlex(data
     freqIx = 5;
     harmIx = 9;
 
-    fid=fopen(fname);
+    fid = fopen(fname);
     if fid == -1
         error('File %s could not be opened.',fname);
     end
@@ -73,7 +72,6 @@ function [colHdr, freqsAnalyzed, binIndices, dataMatrix] = getSweepDataFlex(data
     dati{1, channelIx} = chan';
     usCols = [3 4 5 11 13 14 15 16 17 18];
 
-
     % Fill in essential matrix
     for s = 1:length(usCols)
         o = usCols(s);
@@ -83,7 +81,6 @@ function [colHdr, freqsAnalyzed, binIndices, dataMatrix] = getSweepDataFlex(data
             if isempty(cell2mat((dati{1, o}(:))))
                 colHdr = {};
                 freqsAnalyzed = {};
-                sweepVals = nan;
                 dataMatrix = nan;
                 fprintf('ERROR! rawdata is empty..\n')
                 return;
@@ -95,18 +92,7 @@ function [colHdr, freqsAnalyzed, binIndices, dataMatrix] = getSweepDataFlex(data
     end
 
     binIndices = unique(dataMatrix(:, 4)); % this will always include 0
-    sweepTemp = (dati{1, 10}(1:length(binIndices))); % the 12th column in dati are the bin levels, aka "SweepVal"s, include the zeroth bin, which has nan
-    sweepTemp = sweepTemp';
-    sweepVals = arrayfun(@(x) num2str(x, '%.4f'), sweepTemp, 'uni', false);
-    sweepVals(1) = {'ave'};
     
-
-    %if ~isempty(chanToSave)
-    %    dataMatrix=dataMatrix(ismember(int16(dataMatrix(:, 2)),int16(chanToSave(:))),:); % Restricts the running matrix to the selected electrodes
-    %end
-
-    % dataMatrix=dataMatrix(dataMatrix(:, 4)>0, :); % Selects all bins but the 0th one (i.e. the average bin)
-
     dataMatrix = dataMatrix(dataMatrix(:, 1)>0, :); % Selects all trials but the 0th one (i.e. the average trial)
 
     [freqsAnalyzed, tmpIx] = unique(dati{1, harmIx}(:));

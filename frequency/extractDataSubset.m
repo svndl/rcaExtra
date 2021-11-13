@@ -1,4 +1,4 @@
-function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceDataFileName, settings)
+function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sourceDataFileName, settings)
     % Return subset of data contained in sourceDataFileName
     % containing binsToUse, freqsToUse, condsToUse
     
@@ -35,16 +35,16 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
     end
         
     nConds = length(condsToUse);  
-        
+    
+    % pre-allocate
     signalDataSel = cell(nConds, 1);
     noise1Sel = cell(nConds, 1);
     noise2Sel = cell(nConds, 1);
-    
-    indB_ToSave = cell(nConds, 1);
-    indF_ToSave = cell(nConds, 1);
     freqLabelsSel = cell(nConds, 1);
     binLabelsSel = cell(nConds, 1);
+    
     for c = 1:nConds
+        % if outside of data range or condition has no data, add empty cell
         if condsToUse(c) > size(signalData, 1) || isempty(signalData{condsToUse(c)})
             signalDataSel{c} = [];
             noise1Sel{c} = [];
@@ -52,11 +52,8 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
         else
             if isempty(freqsToUse)
                 % use all available frequencies
-                % (note: cannot differ across conditions)
-                settings.useFrequencies = unique(info.freqLabels{condsToUse(c)});
-                freqsToUse = unique(info.indF{condsToUse(c)});
-                indF_ToSave{c} = info.indF{condsToUse(c)};
-                hasFrequencies = unique(ismember(info.indF{condsToUse(c)}), settings.useFrequencies);
+                infoSel.freqLabels = unique(info.freqLabels{condsToUse(c)});
+                freqsToUse = infoSel.useFrequencies;
             else
                 [~, hasFrequencies] = ismember(settings.useFrequencies, info.freqLabels{condsToUse(c)});
                 freqsToUse = info.freqLabels{condsToUse(c)}(hasFrequencies); 
@@ -64,17 +61,10 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
             if isempty(binsToUse)
                 % use all available bins
                 % (note: canmot differ across conditions)
-                binsToUse = unique(info.indB{condsToUse(c)});
-                binsToUse = binsToUse(binsToUse>0); % use all bins except the average bin
+                infoSel.binLabels = unique(info.binLabels{condsToUse(c)});
+                binsToUse = infoSel.binLabels;
             else
             end
-            
-            indF_updated = repmat(hasFrequencies', [numel(binsToUse) 1]);
-            indB_updated = repmat(binsToUse', [numel(hasFrequencies) 1]);
-            indF_ToSave{c} = indF_updated(:);
-            indB_ToSave{c} = indB_updated(:);
-
-            selRowIx = ismember(info.indB{condsToUse(c)}, binsToUse) & ismember(info.indF{condsToUse(c)}, hasFrequencies);
             if isempty(trialsToUse)
                 % use all available trials 
                 % (note: can differ across conditions)
@@ -82,14 +72,24 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
             else
                 curTrials = trialsToUse;
             end
-            missingIdx = find(~ismember(curTrials,1:size(signalData{condsToUse(c)}, 3)));
+            % raw data structured first by harmonics as listed in useFrequencies
+            % following the exact order, then by bins ie 1F1 bins 0-10, 2
+            allFreqs = numel(info.freqLabels{condsToUse(c)});
+            
+            allBins = info.binLabels{condsToUse(c)};
+            cellIdx = arrayfun(@(x) (x + binsToUse' + 1), ((hasFrequencies') - 1).*numel(allBins), 'uni', false);
+            indReal = cat(1, cellIdx{:});
+            selRowIx = [indReal; indReal + allFreqs*numel(allBins)];            
+ 
+            missingIdx = find(~ismember(curTrials, 1:size(signalData{condsToUse(c)}, 3)));
             if ~isempty(missingIdx)
                 error('Input trial indices "%s" is not among set of trials',num2str(curTrials(missingIdx),'%d,'));
             else
             end
-            signalDataSel{c} = signalData{condsToUse(c)}(repmat(selRowIx,[2,1]),:,curTrials); % repmat because the first half is real, second half is imag with same ordering
-            noise1Sel{c}     =     noise1{condsToUse(c)}(repmat(selRowIx,[2,1]),:,curTrials);
-            noise2Sel{c}     =     noise2{condsToUse(c)}(repmat(selRowIx,[2,1]),:,curTrials);
+            % repmat because the first half is real, second half is imag with same ordering
+            signalDataSel{c} = signalData{condsToUse(c)}(selRowIx, :, curTrials); 
+            noise1Sel{c}     = noise1{condsToUse(c)}(selRowIx, :, curTrials);
+            noise2Sel{c}     = noise2{condsToUse(c)}(selRowIx, :, curTrials);
             
             % find non-empty frequency indices
             nonEmpty = find(cell2mat(cellfun(@(x) ~isempty(x), info.indF, 'uni', false)));
@@ -115,14 +115,14 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
 %                 binLabelsSel{c}  = binLabels{condsToUse(c)}(binsToUse); % add one, because bin level 0 = average
 %             end  
 %             % grap frequency labels
-             
+%              
              freqLabelsSel{c}  = info.freqLabels{condsToUse(c)}(hasFrequencies);
              try
                 binLabelsSel{c}  = info.binLabels{condsToUse(c)}(binsToUse + 1); % add one, because bin level 0 = average
-             catch 
+             catch
                 binLabelsSel{c}  = info.binLabels{condsToUse(c)}(binsToUse);
              end
-                 
+%                  
 %             % grap frequency labels
 %             trialsSel{c}  = curTrials;
         end
@@ -133,8 +133,6 @@ function [signalDataSel, noise1Sel, noise2Sel, info] = extractDataSubset(sourceD
     signalDataSel = replaceEmpty(signalDataSel);
     noise1Sel = replaceEmpty(noise1Sel);
     noise2Sel = replaceEmpty(noise2Sel);
-    info.indF = indF_ToSave;
-    info.indB = indB_ToSave;
     info.freqLabels = freqLabelsSel;
     info.binLabels = binLabelsSel;
     

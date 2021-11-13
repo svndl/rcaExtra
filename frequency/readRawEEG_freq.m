@@ -41,14 +41,12 @@ function [subjs, sensorData, cellNoiseData1, cellNoiseData2, info] = readRawEEG_
                     
                     if (~exist(fullfile(loadedData, processedDataFileName), 'file'))                        
                         try
-                            [signalData, info.indF, info.indB, noise1, noise2, ...
-                                info.freqLabels, info.binLabels, info.chanIncluded] = textExportToRca(subjSrcDir, dataType);        
+                            [signalData, noise1, noise2, info] = exportFrequencyData(subjSrcDir, dataType);        
                         catch err
                             rcaExtra_displayError(err);                    
-                            [signalData, info.indF, info.indB, noise1, noise2, ...
-                                info.freqLabels, info.binLabels, info.chanIncluded] = textExportToRca(subjSrcDir, 'DFT');        
+                            [signalData, noise1, noise2, info] = exportFrequencyData(subjSrcDir, 'DFT');        
                         end
-                        save(fullfile(loadedData, processedDataFileName), 'signalData', 'noise1','noise2', 'info');
+                        save(fullfile(loadedData, processedDataFileName), 'signalData', 'noise1', 'noise2', 'info');
                     end                
                     try
                         [signalData, noise1, noise2, info] = extractDataSubset(fullfile(loadedData, processedDataFileName), settings); 

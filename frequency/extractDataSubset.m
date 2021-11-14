@@ -4,7 +4,20 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
     
     %Copyright 2019 Alexandra Yakovleva Stanford University SVNDL
     
-    load(sourceDataFileName); 
+    signalDataSel = [];
+    noise1Sel = [];
+    noise2Sel = [];
+    infoSel = [];
+    
+    try
+        load(sourceDataFileName); 
+        if (isempty(signalData))
+            return 
+        end
+    catch err
+        rcaExtra_displayError(err);
+        return
+    end
     
     if (~isfield(settings, 'useConditions'))
         condsToUse = [];
@@ -19,9 +32,9 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
     end
     
     if (~isfield(settings, 'useFrequencies'))
-        freqsToUse = [];
+        freqsToUseStr = [];
     else
-        freqsToUse = settings.useFrequencies;        
+        freqsToUseStr = settings.useFrequencies;        
     end
     
     if (~isfield(settings, 'useTrials'))
@@ -50,19 +63,19 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
             noise1Sel{c} = [];
             noise2Sel{c} = [];
         else
-            if isempty(freqsToUse)
+            if isempty(freqsToUseStr)
                 % use all available frequencies
-                infoSel.freqLabels = unique(info.freqLabels{condsToUse(c)});
-                freqsToUse = infoSel.useFrequencies;
+                freqsToUseStr = unique(info.freqLabels{condsToUse(c)});
+                infoSel.freqLabels = freqsToUseStr;
             else
                 [~, hasFrequencies] = ismember(settings.useFrequencies, info.freqLabels{condsToUse(c)});
-                freqsToUse = info.freqLabels{condsToUse(c)}(hasFrequencies); 
+                freqsToUseStr = info.freqLabels{condsToUse(c)}(hasFrequencies); 
             end           
             if isempty(binsToUse)
                 % use all available bins
                 % (note: canmot differ across conditions)
                 infoSel.binLabels = unique(info.binLabels{condsToUse(c)});
-                binsToUse = infoSel.binLabels;
+                binsToUse = info.binLabels;
             else
             end
             if isempty(trialsToUse)
@@ -87,21 +100,28 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
             else
             end
             % repmat because the first half is real, second half is imag with same ordering
-            signalDataSel{c} = signalData{condsToUse(c)}(selRowIx, :, curTrials); 
-            noise1Sel{c}     = noise1{condsToUse(c)}(selRowIx, :, curTrials);
-            noise2Sel{c}     = noise2{condsToUse(c)}(selRowIx, :, curTrials);
-            
-            % find non-empty frequency indices
-            nonEmpty = find(cell2mat(cellfun(@(x) ~isempty(x), info.indF, 'uni', false)));
-            % find first among conditions to use
-            nonEmpty = min(nonEmpty(ismember(nonEmpty,condsToUse)));
-            % check if indices are unequal
-            if any ( info.indF{nonEmpty} ~= info.indF{condsToUse(c)} )
-                disp('frequency indices are not matched across conditions');
-            elseif any ( info.indB{nonEmpty} ~= info.indB{condsToUse(c)} )
-                disp('bin indices are not matched across conditions');
-            else
+            try
+                signalDataSel{c} = signalData{condsToUse(c)}(selRowIx, :, curTrials); 
+                noise1Sel{c}     = noise1{condsToUse(c)}(selRowIx, :, curTrials);
+                noise2Sel{c}     = noise2{condsToUse(c)}(selRowIx, :, curTrials);
+            catch err
+                rcaExtra_displayError(err);
+                signalDataSel{c} = [];
+                noise1Sel{c} = [];
+                noise2Sel{c} = [];
             end
+            
+%             % find non-empty frequency indices
+%             nonEmpty = find(cell2mat(cellfun(@(x) ~isempty(x), info.indF, 'uni', false)));
+%             % find first among conditions to use
+%             nonEmpty = min(nonEmpty(ismember(nonEmpty,condsToUse)));
+%             % check if indices are unequal
+%             if any ( info.indF{nonEmpty} ~= info.indF{condsToUse(c)} )
+%                 disp('frequency indices are not matched across conditions');
+%             elseif any ( info.indB{nonEmpty} ~= info.indB{condsToUse(c)} )
+%                 disp('bin indices are not matched across conditions');
+%             else
+%             end
 
 %             % assign indices and labels of selected data features
 %             % grab bin indices
@@ -133,8 +153,8 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
     signalDataSel = replaceEmpty(signalDataSel);
     noise1Sel = replaceEmpty(noise1Sel);
     noise2Sel = replaceEmpty(noise2Sel);
-    info.freqLabels = freqLabelsSel;
-    info.binLabels = binLabelsSel;
+    infoSel.freqLabels = freqLabelsSel;
+    infoSel.binLabels = binLabelsSel;
     
 %     indFSel = replaceEmpty(indFSel);
 %     indBSel = replaceEmpty(indBSel);

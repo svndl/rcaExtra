@@ -70,14 +70,20 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
             else
                 [~, hasFrequencies] = ismember(settings.useFrequencies, info.freqLabels{condsToUse(c)});
                 freqsToUseStr = info.freqLabels{condsToUse(c)}(hasFrequencies); 
-            end           
-            if isempty(binsToUse)
-                % use all available bins
-                % (note: canmot differ across conditions)
-                infoSel.binLabels = unique(info.binLabels{condsToUse(c)});
-                binsToUse = info.binLabels;
-            else
             end
+            allBins = unique(info.binLabels{condsToUse(c)});
+            
+            if isempty(binsToUse)
+                % use all available bins except bin 0
+                % use find to return indicies > 0                 
+                binIndex = find(allBins);
+            else
+                binIndex = find(ismember(allBins, settings.useBins));    
+            end
+            
+            infoSel.binLabels = allBins(binIndex);
+            binsToUse = infoSel.binLabels;
+
             if isempty(trialsToUse)
                 % use all available trials 
                 % (note: can differ across conditions)
@@ -85,12 +91,13 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
             else
                 curTrials = trialsToUse;
             end
-            % raw data structured first by harmonics as listed in useFrequencies
-            % following the exact order, then by bins ie 1F1 bins 0-10, 2
-            allFreqs = numel(info.freqLabels{condsToUse(c)});
             
-            allBins = info.binLabels{condsToUse(c)};
-            cellIdx = arrayfun(@(x) (x + binsToUse' + 1), ((hasFrequencies') - 1).*numel(allBins), 'uni', false);
+            % raw data structured first by harmonics as listed in useFrequencies
+            % following the exact order, then by bins ie 1F1 bins 0-10, 2F1 bins 0-10, etc..
+           
+            allFreqs = numel(info.freqLabels{condsToUse(c)});
+            % reconstruct data index  
+            cellIdx = arrayfun(@(x) (x + binIndex'), ((hasFrequencies') - 1).*numel(allBins), 'uni', false);
             indReal = cat(1, cellIdx{:});
             selRowIx = [indReal; indReal + allFreqs*numel(allBins)];            
  

@@ -55,6 +55,9 @@ function [colHdr, freqsAnalyzed, binIndices, dataMatrix] = readFrequencyDataTXT(
     channelIx = 4;
     freqIx = 5;
     harmIx = 9;
+    binIdx = 11;
+    xF1Idx = 7;
+    xF2Idx = 8;
 
     fid = fopen(fname);
     if fid == -1
@@ -93,7 +96,7 @@ function [colHdr, freqsAnalyzed, binIndices, dataMatrix] = readFrequencyDataTXT(
 
     binIndices = unique(dataMatrix(:, 4)); % this will always include 0
     
-    dataMatrix = dataMatrix(dataMatrix(:, 1)>0, :); % Selects all trials but the 0th one (i.e. the average trial)
+    dataMatrix = dataMatrix(dataMatrix(:, 1) >0, :); % Selects all trials but the 0th one (i.e. the average trial)
 
     [freqsAnalyzed, tmpIx] = unique(dati{1, harmIx}(:));
     freqNum = nan(1, length(freqsAnalyzed));

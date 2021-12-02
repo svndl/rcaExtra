@@ -96,8 +96,9 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
             % following the exact order, then by bins ie 1F1 bins 0-10, 2F1 bins 0-10, etc..
            
             allFreqs = numel(info.freqLabels{condsToUse(c)});
-            % reconstruct data index  
-            cellIdx = arrayfun(@(x) (x + binIndex'), ((hasFrequencies') - 1).*numel(allBins), 'uni', false);
+            % reconstruct data index
+            binStarts = ((hasFrequencies') - 1).*numel(allBins);
+            cellIdx = arrayfun(@(x) (x + binIndex), binStarts, 'uni', false);
             indReal = cat(1, cellIdx{:});
             selRowIx = [indReal; indReal + allFreqs*numel(allBins)];            
  

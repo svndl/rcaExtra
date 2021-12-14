@@ -153,6 +153,7 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
 %                  
 %             % grap frequency labels
 %             trialsSel{c}  = curTrials;
+             binsToUse = [];
         end
     end
 

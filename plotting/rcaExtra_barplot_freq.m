@@ -44,12 +44,12 @@ function varargout = rcaExtra_barplot_freq(axisHandle, frequencies, vals, errs, 
         xlabel(xlabels);
     end
     if (~isempty(labels))
-        legend(barsHandle, labels{:}, 'Interpreter', 'none',  'FontSize', 30, 'EdgeColor', 'none', 'Color', 'none');
+        legend(barsHandle, labels{:}, 'Interpreter', 'none',  'FontSize', 17, 'EdgeColor', 'none', 'Color', 'none');
     end
     currYLimit = ylim(gca);
     ylim([0, 1.2*currYLimit(2)]);
     %title('Amplitude Values');
-    set(gca,'FontSize', 30, 'fontname', 'helvetica', 'FontAngle', 'italic');
-    ylabel('Amplitude (\muV)');
+    set(gca,'FontSize', 20, 'fontname', 'helvetica', 'FontAngle', 'italic');
+    ylabel('Amplitude (\muV)');    
     %pbaspect(gca, [1 1 1]);
 end

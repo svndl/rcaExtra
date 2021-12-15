@@ -11,9 +11,9 @@ function [subj_names, DataOut] = readRawEEG_time(info)
     removeEyes = 0;
     nanArtifacts = 1;
     censorEvents = [];
-    useCnd = [];
-    if (isfield(info, 'useConditions'))
-        useCnd = info.useConditions;
+    useConditions = [];
+    if (isfield(info, 'useCnds'))
+        useConditions = info.useCnds;
     end
 
     readArgs = { how, removeEyes, nanArtifacts, censorEvents};

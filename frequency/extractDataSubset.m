@@ -19,10 +19,10 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
         return
     end
     
-    if (~isfield(settings, 'useConditions'))
+    if (~isfield(settings, 'useCnds'))
         condsToUse = [];
     else
-        condsToUse = settings.useConditions;        
+        condsToUse = settings.useCnds;        
     end
     
     if (~isfield(settings, 'useBins'))

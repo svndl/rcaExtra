@@ -71,8 +71,14 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
                 [~, hasFrequencies] = ismember(settings.useFrequencies, info.freqLabels{condsToUse(c)});
                 freqsToUseStr = info.freqLabels{condsToUse(c)}(hasFrequencies); 
             end
+            
             allBins = unique(info.binLabels{condsToUse(c)});
             
+            % transpose if needed
+            if (size(allBins, 1) == 1)
+                allBins = allBins';
+            end
+
             if isempty(binsToUse)
                 % use all available bins except bin 0
                 % use find to return indicies > 0                 

@@ -28,16 +28,16 @@ function plotSummary_AmplitudeBars(fighandle, xLabel, rcaDataIn, statData, nSubp
             asterisk_3 = repmat({'***'}, size(groupAmp, 1), 1);
            
             asterick_plotSettings = {'HorizontalAlignment', 'center', 'VerticalAlignment', 'top', ...
-                'FontSize', 50, 'fontname', 'helvetica', 'Color', 'r'};
+                'FontSize', 30, 'fontname', 'helvetica', 'Color', 'r'};
             
             if (~isempty(statData))
-                %currRC_sig = statData.sig(:, c);
-                currRC_sig_1 = statData.pValues(:, c) < 0.05 * statData.pValues(:, c) > 0.01;
-                currRC_sig_2 = statData.pValues(:, c) < 0.01 * statData.pValues(:, c) > 0.001;
-                currRC_sig_3 = statData.pValues(:, c) < 0.001;
-                
-                
                 currPValue = statData.pValues(:, c);
+                %currRC_sig = statData.sig(:, c);
+                currRC_sig_1 = (currPValue < 0.05).* (currPValue > 0.01);
+                currRC_sig_2 = (currPValue < 0.01).* (currPValue > 0.001);
+                currRC_sig_3 = currPValue < 0.001;
+                
+                
                 % pValues text Y position
                 text_maxY = 0.5*groupAmp ;
                 

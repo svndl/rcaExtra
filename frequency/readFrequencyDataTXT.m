@@ -1,4 +1,4 @@
-function [colHdr, freqsAnalyzed, binIndices, dataMatrix] = readFrequencyDataTXT(datafile)
+function [colHdr, freqsAnalyzed, binIndices, trialIndices, dataMatrix] = readFrequencyDataTXT(datafile)
     %% Imports frequency data from a Text File
     %
     % [colHdr, freqsAnalyzed, sweepVals, dataMatrix] = readFrequencyDataTXT(datafile)
@@ -96,8 +96,9 @@ function [colHdr, freqsAnalyzed, binIndices, dataMatrix] = readFrequencyDataTXT(
 
     binIndices = unique(dataMatrix(:, 4)); % this will always include 0
     
-    dataMatrix = dataMatrix(dataMatrix(:, 1) >0, :); % Selects all trials but the 0th one (i.e. the average trial)
-
+    %dataMatrix = dataMatrix(dataMatrix(:, 1) >0, :); % Selects all trials but the 0th one (i.e. the average trial)
+    trialIndices = unique(dataMatrix(:, 1));
+    
     [freqsAnalyzed, tmpIx] = unique(dati{1, harmIx}(:));
     freqNum = nan(1, length(freqsAnalyzed));
     for f = 1:length(freqsAnalyzed)
@@ -105,6 +106,7 @@ function [colHdr, freqsAnalyzed, binIndices, dataMatrix] = readFrequencyDataTXT(
     end
     [~, tmpIx] = sort(freqNum);
     freqsAnalyzed = freqsAnalyzed(tmpIx);
+    
 
     for m = 1:length(usCols)
         colHdr{m} = hdrFields{usCols(m), 1};

@@ -39,7 +39,7 @@ function [subj_names, DataOut] = readRawEEG_time(info)
                     save(subjDataFile, 'subjEEG');
                 end
                 if (~isempty(useCnd))
-                    rcaData(nge, :) = subjEEG(useCnd)';
+                    rcaData(nge, :) = subjEEG(useConditions)';
                 else
                     rcaData(nge, :) = subjEEG(:)';
                 end

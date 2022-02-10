@@ -40,7 +40,8 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
                 disp('New settings don''t match previous instance, re-running RCA ...'); 
                 matFileRCA_old = fullfile(rcaSettings.destDataDir_RCA, ['previous_rcaResults_' rcaSettings.label '_freq.mat']);
                 movefile(savedFile ,matFileRCA_old, 'f');
-                rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, cellNoiseData2);
+                rcaResult = runRCA_frequency(rcaSettings, dataSlice, cellNoiseData1(:, rcaSettings.useCnds), ...
+                    cellNoiseData2(:, rcaSettings.useCnds));
             end
             
             % transpose and overwrite projectedData for old structures
@@ -54,19 +55,31 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
             rcaExtra_displayError(err);
             matFileRCA_old = fullfile(rcaSettings.destDataDir_RCA, ['corrupted_rcaResults_' rcaSettings.label '_freq.mat']);
             movefile(savedFile ,matFileRCA_old, 'f');
-            rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, cellNoiseData2);            
+            rcaResult = runRCA_frequency(rcaSettings, dataSlice, cellNoiseData1(:, rcaSettings.useCnds), ...
+                cellNoiseData2(:, rcaSettings.useCnds));            
         end
     end
     
     % compute average data
+    %rcaResult.projectedData = rcaExtra_projectCellData(dataSlice, rcaResult.W);
     [projAvg, subjAvg, subjProj] = averageFrequencyData(rcaResult.projectedData, ...
         numel(rcaSettings.useBins), numel(rcaSettings.useFrequencies));
     rcaResult.projAvg = projAvg;
     rcaResult.subjAvg = subjAvg;
     rcaResult.subjProj = subjProj;
  
+    nSubj = size(rcaResult.projectedData, 1);
+    projectedDataConcat = cell(nSubj, 1);
+    for s = 1:nSubj
+        projectedDataConcat{s} = cat(3, rcaResult.projectedData{s, :});
+    end
+    
+    % copy for plotting
+    rcaResultPlotting = rcaResult;
+    [rcaResultPlotting.projAvg, ~, ~] = averageFrequencyData(projectedDataConcat, ...
+        numel(rcaSettings.useBins), numel(rcaSettings.useFrequencies));
     statSettings = rcaExtra_getStatsSettings(rcaSettings);
-    subjRCMean = rcaExtra_prepareDataArrayForStats(rcaResult.projectedData, statSettings);
+    subjRCMean = rcaExtra_prepareDataArrayForStats(projectedDataConcat, statSettings);
     
     % add stats   
     try
@@ -76,7 +89,7 @@ function rcaResult = runRCA_frequency(rcaSettings, sensorData, cellNoiseData1, c
         statData = [];
     end
     try
-        rcaExtra_plotRCSummary(rcaResult, statData);
+        rcaExtra_plotRCSummary(rcaResultPlotting, statData);
     catch err
         rcaExtra_displayError(err);
     end

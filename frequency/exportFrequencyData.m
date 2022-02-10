@@ -21,16 +21,17 @@ function [subjEEG, subjNoise1, subjNoise2, info] = ...
     subjNoise2 = cell(nConditions, 1);
     info.freqLabels = cell(nConditions, 1);
     info.binLabels = cell(nConditions, 1);
+    info.trialLabels = cell(nConditions, 1);
     
-    for nf = 1:nConditions
+    for nc = 1:nConditions
         % check filename
-        if ~strcmp(filenames(nf).name(1:3),dataType)
-            error('inputfile %s is not datatype %s',filenames(nf).name, dataType);
+        if ~strcmp(filenames(nc).name(1:3),dataType)
+            error('inputfile %s is not datatype %s',filenames(nc).name, dataType);
         else
         end
 
         % load text data
-        [~, freqCrnt, binLabelsCrnt, data] = readFrequencyDataTXT(fullfile(pathname, filenames(nf).name));
+        [~, freqCrnt, binLabelsCrnt, trialCrnt, data] = readFrequencyDataTXT(fullfile(pathname, filenames(nc).name));
         
         % Data Fields
         % 1 'iTrial'        
@@ -49,12 +50,13 @@ function [subjEEG, subjNoise1, subjNoise2, info] = ...
         
         % filename is {DFT, RLS}_c0xx.txt 
         % grab condition number
-        tempName = filenames(nf).name;
+        tempName = filenames(nc).name;
         condIdx = str2num(tempName(end - 6:end - 4)); 
         
         info.channelsToUse = unique(data(:,  2));
         info.freqLabels{condIdx} = freqCrnt;
         info.binLabels{condIdx} = binLabelsCrnt;
+        info.trialLabels{condIdx} = trialCrnt;
        
         % numerical values for current processing 
         nFreqs = numel(freqCrnt);
@@ -62,7 +64,7 @@ function [subjEEG, subjNoise1, subjNoise2, info] = ...
         nChannels = numel(info.channelsToUse);
 
         if isempty(data)
-            warning('No data found in %s',filenames(nf).name)
+            warning('No data found in %s',filenames(nc).name)
             continue
         end
  
@@ -115,8 +117,8 @@ function [subjEEG, subjNoise1, subjNoise2, info] = ...
                 noise2(:, ch, tr) = [theseNoiseReals2; theseNoiseImags2];
             end
         end
-        subjEEG{nf} = eeg;
-        subjNoise1{nf} = noise1;
-        subjNoise2{nf} = noise2;
+        subjEEG{nc} = eeg;
+        subjNoise1{nc} = noise1;
+        subjNoise2{nc} = noise2;
     end
 end

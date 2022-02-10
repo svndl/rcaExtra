@@ -20,33 +20,38 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
     end
     
     if (~isfield(settings, 'useCnds'))
-        condsToUse = [];
+        condsToUse = []; %empty, use all conditions
     else
         condsToUse = settings.useCnds;        
     end
     
     if (~isfield(settings, 'useBins'))
-        binsToUse = [];
+        binsToUse = []; % empty, use all bins except 0
     else
         binsToUse = settings.useBins;
     end
     
     if (~isfield(settings, 'useFrequencies'))
-        freqsToUseStr = [];
+        freqsToUseStr = []; % empty, use all frequencies
     else
         freqsToUseStr = settings.useFrequencies;        
     end
     
-    if (~isfield(settings, 'useTrials'))
-        trialsToUse = [];
-    else
-        trialsToUse = settings.useTrials;        
-    end
-
     if (isempty(condsToUse))
         condsToUse = 1:size(signalData, 1);
     end
-        
+    
+    if (~isfield(settings, 'useTrials'))
+        trialsToUse = []; % empty, use all trials except 0
+    else
+        trialsToUse = settings.useTrials;        
+    end
+    
+    if (~isfield(settings, 'useChannels'))
+        channelsToUse = []; % empty, use all trials except 0
+    else
+        channelsToUse = settings.useChannels;        
+    end
     nConds = length(condsToUse);  
     
     % pre-allocate
@@ -63,6 +68,7 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
             noise1Sel{c} = [];
             noise2Sel{c} = [];
         else
+            %% frequency selection
             if isempty(freqsToUseStr)
                 % use all available frequencies
                 freqsToUseStr = unique(info.freqLabels{condsToUse(c)});
@@ -72,6 +78,7 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
                 freqsToUseStr = info.freqLabels{condsToUse(c)}(hasFrequencies); 
             end
             
+            %% bin selection
             allBins = unique(info.binLabels{condsToUse(c)});
             
             % transpose if needed
@@ -87,23 +94,37 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
                 binIndex = find(ismember(allBins, settings.useBins));    
             end
             
-            infoSel.binLabels = allBins(binIndex);
-            binsToUse = infoSel.binLabels;
-
+            %% trial selection
+            allTrials = 1:size(signalData{condsToUse(c)}, 3);
+            
             if isempty(trialsToUse)
-                % use all available trials 
-                % (note: can differ across conditions)
-                curTrials = 1:size(signalData{condsToUse(c)},3); % use all trials
+                % use all available trials except  0
+                curTrials = allTrials(2:end);
             else
-                curTrials = trialsToUse;
+                curTrials = find(ismember(allTrials, trialsToUse + 1));
+            end
+
+            %% channel selection
+            allChannels = 1:size(signalData{condsToUse(c)}, 2);
+            if isempty(channelsToUse)
+                % use all channels
+                curChannels =  allChannels;
+            else
+                curChannels = channelsToUse;
             end
             
+            
+            infoSel.binLabels = allBins(binIndex);
+            curBins = infoSel.binLabels;
+
             % raw data structured first by harmonics as listed in useFrequencies
             % following the exact order, then by bins ie 1F1 bins 0-10, 2F1 bins 0-10, etc..
            
             allFreqs = numel(info.freqLabels{condsToUse(c)});
-            % reconstruct data index
-            binStarts = ((hasFrequencies') - 1).*numel(allBins);
+            
+            % start of bin0 for each freq multiple
+            binStarts = ((hasFrequencies') - 1).*(numel(allBins));
+            % add selected bin indicies
             cellIdx = arrayfun(@(x) (x + binIndex), binStarts, 'uni', false);
             indReal = cat(1, cellIdx{:});
             selRowIx = [indReal; indReal + allFreqs*numel(allBins)];            
@@ -115,9 +136,9 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
             end
             % repmat because the first half is real, second half is imag with same ordering
             try
-                signalDataSel{c} = signalData{condsToUse(c)}(selRowIx, :, curTrials); 
-                noise1Sel{c}     = noise1{condsToUse(c)}(selRowIx, :, curTrials);
-                noise2Sel{c}     = noise2{condsToUse(c)}(selRowIx, :, curTrials);
+                signalDataSel{c} = signalData{condsToUse(c)}(selRowIx, curChannels, curTrials); 
+                noise1Sel{c}     = noise1{condsToUse(c)}(selRowIx, curChannels, curTrials);
+                noise2Sel{c}     = noise2{condsToUse(c)}(selRowIx, curChannels, curTrials);
             catch err
                 rcaExtra_displayError(err);
                 signalDataSel{c} = [];
@@ -125,41 +146,13 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
                 noise2Sel{c} = [];
             end
             
-%             % find non-empty frequency indices
-%             nonEmpty = find(cell2mat(cellfun(@(x) ~isempty(x), info.indF, 'uni', false)));
-%             % find first among conditions to use
-%             nonEmpty = min(nonEmpty(ismember(nonEmpty,condsToUse)));
-%             % check if indices are unequal
-%             if any ( info.indF{nonEmpty} ~= info.indF{condsToUse(c)} )
-%                 disp('frequency indices are not matched across conditions');
-%             elseif any ( info.indB{nonEmpty} ~= info.indB{condsToUse(c)} )
-%                 disp('bin indices are not matched across conditions');
-%             else
-%             end
-
-%             % assign indices and labels of selected data features
-%             % grab bin indices
-%             indBSel{c} = indB{condsToUse(c)}(selRowIx);
-%             % grab frequency indices
-%             indFSel{c}  = indF{condsToUse(c)}(selRowIx);
-%             % grab bin labels
-%             try
-%                 binLabelsSel{c}  = binLabels{condsToUse(c)}(binsToUse+1); % add one, because bin level 0 = average
-%             catch
-%                 binLabelsSel{c}  = binLabels{condsToUse(c)}(binsToUse); % add one, because bin level 0 = average
-%             end  
-%             % grap frequency labels
-%              
+              
              freqLabelsSel{c}  = info.freqLabels{condsToUse(c)}(hasFrequencies);
              try
-                binLabelsSel{c}  = info.binLabels{condsToUse(c)}(binsToUse + 1); % add one, because bin level 0 = average
+                binLabelsSel{c}  = info.binLabels{condsToUse(c)}(curBins + 1); % add one, because bin level 0 = average
              catch
-                binLabelsSel{c}  = info.binLabels{condsToUse(c)}(binsToUse);
+                binLabelsSel{c}  = info.binLabels{condsToUse(c)}(curBins);
              end
-%                  
-%             % grap frequency labels
-%             trialsSel{c}  = curTrials;
-             binsToUse = [];
         end
     end
 

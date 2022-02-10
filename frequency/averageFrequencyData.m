@@ -18,7 +18,7 @@ function [proj, subj, projectedMeanSubj] = averageFrequencyData(inputData, nBs, 
     data_aRe = averageSubjects(data_Re);
     data_aIm = averageSubjects(data_Im);
 
-    %% Step 5. Fit error ellipse for project and subject data 
+    %% Step 5. Fit error ellipse for project, compute tcirc for subj data 
     errSubj = computeErrorSubj(data_aRe, data_aIm);
     [ampErrP, phaseErrP, ellipse] = computeErrorProj(avgSubj_Re, avgSubj_Im);
     

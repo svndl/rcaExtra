@@ -16,6 +16,7 @@ function rcaExtra_analyzeFrequencyDataset(varargin)
     nsubj = numel(subjs);
     datasetBinLabels = {};
     datasetFrequencyLabels = {}; 
+    datasetNaNs = {};
     
     if (nsubj > 0)
         for s = 1:nsubj
@@ -24,7 +25,8 @@ function rcaExtra_analyzeFrequencyDataset(varargin)
                 load(fullfile(sourceData, subjs{s}));
                 % add info into datsert table
                 datasetBinLabels(s, :) = info.binLabels';
-                datasetFrequencyLabels(s, :) = info.freqLabels';                
+                datasetFrequencyLabels(s, :) = info.freqLabels';
+                datasetNaNs(s, :) = cellfun(@(x) pctNaNSamples(x), signalData', 'uni', false);
             catch err
                 rcaExtra_displayError(err)
                 display(['Warning, could not load data from: ' subjs{s}]);
@@ -39,7 +41,8 @@ function rcaExtra_analyzeFrequencyDataset(varargin)
     nConditions = size(datasetBinLabels, 2);
     for nc = 1:nConditions
         tb = table(subjs', datasetBinLabels(:, nc), datasetFrequencyLabels(:, nc), ...
-            'VariableNames', {'ID', 'Bins', 'Frequencies'});
+            datasetNaNs(:, nc), ...
+            'VariableNames', {'ID', 'Bins', 'Frequencies', 'PercentNaNs'});
         writetable(tb, tableFileName, 'sheet', nc);
     end
 end

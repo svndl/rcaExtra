@@ -31,18 +31,27 @@ function projectedSubj = projectSubjectAmplitudes(proj)
                 
                 xyData = cat(2, real_in, imag_in);
                 not_nan = ~any(isnan(xyData), 2);
-                xyData = xyData(not_nan, :);
+                xyDataValid = xyData(not_nan, :);
                 
+                nSubjValid = size(xyDataValid, 1);
+                
+                lenC = zeros(nSubj, 1);
                 % extract project-level average and replicate for the
                 % number of subjects
                 avgReIm = cat(2, proj.avgRe(f, rc, c), proj.avgIm(f, rc, c));
-                xyMean = repmat(avgReIm, [nSubj 1]);
-                
-                % compute projection 
-                lenC = dot(xyData, xyMean, 2) ./ sum(xyMean .* xyMean, 2);
+                xyMean = repmat(avgReIm, [nSubj 1]);           
+                % workaround  for bad subjects
+                % compute projection
+
+                if (nSubjValid < nSubj)
+                    xyMeanValid = repmat(avgReIm, [nSubjValid 1]);           
+                    lenC(not_nan) = dot(xyDataValid, xyMeanValid, 2) ./ sum(xyMeanValid .* xyMeanValid, 2);
+                else
+                    lenC = dot(xyDataValid, xyMean, 2) ./ sum(xyMean .* xyMean, 2);
+                end    
+                xyOut = bsxfun(@times, lenC, xyMean);     
+
                 % apply projection
-                xyOut = bsxfun(@times, lenC, xyMean);
-                
                 % recompute real and imaginary data 
                 projectedRe(f, rc, :, c) = xyOut(:, 1);
                 projectedIm(f, rc, :, c) = xyOut(:, 2);

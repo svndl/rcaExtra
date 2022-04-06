@@ -70,8 +70,13 @@ function figureHandles = rcaExtra_plotLatencies(varargin)
                     satColor = cndColor + (1 - cndColor)*(1 - groups{ng}.significanceSaturation);
                     %patchSatColor = satColor + (1 - satColor)*(1 - groups{ng}.patchSaturation);
                     
-                    % unwrap before plotting and fit linear function with                   
-                    valsUnwrapped = unwrapPhases(dataToPlot_lat);
+                    if (~isfield(groups{ng}, 'unwrapAngles'))
+                    % unwrap before plotting and fitting linear function                    
+                        valsUnwrapped = unwrapPhases(dataToPlot_lat);
+                    else
+                        valsUnwrapped = dataToPlot_lat;
+                    end
+
                     
                     % compute slope and error estimate for significant 
                     

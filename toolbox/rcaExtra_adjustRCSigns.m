@@ -47,8 +47,8 @@ function output = rcaExtra_adjustRCSigns(rcResult, sourceData)
         
     end
     % sort by correlation values, high to low
-    [corrVars_2d, varIdx_2d] = sort(abs(tempCorr_2d), 'descend');   
-    [corrVars_avg, varIdx_avg] = sort(abs(tempCorr_avg), 'descend');
+    [corrVars_2d, varIdx_2d] = sort((tempCorr_2d), 'descend');   
+    [corrVars_avg, varIdx_avg] = sort((tempCorr_avg), 'descend');
     
     output.corrVars_2d = corrVars_2d;
     output.corrVars_avg = corrVars_avg;

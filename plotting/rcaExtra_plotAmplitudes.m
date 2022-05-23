@@ -37,7 +37,7 @@ function figureHandles = rcaExtra_plotAmplitudes(varargin)
 %     end
        
     % adjusting bar width according to number of conditions
-    groupWidth = min(0.8, barWidthBase/(barWidthBase + 1.5));
+    groupWidth = max(0.8, barWidthBase/(barWidthBase + 1.5));
     nF = numel(xLabel);
     
     xBarsPos = zeros(nF, barWidthBase);
@@ -62,6 +62,7 @@ function figureHandles = rcaExtra_plotAmplitudes(varargin)
                 figureHandles(rc, np) = figure('units','normalized','outerposition',[0 0 1 1]);
                 % nItems is the number of groups, for two or more input arguments;
                 % nItems is the number of , for two or more input arguments;
+
                 for ni = 1:nItems
                     % extract data index and data labels
                     
@@ -87,8 +88,7 @@ function figureHandles = rcaExtra_plotAmplitudes(varargin)
                     end
                         
                     % labels for legend/figure title
-                    legendLabels{ni} = sprintf('%s %s RC %d', groupLabel, conditionLabel, rcIdx);
-                    
+                    legendLabels{ni} = groupLabel;
                     % significant color
                     cndColor = groups{ni}.conditionColors(np, :);
                     patchColor = cndColor + (1 - cndColor)*(1 - groups{ni}.patchSaturation);
@@ -152,7 +152,9 @@ function figureHandles = rcaExtra_plotAmplitudes(varargin)
                 set(gca,'FontSize', 30, 'fontname', 'helvetica', 'FontAngle', 'italic');
                 ylabel(yLabel);
                 pbaspect(gca, [1 2 1]);
-            end 
+            end
+            titleLabel = sprintf('%s RC %d', conditionLabel, rcIdx);
+            title(titleLabel);            
         end
     catch err
         rcaExtra_displayError(err);

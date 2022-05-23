@@ -56,10 +56,11 @@ function [results] = t2FC(xyData1, xyData2, varargin)
          warning('length of third dimension of input data may not exceed two')
     else
     end
-
-    if length(opt.testMu) ~= 2
-        error('testMu should be a 2D vector');
-    end
+    opt.testMu = zeros(1, dims(2));
+    
+%     if length(opt.testMu) ~= 2
+%         error('testMu should be a 2D vector');
+%     end
 
     
     % remove NaNs
@@ -71,41 +72,53 @@ function [results] = t2FC(xyData1, xyData2, varargin)
     
     n1 = size(dData1, 1);
     n2 = size(dData2, 1);
-    
     try
         [sMu1, sCov1] = eigFourierCoefs(dData1);
         [sMu2 ,sCov2] = eigFourierCoefs(dData2);
     catch
         fprintf('The covariance matrix of xyData could not be calculated, probably your data do not contain >1 sample.');
+        sCov1 = cov(dData1);
+        sCov2 = cov(dData2);
+        sMu1 = mean(dData1);
+        sMu2 = mean(dData2);
+       
     end
 
     results.alpha = opt.alphaVal;
-    p = 2;
+    p = size(xyData1, 2);
     df1 = p;
-    df2 = n1 + n2 - p - 1;    
-    
+    df2 = n1 + n2 - p - 1;        
     t0Sqrd = (((n1 + n2 - 2)*p)/df2)*finv( 1 - opt.alphaVal, df1, df2);
-  
     results.tSqrdCritical = t0Sqrd;
     
-    %% if covariance matrices are the same:
-    if (sCov1 == sCov2)
-        S_pool = ( (n1 - 1)*sCov1 + (n2 - 1)*sCov2)/(n1 + n2 - 2);
+    % perform M-Box test:
+    alphaVal = 0.01;
+    [sig_diff, pVal] = mbox(dData1, dData2, alphaVal);
+    diff_mu = sMu1 - sMu2;
+    
+    if (~sig_diff)% if covariance matrices are not significantly different:
+        disp("Matrices not significantly different");
+        S_pool = ( (n1 - 1)*sCov1 + (n2 - 1)*sCov2)/(n1 -1 + n2 - 1);
         diff_S_pool = S_pool*(1/n1 + 1/n2);      
-        diff_mu = sMu1 - sMu2;
         
         invCovMat = inv(diff_S_pool);    
         results.tSqrd = (diff_mu - opt.testMu)*invCovMat*(diff_mu - opt.testMu)'; 
         tSqrdF = results.tSqrd*(df2/(df1*(df2 + 1))); %F-approx
         results.pVal = 1 - fcdf(tSqrdF, df1, df2);  % compute p-value
-    else % same for now
-        S_pool = ( (n1 - 1)*sCov1 + (n2 - 1)*sCov2)/(n1 + n2 - 2);
-        diff_S_pool = S_pool*(1/n1 + 1/n2);      
+    else % unequal covariance matrices
+        disp("Matrices significantly different");
+
+        S_pool = sCov1/n1 + sCov2/n2;
         diff_mu = sMu1 - sMu2;
         
-        invCovMat = inv(diff_S_pool);    
+        invCovMat = inv(S_pool);    
         results.tSqrd = (diff_mu - opt.testMu)*invCovMat*(diff_mu - opt.testMu)'; 
-        tSqrdF = results.tSqrd*(df2/(df1*(df2 + 1))); %F-approx
+        tSqrdF = results.tSqrd*(n1 + n2 - 1 - p)/(p*(n1 - 1 + n2 -1));
+        df1 = p;
+        s1 = (diff_mu - opt.testMu)*invCovMat*(sCov1/n1)*invCovMat*(diff_mu - opt.testMu)';
+        s2 = (diff_mu - opt.testMu)*invCovMat*(sCov2/n2)*invCovMat*(diff_mu - opt.testMu)';
+        df2 = results.tSqrd^2/(s1^2/(n1 - 1) + s2^2/(n2 - 1));
+        F_Crit = finv(opt.alphaVal, df1, df2)
         results.pVal = 1 - fcdf(tSqrdF, df1, df2);  % compute p-value
     end
     results.H = tSqrdF >= results.tSqrdCritical;    

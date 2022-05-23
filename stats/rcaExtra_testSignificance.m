@@ -11,7 +11,7 @@ function statResults = rcaExtra_testSignificance(dataSet1, dataSet2, testSetting
             [nSamples, nRc, nCnd, ~] = size(dataSet1);
             
             if (~isempty(dataSet2))
-                [nSamples2, nRc2, nCnd2, ~] = size(dataSet1);
+                [nSamples2, nRc2, nCnd2, ~] = size(dataSet2);
                 % must have same number of timesamples
                 if (nSamples ~= nSamples2)
                     statResults = NaN;

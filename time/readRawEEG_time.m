@@ -38,7 +38,7 @@ function [subj_names, DataOut] = readRawEEG_time(info)
                     %subjEEG = exportToRcaReady(subjDir, readArgs{:});                    
                     save(subjDataFile, 'subjEEG');
                 end
-                if (~isempty(useCnd))
+                if (~isempty(useConditions))
                     rcaData(nge, :) = subjEEG(useConditions)';
                 else
                     rcaData(nge, :) = subjEEG(:)';

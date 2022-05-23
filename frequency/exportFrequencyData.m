@@ -50,13 +50,10 @@ function [subjEEG, subjNoise1, subjNoise2, info] = ...
         
         % filename is {DFT, RLS}_c0xx.txt 
         % grab condition number
-        tempName = filenames(nc).name;
-        condIdx = str2num(tempName(end - 6:end - 4)); 
-        
         info.channelsToUse = unique(data(:,  2));
-        info.freqLabels{condIdx} = freqCrnt;
-        info.binLabels{condIdx} = binLabelsCrnt;
-        info.trialLabels{condIdx} = trialCrnt;
+        info.freqLabels{nc} = freqCrnt;
+        info.binLabels{nc} = binLabelsCrnt;
+        info.trialLabels{nc} = trialCrnt;
        
         % numerical values for current processing 
         nFreqs = numel(freqCrnt);

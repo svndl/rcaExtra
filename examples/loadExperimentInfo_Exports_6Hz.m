@@ -24,7 +24,7 @@ function adults6HzInfo = loadExperimentInfo_Exports_6Hz
     adults6HzInfo.path.destDataDir_RCA = dirPaths{3};
    
     % replace default values here
-    adults6HzInfo.info.subjTag = 'nl*';
+    adults6HzInfo.info.subjTag = '1*';
     adults6HzInfo.info.subDirTxt = 'text';
     adults6HzInfo.info.subDirMat = 'matlab';
     adults6HzInfo.info.groupLabels = {'Adults 6 Hz'};

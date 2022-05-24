@@ -28,6 +28,9 @@ function main_Standard_Oddball_analysis_time
     % selecting specific frequency (1 HZ) and corresponding sampling rate
     % and time course length to use for resampling, RC analysis and
     % plotting results
+
+    % not going to work because 1F1 = 6F2
+%     data_nF2 = rcaExtra_filterData(EEGData, analysisStruct.info.frequenciesHz, 'nF2', 'keep');
     
     % rcSettings has two resampling values and two timecourses
     
@@ -59,15 +62,41 @@ function main_Standard_Oddball_analysis_time
     % run RC on all conditions and project
     runSettings_1hz.label = 'AllConditions';
     
+    % demonstrate that RCA result has 6Hz present in and not informative
+    runSettings_1hz.computeStats = 0;
     rcResult_all = rcaExtra_runAnalysis(runSettings_1hz, EEGData);
     
-    plotSettings_all = rcaExtra_getPlotSettings(rcResult_all);
-    plotSettings_all.RCsToPlot = 1:3;
+    % filter out 6Hz
+    data_nF1 = rcaExtra_filterData(EEGData, analysisStruct.info.frequenciesHz, 'nF1clean', 'keep');
     
-    % plotting all conditions:
-    rcaExtra_plotCompareConditions_time(plotSettings_all, rcResult_all)    
+    runSettings_1hz_clean = runSettings_1hz;
+    runSettings_1hz_clean.label = 'AllConditions_nF1_clean';
+
+    rcResult_all_nF1_clean = rcaExtra_runAnalysis(runSettings_1hz_clean, data_nF1);
     
-    % comparing two conditions 
-%     statSettings = rcaExtra_getStatsSettings(rcSettings);
-%     rcaExtra_plotCompareGroups_time(rcResult_condition{1}, rcResult_condition{2})
+    % flip weights, use once
+    %rcResult_all_nF1_clean = rcaExtra_adjustRCWeights(rcResult_all_nF1_clean, [-1 2 3 4 5 6]);
+    
+    % plot conditions
+    
+    % colors, make sure to have enough for each condition
+    load('colorbrewer');
+    
+    colors_to_use = colorbrewer.qual.Set1{8};
+        
+    %% plotting
+    rcResult_all_nF1_clean.rcaSettings.computeStats = 0;
+
+    plot_1hz_all = rcaExtra_initPlottingContainer(rcResult_all_nF1_clean);
+    plot_1hz_all.conditionLabels = analysisStruct.info.conditionLabels;
+    plot_1hz_all.rcsToPlot = 1;
+    plot_1hz_all.cndsToPlot = [1:numel(analysisStruct.info.conditionLabels)];
+    plot_1hz_all.conditionColors = colors_to_use./255;
+    % plots groups, each condition in separate window
+    rcaExtra_plotWaveforms(plot_1hz_all)
+    
+    %split data to be displayed in one figure
+    [c1, c2, c3, c4, c5]  = rcaExtra_splitPlotDataByCondition(plot_1hz_all);
+    rcaExtra_plotWaveforms(c1, c2, c3, c4, c5)
+        
 end

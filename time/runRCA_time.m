@@ -125,10 +125,12 @@ function rcaResult = runRCA_time(currSettings, dataIn)
     
     % compute stats if required
     sigResults = [];
-    if (isfield(currSettings, 'computeStats'))  
-        statSettings = rcaExtra_getStatsSettings(currSettings);
-        subjRCMean = rcaExtra_prepareDataArrayForStats(rcaResult.projectedData, statSettings);
-        sigResults = rcaExtra_testSignificance(subjRCMean, [], statSettings);
+    if (isfield(currSettings, 'computeStats'))
+        if (currSettings.computeStats)
+            statSettings = rcaExtra_getStatsSettings(currSettings);
+            subjRCMean = rcaExtra_prepareDataArrayForStats(rcaResult.projectedData, statSettings);
+            sigResults = rcaExtra_testSignificance(subjRCMean, [], statSettings);
+        end
     end
     % plot rc results
     try

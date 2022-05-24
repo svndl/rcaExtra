@@ -25,8 +25,10 @@ function plotContainer = rcaExtra_initPlottingContainer(rcAverageStruct)
         otherwise
             
     end
-    if (isfield(rcAverageStruct.rcaSettings, 'computeStats'))  
-        plotContainer.statData = rcaExtra_runStatsAnalysis(rcAverageStruct, []);
+    if (isfield(rcAverageStruct.rcaSettings, 'computeStats'))
+        if (rcAverageStruct.rcaSettings.computeStats)
+            plotContainer.statData = rcaExtra_runStatsAnalysis(rcAverageStruct, []);
+        end
     end
     plotContainer.yDataLabel = 'Amplitude, \muV';
     plotContainer.dataLabel = {rcAverageStruct.rcaSettings.label};

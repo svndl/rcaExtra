@@ -69,10 +69,13 @@ function figureHandles = rcaExtra_plotWaveforms(varargin)
                 % update axes, vert limits, add legends
                 figureHandles(rc, np).Name = sprintf('Waveforms RC %d', rc);
                 xlabel(xLabel);
-                
-                legend([legendHandles{:}], legendLabels{:}, ...
-                    'Interpreter', 'none',  'FontSize', 30, 'EdgeColor', 'none', 'Color', 'none');
-                
+                try
+                    legend([legendHandles{:}], legendLabels{:}, ...
+                        'Interpreter', 'none',  'FontSize', 30, 'EdgeColor', 'none', 'Color', 'none');
+                catch
+                    legend([legendHandles{ni}], legendLabels{ni}, ...
+                        'Interpreter', 'none',  'FontSize', 30, 'EdgeColor', 'none', 'Color', 'none');                    
+                end
                 %currYLimit = ylim(gca);
                 %ylim([0, 1.2*currYLimit(2)]);
                 set(gca,'FontSize', 30, 'fontname', 'helvetica', 'FontAngle', 'italic');
@@ -83,6 +86,7 @@ function figureHandles = rcaExtra_plotWaveforms(varargin)
         rcaExtra_displayError(err)
     end
     % link axes
+    
     allaxes = arrayfun(@(x) get(x, 'CurrentAxes'), figureHandles, 'uni', true);
     linkaxes(allaxes(:), 'xy');    
 end

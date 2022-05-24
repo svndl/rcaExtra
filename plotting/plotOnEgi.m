@@ -1,4 +1,4 @@
-function [plotH,colorH,roiH] = plotOnEgi(data,colorbarLimits,showColorbar,sensorROI,doText,markerProps)
+function [plotH,colorH,roiH] = plotOnEgi(data, colorbarLimits, showColorbar, sensorROI, doText, markerProps)
 % mrC.plotOnEgi - Plots data on a standarized EGI net mesh
 % function meshHandle = mrC.plotOnEgi(data,[colorbarLimits,showColorbar,sensorROI,doText,markerProps])
 %
@@ -56,7 +56,7 @@ if size(data,1) == 128
     tEpos = load('defaultFlatNet.mat');
     tEpos = [ tEpos.xy, zeros(128,1) ];
     
-    tEGIfaces = mrC.EGInetFaces( false );
+    tEGIfaces = EGInetFaces( false );
     
     nChan = 128;
 elseif size(data,1) == 256
@@ -64,13 +64,13 @@ elseif size(data,1) == 256
     tEpos = load('defaultFlatNet256.mat');
     tEpos = [ tEpos.xy, zeros(256,1) ];
     
-    tEGIfaces = mrC.EGInetFaces256( false );
+    tEGIfaces = EGInetFaces256( false );
     nChan = 256;
 elseif size(data,1) == 32
     tEpos = load('defaultFlatNet32.mat');
     tEpos = [ tEpos.xy, zeros(32,1) ];
     
-    tEGIfaces = mrC.EGInetFaces32( false );
+    tEGIfaces = EGInetFaces32( false );
     
     nChan = 32;
 elseif size(data,1) == 7
@@ -79,7 +79,7 @@ elseif size(data,1) == 7
     tEpos = load('defaultFlatNet.mat');
     tEpos = [ tEpos.xy, zeros(128,1) ];
     
-    tEGIfaces = mrC.EGInetFaces( false );
+    tEGIfaces = EGInetFaces( false );
     
     nChan = 128;
     
@@ -92,7 +92,7 @@ patchList = findobj(gca,'type','patch');
 netList   = findobj(patchList,'UserData','plotOnEgi');
 
 
-if isempty(netList),    
+if isempty(netList)    
     plotH = patch( 'Vertices', [ tEpos(1:nChan,1:2), zeros(nChan,1) ], ...
         'Faces', tEGIfaces,'EdgeColor', [ 0.5 0.5 0.5 ], ...
         'FaceColor', 'interp');

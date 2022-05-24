@@ -4,30 +4,33 @@ function dE = computeErrorSubj(dataRe, dataIm)
     nSubj = size(dataRe, 1);
     nCnd = size(dataRe, 2);
     dE = cell(nSubj, nCnd);
-    for c = 1:nCnd
-        allSubj_re = squeeze(dataRe(:, c));
-        allSubj_im = squeeze(dataIm(:, c));
-        dE(:, c) = ...
+    for cn = 1:nCnd
+        allSubj_re = squeeze(dataRe(:, cn));
+        allSubj_im = squeeze(dataIm(:, cn));
+        dE(:, cn) = ...
             cellfun(@(x, y) computeErrTCirc(x, y), ...
             allSubj_re, allSubj_im, 'uni', false);
     end
 end
 
 function errDiff = computeErrTCirc(reVec, imVec)
-    nF = size(reVec, 1);
+    nFreq = size(reVec, 1);
     % number of components
-    nC = size(reVec, 2);
-    errDiff = zeros(nF, nC);
-    for f = 1:nF
-        for c = 1:nC
-            reData = squeeze(reVec(f, c, :));
-            imData = squeeze(imVec(f, c, :));
+    nComp = size(reVec, 2);
+    errDiff = zeros(nFreq, nComp);
+    for nf = 1:nFreq
+        for cp = 1:nComp
+            reData = squeeze(reVec(nf, cp, :));
+            imData = squeeze(imVec(nf, cp, :));
+            %% using nanstd instead of the tcirc here?
+              
             validIdx = (~isnan(reData)) & squeeze(~isnan(imData));
             data = complex(reData(validIdx), imData(validIdx));
             try
-                [~, errDiff(f, c), ~, ~] = tcirc(data);
+                [~, errDiff(nf, cp), ~, ~] = tcirc(data);
             catch err
                 disp('Failed to calc tcirc');
+                rcaExtra_displayError(err);
             end    
         end
     end

@@ -8,10 +8,10 @@ function runSettings = rcaExtra_getRCARunSettings(infoStruct)
     switch infoStruct.domain
         case 'time'
             DAQSR = 420; % data acquisition sampling rate
-            runSettings.timecourseLen = 1000./infoStruct.info.frequenciesHz; % Duration of a frequency cycle, ms 
+            runSettings.cycleDuration = 1000./infoStruct.info.frequenciesHz; % Duration of a frequency cycle, ms 
             
             % parameters that will be checked when loading RC result:
-            runSettings.samplingRate = round(DAQSR./infoStruct.info.frequenciesHz); % Number of datasamples for one frequency cycle
+            runSettings.cycleLength = round(DAQSR./infoStruct.info.frequenciesHz); % Number of datasamples for one frequency cycle
             
         case 'freq'            
             runSettings.dataType = 'RLS';

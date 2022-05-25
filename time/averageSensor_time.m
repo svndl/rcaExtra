@@ -1,8 +1,8 @@
 function sensorResult = averageSensor_time(currSettings, dataIn)
     % resample data if needed
     resampled_data = dataIn;
-    if (size(dataIn{1, 1}, 1) ~= currSettings.samplingRate)
-        resampled_data = resampleData(dataIn, currSettings.samplingRate);
+    if (size(dataIn{1, 1}, 1) ~= currSettings.cycleLength)
+        resampled_data = resampleData(dataIn, currSettings.cycleLength);
     end
     if (~isempty(currSettings.useCnds))
         dataSlice = resampled_data(:, currSettings.useCnds);
@@ -31,7 +31,7 @@ function sensorResult = averageSensor_time(currSettings, dataIn)
     sensorResult.s_cnd = cat(3, s_cnd{:});
     
     
-    tc = linspace(0, currSettings.timecourseLen - 1, currSettings.samplingRate);
+    tc = linspace(0, currSettings.cycleLength - 1, currSettings.cycleDuration);
     sensorResult.timecourse = tc;
     sensorResult.rcaSettings = currSettings;
     sensorResult.projectedData = dataIn;

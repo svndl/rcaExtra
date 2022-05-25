@@ -10,7 +10,7 @@ function res = rcaExtra_compareRCASettings_time(settingsLoaded, settingsCurrent)
     diff_nreg = (settingsLoaded.nReg == settingsCurrent.nReg);
     
     % compare frequencies
-    diff_freq = (settingsLoaded.samplingRate == settingsCurrent.samplingRate);
+    diff_freq = (settingsLoaded.cycleLength == settingsCurrent.cycleLength);
     
     % compare conditions
     try

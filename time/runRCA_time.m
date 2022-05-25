@@ -2,8 +2,8 @@ function rcaResult = runRCA_time(currSettings, dataIn)
     
     % resample data if needed
     resampled_data = dataIn;
-    if (size(dataIn{1, 1}, 1) ~= currSettings.samplingRate)
-        resampled_data = resampleData(dataIn, currSettings.samplingRate);
+    if (size(dataIn{1, 1}, 1) ~= currSettings.cycleLength)
+        resampled_data = resampleData(dataIn, currSettings.cycleLength);
     end
     if (~isempty(currSettings.useCnds))
         dataSlice = resampled_data(:, currSettings.useCnds);
@@ -12,7 +12,7 @@ function rcaResult = runRCA_time(currSettings, dataIn)
     end
     disp(['Running RC on ' currSettings.label ' dataset']);    
     matFileRCA = fullfile(currSettings.destDataDir_RCA, ['rcaResults_Time_' currSettings.label '.mat']);
-    tc = linspace(0, currSettings.timecourseLen - 1, currSettings.samplingRate);
+    tc = linspace(0, currSettings.cycleDuration - 1, currSettings.cycleLength);
     
     %% run RCA
      
@@ -21,6 +21,7 @@ function rcaResult = runRCA_time(currSettings, dataIn)
     
     % if file doesn't exst, run analysis and save results
     if(~exist(matFileRCA, 'file'))
+        disp("File not found, running RCA...")
         [rcaData, W, A, Rxx, Ryy, Rxy, dGen, ~] = rcaRun(dataSlice', currSettings.nReg, currSettings.nComp);
         
         rcaResult.W = W;
@@ -42,6 +43,26 @@ function rcaResult = runRCA_time(currSettings, dataIn)
         try
             % new version structure
             load(matFileRCA, 'rcaResult');
+            overwrite_result = 0;
+            
+            %% replacing old vars
+            if isfield(rcaResult.rcaSettings, 'timecourseLen')
+                rcaResult.rcaSettings.cycleDuration = rcaResult.rcaSettings.timecourseLen;                
+                rcaResult.rcaSettings = rmfield(rcaResult.rcaSettings, 'timecourseLen');
+                overwrite_result = 1;
+            end
+            
+            if isfield(rcaResult.rcaSettings, 'samplingRate')
+                rcaResult.rcaSettings.cycleLength = rcaResult.rcaSettings.samplingRate;
+                rcaResult.rcaSettings = rmfield(rcaResult.rcaSettings, 'samplingRate');
+                overwrite_result = 1;
+                
+            end
+            
+            if(overwrite_result)
+                save(matFileRCA, 'rcaResult');
+            end
+            
             if (~exist('rcaResult', 'var'))
                 % load old version structure
                 
@@ -101,8 +122,7 @@ function rcaResult = runRCA_time(currSettings, dataIn)
     
     %% flip the RC weights here
     %W_new = rcaExtra_adjustRCSigns(rcResults, rcSettings);
-    
-    % average each subject's response
+   % average each subject's response
     subjMean_cell = cellfun(@(x) nanmean(x, 3), rcaResult.projectedData', 'uni', false)';
     nCnd = size(subjMean_cell, 2);
     subjMean_bycnd = cell(1, nCnd);
@@ -121,7 +141,8 @@ function rcaResult = runRCA_time(currSettings, dataIn)
     mu_cnd = cellfun(@(x) nanmean(x, 3), subjMean_bycnd, 'uni', false);
     s_cnd = cellfun(@(x) nanstd(x, [], 3)/(sqrt(size(x, 3))), subjMean_bycnd, 'uni', false);
     rcaResult.mu_cnd = cat(3, mu_cnd{:});
-    rcaResult.s_cnd = cat(3, s_cnd{:});
+    rcaResult.s_cnd = cat(3, s_cnd{:});    
+    % for each condition, compute individual mean/std
     
     % compute stats if required
     sigResults = [];

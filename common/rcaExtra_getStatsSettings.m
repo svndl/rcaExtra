@@ -4,8 +4,8 @@ function statSettings = rcaExtra_getStatsSettings(rcInfoStruct)
     statSettings.domain = rcInfoStruct.domain;
     switch statSettings.domain
         case 'time'
-            statSettings.samplingRate = rcInfoStruct.samplingRate;
-            statSettings.timecourseLen = rcInfoStruct.timecourseLen;
+            statSettings.cycleLength = rcInfoStruct.cycleLength;
+            statSettings.cycleDuration = rcInfoStruct.cycleDuration;
             % copy defaults for time-domain test permute
             statSettings.tParams = {'dim', 2, 'alpha', 0.05};
             statSettings.deletePool = true;

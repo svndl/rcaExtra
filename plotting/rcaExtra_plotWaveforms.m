@@ -60,10 +60,13 @@ function figureHandles = rcaExtra_plotWaveforms(varargin)
                         groupMu, groupStd, ...
                         {'Color', cndColor, 'LineWidth',  groups{ni}.LineWidths}); hold on;
                     legendHandles{ni} = h.mainLine;
-%                     significance_RC = groups{ni}.statData.sig(:, rc, ni);
-%                     pValues = groups{ni}.statData.pValues(:, rc, ni);
+                    
+%                     if (isfield(groups{ni}, 'statData'))
+%                         significance_RC = groups{ni}.statData.sig(:, rc, ni);
+%                         pValues = groups{ni}.statData.pValues(:, rc, ni);
 %             
-%                     plot_addStatsBar_time(gca, pValues, significance_RC, timecourse');
+%                         plot_addStatsBar_time(gca, pValues, significance_RC, timecourse');
+%                     end
                     
                 end
                 % update axes, vert limits, add legends

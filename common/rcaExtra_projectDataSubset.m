@@ -29,8 +29,9 @@ function varargout = rcaExtra_projectDataSubset(rcaResult, varargin)
         newData_rcaResult.rcaSettings.useCnds = size(varargin{n}, 2);
         
         % project source data through weights
-        newData_rcaResult.projectedData = rcaExtra_projectCellData(varargin{n}, W);
         
+        projectedData = rcaExtra_projectCellData(varargin{n}, W);
+        newData_rcaResult.projectedData = resampleData(projectedData, newData_rcaResult.rcaSettings.cycleLength);
         % remove noise averages, as they belong to old data
         % should be re-done in thge future
         if (isfield(newData_rcaResult, 'noiseData'))

@@ -1,8 +1,8 @@
-function main_Standard_Oddball_analysis_time
+function main_Lochy_Oddball_analysis_time
 
     %% define experimentInfo
           
-    experimentName = 'Exports_6Hz';
+    experimentName = 'Lochy_Oddball';
     
     % load up expriment info specified in loadExperimentInfo_experimentName
     % matlab file
@@ -34,9 +34,9 @@ function main_Standard_Oddball_analysis_time
     
     % rcSettings has two resampling values and two timecourses
     
-    runSettings_1hz = rcSettings;
-    runSettings_1hz.cycleLength = rcSettings.cycleLength(1);
-    runSettings_1hz.cycleDuration = rcSettings.cycleDuration(1);
+    runSettings_2hz = rcSettings;
+    runSettings_2hz.cycleLength = rcSettings.cycleLength(1);
+    runSettings_2hz.cycleDuration = rcSettings.cycleDuration(1);
     
     
     nConditions = size(EEGData, 2);
@@ -60,17 +60,18 @@ function main_Standard_Oddball_analysis_time
     
     
     % run RC on all conditions and project
-    runSettings_1hz.label = 'AllConditions';
+    runSettings_2hz.label = 'Conditions_1-4';
     
     % demonstrate that RCA result has 6Hz present in and not informative
-    runSettings_1hz.computeStats = 0;
-    rcResult_all = rcaExtra_runAnalysis(runSettings_1hz, EEGData);
+    runSettings_2hz.computeStats = 0;
+    runSettings_2hz.useCnds = 1:4;
+    rcResult_all = rcaExtra_runAnalysis(runSettings_2hz, EEGData);
     
     % filter out 6Hz
     data_nF1 = rcaExtra_filterData(EEGData, analysisStruct.info.frequenciesHz, 'nF1clean', 'keep');
     
-    runSettings_1hz_clean = runSettings_1hz;
-    runSettings_1hz_clean.label = 'AllConditions_nF1_clean';
+    runSettings_1hz_clean = runSettings_2hz;
+    runSettings_1hz_clean.label = 'Conditions_1-4_nF1_clean';
 
     rcResult_all_nF1_clean = rcaExtra_runAnalysis(runSettings_1hz_clean, data_nF1);
     

@@ -161,7 +161,8 @@ function main_Lochy_Oddball_analysis_time
     % add stats data
     
     axes_h = get(fig_c34,'CurrentAxes');
-    plot_addStatsBar_time(axes_h, statData.pValues, statData.sig, projected_c3_nF1_clean.timecourse)
+    plot_addStatsBar_time(axes_h, statData.pValues(:, plot_2hz_nF1clean_c4.rcsToPlot), ...
+        statData.sig(:, plot_2hz_nF1clean_c4.rcsToPlot), projected_c3_nF1_clean.timecourse)
     
     %% Sensor Data
     avgSensor_all = averageSensor_time(rcResult_c1234_nF1clean.rcaSettings, data_nF1);

@@ -1,37 +1,37 @@
-function plotContainer = rcaExtra_initPlottingContainer(rcAverageStruct)
+function plotContainer = rcaExtra_initPlottingContainer(rcResultStructure)
 % quick init function for plotting
 % Alexandra Yakovleva, Stanford University 2021 
 
 
-    switch rcAverageStruct.rcaSettings.domain
+    switch rcResultStructure.rcaSettings.domain
         case 'freq'
             % add frequency-specific data
-            plotContainer = rcaExtra_addPlotOptionsToData(rcAverageStruct.projAvg);
+            plotContainer = rcaExtra_addPlotOptionsToData(rcResultStructure.projAvg);
             
             % create x-axis labels and frequency values
-            freqIdx = cellfun(@(x) str2double(x(1)), rcAverageStruct.rcaSettings.useFrequencies, 'uni', true);
-            freqVals = rcAverageStruct.rcaSettings.useFrequenciesHz*freqIdx;
-            plotContainer.xDataLabel = cellfun(@(x) x(1:2), rcAverageStruct.rcaSettings.useFrequencies, 'uni', false);
+            freqIdx = cellfun(@(x) str2double(x(1)), rcResultStructure.rcaSettings.useFrequencies, 'uni', true);
+            freqVals = rcResultStructure.rcaSettings.useFrequenciesHz*freqIdx;
+            plotContainer.xDataLabel = cellfun(@(x) x(1:2), rcResultStructure.rcaSettings.useFrequencies, 'uni', false);
             plotContainer.xDataValues = freqVals;
         case 'time'
             % init with empty argument 
             plotContainer = rcaExtra_addPlotOptionsToData([]);
             % add relevant data
-            plotContainer.dataToPlot.mu = rcAverageStruct.mu_cnd;
-            plotContainer.dataToPlot.s = rcAverageStruct.s_cnd;
+            plotContainer.dataToPlot.mu = rcResultStructure.mu_cnd;
+            plotContainer.dataToPlot.s = rcResultStructure.s_cnd;
             % use rcAnalysisInfo timecourse
             plotContainer.xDataLabel = 'Time, msec';
-            plotContainer.xDataValues = rcAverageStruct.timecourse;
+            plotContainer.xDataValues = rcResultStructure.timecourse;
         otherwise
             
     end
-    if (isfield(rcAverageStruct.rcaSettings, 'computeStats'))
-        if (rcAverageStruct.rcaSettings.computeStats)
-            plotContainer.statData = rcaExtra_runStatsAnalysis(rcAverageStruct, []);
+    if (isfield(rcResultStructure.rcaSettings, 'computeStats'))
+        if (rcResultStructure.rcaSettings.computeStats)
+            plotContainer.statData = rcaExtra_runStatsAnalysis(rcResultStructure, []);
         end
     end
     plotContainer.yDataLabel = 'Amplitude, \muV';
-    plotContainer.dataLabel = {rcAverageStruct.rcaSettings.label};
+    plotContainer.dataLabel = {rcResultStructure.rcaSettings.label};
     
     plotContainer.markerSize = 12; 
     plotContainer.LineWidths = 3;

@@ -1,7 +1,7 @@
 function rcaExtra_analyzeFrequencyDataset(varargin)
 
     [curr_path, ~, ~] = fileparts(mfilename('fullpath'));
-    pathToFolder = varargin;
+    pathToFolder = varargin{1};
     if(isempty(pathToFolder))
         pathToFolder = uigetdir(curr_path, 'Select MAT data source results directory');        
     end
@@ -10,7 +10,7 @@ function rcaExtra_analyzeFrequencyDataset(varargin)
 
     %% list subjects
     
-    list_subj = list_folder(fullfile(sourceData, '*.mat'));
+    list_subj = list_folder(fullfile(sourceData, '*RLS.mat'));
 
     subjs = {list_subj(:).name};
     nsubj = numel(subjs);

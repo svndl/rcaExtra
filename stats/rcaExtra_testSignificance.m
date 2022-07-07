@@ -40,38 +40,42 @@ function statResults = rcaExtra_testSignificance(dataSet1, dataSet2, testSetting
             
             % frequency domain testing:
         case 'freq'
-            [nF, nRc, nCnd, nSubj] = size(dataSet1.subjAvgImag);
+            [nF, nRc, nCnd, ~] = size(dataSet1.subjAvgImag);
             
             h0 = zeros(nF, nRc, nCnd);
-            pVal = ones(nF, nRc, nCnd);
+            pVals = ones(nF, nRc, nCnd);
              
             for r = 1:nRc
                 for c = 1:nCnd
-                    d1 = dataSet1.subjAvgReal(:, r, c, :);
-                    d2 = dataSet1.subjAvgImag(:, r, c, :);
-                    % reshape conditions
-                    data1Slice.subjAvgReal = reshape(d1, [nF 1 nSubj]);
-                    data1Slice.subjAvgImag = reshape(d2, [nF 1 nSubj]);
-                    
-                    data2Slice = [];
-                    if (~isempty(dataSet2))
-                        d3 = dataSet2.subjAvgReal(:, r, c, :);
-                        d4 = dataSet2.subjAvgImag(:, r, c, :);
-                        nSubj2 = size(dataSet2.subjAvgImag, 4);
+                    for f = 1:nF
+                        d1 = dataSet1.subjAvgReal(f, r, c, :);
+                        d2 = dataSet1.subjAvgImag(f, r, c, :);
+                        data1Slice = cat(2, squeeze(d1), squeeze(d2));
+                        data2Slice = [];
+                        if (~isempty(dataSet2))
+                            d3 = dataSet2.subjAvgReal(f, r, c, :);
+                            d4 = dataSet2.subjAvgImag(f, r, c, :);       
+                            data2Slice = cat(2, squeeze(d3), squeeze(d4));                        
+                        end
+                        if (isempty(data2Slice))
+                            % dependent TSquared Tcirc or Hotelling, depeding
+                            % on eig1/eig2 ratio
                         
-                        data2Slice.subjAvgReal = reshape(d3, [nF 1 nSubj2]);
-                        data2Slice.subjAvgImag = reshape(d4, [nF 1 nSubj2]);
+                            out = rcaExtra_HTSquared_d(data1Slice, data2Slice);                        
+                        elseif (isfield(testSettings, 'testWithin'))
+                            dataSlice = cat(3, data1Slice, data2Slice); 
+                            out = rcaExtra_HTSquared_d(dataSlice);                                                    
+                        else
+                            % independent TSquared Hotelling  
+                            out = rcaExtra_HTSquared_i(data1Slice, data2Slice);
+                        end
+                        h0(f, r, c) = out.H;
+                        pVals(f, r, c) = out.pVal;
                     end
-                    if (isfield(testSettings, 'testWithin'))
-                        [h0(:, r, c), pVal(:, r, c), ~] = rcaExtra_tSquaredWithin(data1Slice, data2Slice);                        
-                    else
-                        [h0(:, r, c), pVal(:, r, c), ~] = rcaExtra_tSquared(data1Slice, data2Slice);
-                    end
-                    
                 end
             end
         otherwise
     end
     statResults.sig = h0;
-    statResults.pValues = pVal;
+    statResults.pValues = pVals;
 end

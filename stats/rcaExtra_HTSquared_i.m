@@ -1,4 +1,4 @@
-function [results] = t2FC(xyData1, xyData2, varargin)
+function results = rcaExtra_HTSquared_i(xyData1, xyData2, varargin)
 % Alexandra Yakovleva, Stanford University 2012-2020.
 
     % Syntax: [results] = t2FC(xyData,testMu,alphaVal)
@@ -84,43 +84,45 @@ function [results] = t2FC(xyData1, xyData2, varargin)
        
     end
 
-    results.alpha = opt.alphaVal;
     p = size(xyData1, 2);
     df1 = p;
-    df2 = n1 + n2 - p - 1;        
+    df2 = n1 + n2 - p - 1;
+    
+    
     t0Sqrd = (((n1 + n2 - 2)*p)/df2)*finv( 1 - opt.alphaVal, df1, df2);
     results.tSqrdCritical = t0Sqrd;
-    
+    results.alpha = opt.alphaVal;
+
     % perform M-Box test:
     alphaVal = 0.01;
-    [sig_diff, pVal] = mbox(dData1, dData2, alphaVal);
+    [sig_diff, ~] = mbox(dData1, dData2, alphaVal);
+    
     diff_mu = sMu1 - sMu2;
     
+    % turn off unequal variance computation
     if (~sig_diff)% if covariance matrices are not significantly different:
-        disp("Matrices not significantly different");
+        fprintf("Independent T2Hotelling covariance matrices NOT significantly different \n");
         S_pool = ( (n1 - 1)*sCov1 + (n2 - 1)*sCov2)/(n1 -1 + n2 - 1);
         diff_S_pool = S_pool*(1/n1 + 1/n2);      
         
-        invCovMat = inv(diff_S_pool);    
-        results.tSqrd = (diff_mu - opt.testMu)*invCovMat*(diff_mu - opt.testMu)'; 
+        results.tSqrd = (diff_mu - opt.testMu)*(diff_S_pool\(diff_mu - opt.testMu)'); 
         tSqrdF = results.tSqrd*(df2/(df1*(df2 + 1))); %F-approx
-        results.pVal = 1 - fcdf(tSqrdF, df1, df2);  % compute p-value
     else % unequal covariance matrices
-        disp("Matrices significantly different");
+        fprintf("Independent T2Hotelling covariance matrices significantly different \n");
 
         S_pool = sCov1/n1 + sCov2/n2;
         diff_mu = sMu1 - sMu2;
         
-        invCovMat = inv(S_pool);    
-        results.tSqrd = (diff_mu - opt.testMu)*invCovMat*(diff_mu - opt.testMu)'; 
+        results.tSqrd = (diff_mu - opt.testMu)*(S_pool\(diff_mu - opt.testMu)'); 
         tSqrdF = results.tSqrd*(n1 + n2 - 1 - p)/(p*(n1 - 1 + n2 -1));
         df1 = p;
-        s1 = (diff_mu - opt.testMu)*invCovMat*(sCov1/n1)*invCovMat*(diff_mu - opt.testMu)';
-        s2 = (diff_mu - opt.testMu)*invCovMat*(sCov2/n2)*invCovMat*(diff_mu - opt.testMu)';
+        s1 = (diff_mu - opt.testMu)*(S_pool\(sCov1/n1))*(S_pool\(diff_mu - opt.testMu)');
+        s2 = (diff_mu - opt.testMu)*(S_pool\(sCov2/n2))*(S_pool\(diff_mu - opt.testMu)');
         df2 = results.tSqrd^2/(s1^2/(n1 - 1) + s2^2/(n2 - 1));
-        F_Crit = finv(opt.alphaVal, df1, df2)
+        F_Crit = finv(opt.alphaVal, df1, df2);%F-approx
         results.pVal = 1 - fcdf(tSqrdF, df1, df2);  % compute p-value
     end
+    results.pVal = 1 - fcdf(tSqrdF, df1, df2);  % compute p-value    
     results.H = tSqrdF >= results.tSqrdCritical;    
 end
 

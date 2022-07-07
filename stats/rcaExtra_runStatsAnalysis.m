@@ -51,7 +51,6 @@ function statData = rcaExtra_runStatsAnalysis(rcaResult1, rcaResult2, varargin)
         statSettings.testWithin = 1;
     end
         
-    
     % compute mean for rc1
     subjRCMean1 = rcaExtra_prepareDataArrayForStats(rcaResult1.projectedData, statSettings);
     % init mean for optional second rc result structure

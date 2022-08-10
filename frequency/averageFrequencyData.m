@@ -10,7 +10,7 @@ function [proj, subj, projectedMeanSubj] = averageFrequencyData(inputData, nBs, 
     % avg subject -- subject's data is averaged separately
     
     %% Step 3. Computed weighted avg across subjects (every subj is a trial)
-    
+        
     [avgProj_Re, avgSubj_Re, ~] = averageProject(data_Re, nBs);
     [avgProj_Im, avgSubj_Im, ~] = averageProject(data_Im, nBs);
     
@@ -19,7 +19,7 @@ function [proj, subj, projectedMeanSubj] = averageFrequencyData(inputData, nBs, 
     data_aIm = averageSubjects(data_Im);
 
     %% Step 5. Fit error ellipse for project, compute tcirc for subj data 
-    errSubj = computeErrorSubj(data_aRe, data_aIm);
+    [pValSubj, errSubj] = computeErrorSubj(data_aRe, data_aIm);
     [ampErrP, phaseErrP, ellipse] = computeErrorProj(avgSubj_Re, avgSubj_Im);
     
     %% Step 6. Calc Proj/Subj amplitude and phase 
@@ -33,7 +33,7 @@ function [proj, subj, projectedMeanSubj] = averageFrequencyData(inputData, nBs, 
     proj.ellipseErr = ellipse;
     proj.subjsRe = cat(3, avgSubj_Re(:, :));
     proj.subjsIm = cat(3, avgSubj_Im(:, :));
-    subj = projectSubjData(ampSubj, phaseSubj, errSubj);
+    subj = projectSubjData(ampSubj, phaseSubj, errSubj, pValSubj);
     
     %% Step 8. Add projected mean subject data
     try

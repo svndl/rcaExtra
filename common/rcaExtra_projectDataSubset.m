@@ -1,5 +1,5 @@
 function varargout = rcaExtra_projectDataSubset(rcaResult, varargin)
-% function will project varargout data subsets through weights from 
+% function will project varargin data subsets through weights from 
 % rcaResult.W
 
 % Input args:

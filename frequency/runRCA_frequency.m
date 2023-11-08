@@ -20,9 +20,14 @@ function rcaResult = runRCA_frequency(rcaSettings_current, sensorData, cellNoise
         covData.Ryy = Ryy;
         covData.Rxy = Rxy;
         covData.dGen = dGen;
-        noiseData.lowerSideBand = rcaProject(cellNoiseData1(:, rcaSettings_current.useCnds), W); 
-        noiseData.higherSideBand = rcaProject(cellNoiseData2(:, rcaSettings_current.useCnds), W);
-        
+        try
+            noiseData.lowerSideBand = rcaProject(cellNoiseData1(:, rcaSettings_current.useCnds), W); 
+            noiseData.higherSideBand = rcaProject(cellNoiseData2(:, rcaSettings_current.useCnds), W);
+        catch err
+            % catching no noise data
+            noiseData = [];
+        end
+
         %% generate final output struct
         rcaResult.projectedData = rcaData';
 

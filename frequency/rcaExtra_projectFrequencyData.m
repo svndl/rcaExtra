@@ -10,7 +10,7 @@ function out = rcaExtra_projectFrequencyData(rcResultIn, cellSourceData, cellNoi
     out.rcaSettings.useCnds = size(cellSourceData, 2);
     
     % project source data 
-    out.projectedData = rcaExtra_projectCellData(cellSourceData, W);
+    out.projectedData = rcaProject(cellSourceData,W);
     % project noises
     out.noiseData.lowerSideBand = rcaProject(cellNoiseData1, W); 
     out.noiseData.higherSideBand = rcaProject(cellNoiseData2, W);

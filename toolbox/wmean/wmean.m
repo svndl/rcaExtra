@@ -44,4 +44,4 @@ if nargin==2,
   if isempty(dim), dim = 1; end
 end
 
-y = sum(w.*x,dim)./sum(w,dim);
+y = nansum(w.*x,dim)./nansum(w,dim);

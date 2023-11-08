@@ -43,10 +43,13 @@ function out = rcaExtra_adjustRCWeights(rcaResult, order)
     
     % if frequency domain, update noise bands as well
     if strcmp(newStr, 'Freq')
-        updated_rcaResult.noiseData.lowerSideBand = cellfun(@(x) x(:, abs(order), :).*sign(order), ...
-        rcaResult.noiseData.lowerSideBand, 'uni', false);
-        updated_rcaResult.noiseData.higherSideBand = cellfun(@(x) x(:, abs(order), :).*sign(order), ...
-        rcaResult.noiseData.higherSideBand, 'uni', false);
+        try
+            updated_rcaResult.noiseData.lowerSideBand = cellfun(@(x) x(:, abs(order), :).*sign(order), ...
+            rcaResult.noiseData.lowerSideBand, 'uni', false);
+            updated_rcaResult.noiseData.higherSideBand = cellfun(@(x) x(:, abs(order), :).*sign(order), ...
+            rcaResult.noiseData.higherSideBand, 'uni', false);
+        catch err
+        end
     end
     
     % display old topo data top row, new topo data second row

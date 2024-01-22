@@ -1,4 +1,4 @@
-function varargout = readRawEEG_freq(settings)
+function varargout = readRawEEG_freq_MFD(settings)
 % Copyright 2019 Alexandra Yakovleva Stanford University
        
     dataType = 'RLS';
@@ -61,6 +61,7 @@ function varargout = readRawEEG_freq(settings)
                     end                
                     try
                         [signalData, noise1, noise2, subjErr, info] = extractDataSubset(fullfile(loadedData, processedDataFileName), settings); 
+                        
                         sensorData(s, :) = signalData';
                         cellNoiseData1(s, :) = noise1';
                         cellNoiseData2(s, :) = noise2';

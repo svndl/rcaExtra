@@ -132,7 +132,7 @@ function main_Lochy_Oddball_analysis_freq
     colors_to_use = colorbrewer.qual.Set1{8};
         
     %% plotting all rcResult_c12_nF1_1bin
-    rcResult_c14_nF1_1bin.rcaSettings.computeStats = 0;
+    rcResult_c14_nF1_1bin.rcaSettings.computeStats = 1;
 
     plot_c14_nF1_1bin = rcaExtra_initPlottingContainer(rcResult_c14_nF1_1bin);
     plot_c14_nF1_1bin.conditionLabels = analysisStruct.info.conditionLabels;
@@ -155,17 +155,14 @@ function main_Lochy_Oddball_analysis_freq
     rcaExtra_plotLatencies(c1_rc, c2_rc, c3_rc, c4_rc);
     
     %% split rcResults
+    rc_12 = rcaExtra_selectConditionsSubset(rcResult_c14_nF1_1bin, [1 2]);
+    rc_34 = rcaExtra_selectConditionsSubset(rcResult_c14_nF1_1bin, [3 4]);    
     rc_1 = rcaExtra_selectConditionsSubset(rcResult_c14_nF1_1bin, 1);
     rc_2 = rcaExtra_selectConditionsSubset(rcResult_c14_nF1_1bin, 2);    
-    rc_3 = rcaExtra_selectConditionsSubset(rcResult_c14_nF1_1bin, 1);
-    rc_4 = rcaExtra_selectConditionsSubset(rcResult_c14_nF1_1bin, 2);    
 
     %% Stats
     
     rcaExtra_plotAmplitudeWithStats(c1_rc, c2_rc, rc_1, rc_2)
     % let's add stats computing 
-    c12_stats = rcaExtra_runStatsAnalysis(rc_1, rc_2, 1);
-    
-    % specify plotting
-         
+    c12_stats = rcaExtra_runStatsAnalysis(rc_1, rc_2, 1);         
 end

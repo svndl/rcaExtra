@@ -58,6 +58,7 @@ function [colHdr, freqsAnalyzed, binIndices, trialIndices, dataMatrix] = readFre
     binIdx = 11;
     xF1Idx = 7;
     xF2Idx = 8;
+    stdErrIdx = 22;
 
     fid = fopen(fname);
     if fid == -1
@@ -73,7 +74,7 @@ function [colHdr, freqsAnalyzed, binIndices, trialIndices, dataMatrix] = readFre
     end
 
     dati{1, channelIx} = chan';
-    usCols = [3 4 5 11 13 14 15 16 17 18];
+    usCols = [3 4 5 11 13 14 15 16 17 18 22];
 
     % Fill in essential matrix
     for s = 1:length(usCols)

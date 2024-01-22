@@ -4,6 +4,7 @@ function varargout  = rcaExtra_splitPlotDataByCondition(plotContainerStruct)
     outContainers = cell(nConditions, 1);
     for nc = 1:nConditions
         plotContainerStruct_cnd = plotContainerStruct;
+        % add dataToPlot split
         plotContainerStruct_cnd.conditionMarkers = plotContainerStruct.conditionMarkers(nc);
         plotContainerStruct_cnd.markerStyles = plotContainerStruct.markerStyles(nc);
         plotContainerStruct_cnd.lineStytles = plotContainerStruct.lineStytles(nc);

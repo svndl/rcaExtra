@@ -1,4 +1,4 @@
-function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sourceDataFileName, settings)
+function varargout = extractDataSubset(sourceDataFileName, settings)
     % Return subset of data contained in sourceDataFileName
     % containing binsToUse, freqsToUse, condsToUse
     
@@ -7,8 +7,11 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
     signalDataSel = [];
     noise1Sel = [];
     noise2Sel = [];
+    stdErrSel = [];
     infoSel = [];
     
+    dataHasStdErr = 0;
+    dataHasNoise = 0;
     try
         load(sourceDataFileName); 
         if (isempty(signalData))
@@ -19,6 +22,10 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
         return
     end
     
+    if (exist('subjStdErr','var'))
+       dataHasStdErr = 1; 
+    end
+        
     if (~isfield(settings, 'useCnds'))
         condsToUse = []; %empty, use all conditions
     else
@@ -48,7 +55,7 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
     end
     
     if (~isfield(settings, 'useChannels'))
-        channelsToUse = []; % empty, use all trials except 0
+        channelsToUse = []; % empty, u
     else
         channelsToUse = settings.useChannels;        
     end
@@ -58,6 +65,7 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
     signalDataSel = cell(nConds, 1);
     noise1Sel = cell(nConds, 1);
     noise2Sel = cell(nConds, 1);
+    stdErrSel = cell(nConds, 1);
     freqLabelsSel = cell(nConds, 1);
     binLabelsSel = cell(nConds, 1);
     
@@ -67,6 +75,7 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
             signalDataSel{c} = [];
             noise1Sel{c} = [];
             noise2Sel{c} = [];
+            stdErrSel{c} = [];
         else
             %% frequency selection
             if isempty(freqsToUseStr)
@@ -113,7 +122,10 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
                 curChannels = channelsToUse;
             end
             
-            
+            if (~isempty(noise1{c}) && ~isempty(noise2{c}))
+                dataHasNoise = 1;
+            end
+
             infoSel.binLabels = allBins(binIndex);
             curBins = infoSel.binLabels;
 
@@ -136,14 +148,23 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
             end
             % repmat because the first half is real, second half is imag with same ordering
             try
-                signalDataSel{c} = signalData{condsToUse(c)}(selRowIx, curChannels, curTrials); 
-                noise1Sel{c}     = noise1{condsToUse(c)}(selRowIx, curChannels, curTrials);
-                noise2Sel{c}     = noise2{condsToUse(c)}(selRowIx, curChannels, curTrials);
+                % must have signal data var
+                signalDataSel{c} = signalData{condsToUse(c)}(selRowIx, curChannels, curTrials);
+                
+                % new mfHD data doesn't have noise yet
+                if (dataHasNoise)
+                    noise1Sel{c} = noise1{condsToUse(c)}(selRowIx, curChannels, curTrials);
+                    noise2Sel{c}  = noise2{condsToUse(c)}(selRowIx, curChannels, curTrials);
+                end
+                if (dataHasStdErr)
+                    stdErrSel{c} = subjStdErr{condsToUse(c)}(indReal, curChannels, curTrials);
+                end
             catch err
                 rcaExtra_displayError(err);
                 signalDataSel{c} = [];
                 noise1Sel{c} = [];
                 noise2Sel{c} = [];
+                stdErrSel{c} = [];
             end
             
               
@@ -157,18 +178,18 @@ function [signalDataSel, noise1Sel, noise2Sel, infoSel] = extractDataSubset(sour
     end
 
     % now replace missing conditions with NaNs
-    
     signalDataSel = replaceEmpty(signalDataSel);
-    noise1Sel = replaceEmpty(noise1Sel);
-    noise2Sel = replaceEmpty(noise2Sel);
+    if (dataHasNoise)
+        noise1Sel = replaceEmpty(noise1Sel);
+        noise2Sel = replaceEmpty(noise2Sel);
+    end
+    if (dataHasStdErr)
+        stdErrSel = replaceEmpty(stdErrSel);
+    end
     infoSel.freqLabels = freqLabelsSel;
     infoSel.binLabels = binLabelsSel;
     
-%     indFSel = replaceEmpty(indFSel);
-%     indBSel = replaceEmpty(indBSel);
-%     freqLabelsSel = replaceEmpty(freqLabelsSel);
-%     binLabelsSel = replaceEmpty(binLabelsSel);
-%     trialsSel = replaceEmpty(trialsSel);
+    [varargout{1:5}] = deal(signalDataSel, noise1Sel, noise2Sel, stdErrSel, infoSel);
 end
 
 function cellOut = replaceEmpty(cellIn)

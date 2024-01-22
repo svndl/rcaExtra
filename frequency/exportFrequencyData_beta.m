@@ -1,4 +1,4 @@
-function [subjEEG, subjNoise1, subjNoise2, info] = ...
+function [subjEEG, subjNoise1, subjNoise2, subjStdErr, info] = ...
     exportFrequencyData_beta(datapath, dataType)
 
 % Alexandra Yakovleva, Stanford University 2012-2020.
@@ -15,48 +15,34 @@ function [subjEEG, subjNoise1, subjNoise2, info] = ...
             error('dataType must be ''RLS'' or ''DFT''');
     end
     % pre-allocate output
-    nConditions = length(filenames);
+    % change to account for # RLS_Cxx of conditions
+    fnames = {filenames.name};
+    numbers = str2double(extract(fnames, digitsPattern));
+    nConditions = numel(numbers);
+
+    
+    if (~nConditions)        
+        fprintf('Source exports not present at %s', datapath)
+    end
     subjEEG = cell(nConditions, 1);
     subjNoise1 = cell(nConditions, 1);
     subjNoise2 = cell(nConditions, 1);
+    subjStdErr = cell(nConditions, 1);
     info.freqLabels = cell(nConditions, 1);
     info.binLabels = cell(nConditions, 1);
-    headerTable = rcaExtra_getXDivaTextHeaderTable;
+    info.trialLabels = cell(nConditions, 1);
     
-    for nf = 1:nConditions
+    for n = 1:nConditions
         % check filename
-        if ~strcmp(filenames(nf).name(1:3),dataType)
-            error('inputfile %s is not datatype %s',filenames(nf).name, dataType);
+        if ~strcmp(filenames(n).name(1:3),dataType)
+            error('inputfile %s is not datatype %s',filenames(n).name, dataType);
         else
         end
 
-        cndDataStruct = importdata(fullfile(pathname, filenames(nf).name)); 
-        floatData = cndDataStruct.data;
-        % textData has all 32 columns exported as text, remove headers:
-        strData = cndDataStruct.textdata(2:end, :);
-        
-        % data columns we'll be storing for each condition
-        allBins = floatData(:, 2);
-        allChannels = strData(:, headerTable('iCh', "Var1").Variables);
-        allConditions = str2double(strData(:, headerTable('iCond', "Var1").Variables));
-        allFreqVals = str2double(strData(:, headerTable('AF', "Var1").Variables));
-        allFreqLabels = (strData(:, headerTable('Harm', "Var1").Variables));
-        allTrials = str2double(strData(:, headerTable('iTrial', "Var1").Variables));        
-        allxF1 = str2double(strData(:, headerTable('xF1', "Var1").Variables));
-        allxF2 = str2double(strData(:, headerTable('xF2', "Var1").Variables));
-        
-        binsUnique = unique(allBins, 'rows','stable');
-        cndUnique = unique(allConditions, 'rows','stable');
-        trialsUnique = unique(allTrials, 'rows','stable');
-        uniqueFreqVals = unique(allFreqVals, 'rows','stable');
-        uniqueFreqLabels = unique(allFreqLabels, 'rows','stable');
-        uniqueChanLabels = unique(allChannels, 'rows','stable');
-        uniqueF1 = unique(allxF1, 'rows','stable');
-        uniqueF2 = unique(allxF2, 'rows','stable');
-        
-        
         % load text data
-        %[~, freqCrnt, binLabelsCrnt, data] = readFrequencyDataTXT(fullfile(pathname, filenames(nf).name));
+        [~, freqCrnt, binLabelsCrnt, trialCrnt, data] = readFrequencyDataTXT(fullfile(pathname, filenames(n).name));
+        % save matching condition #
+        nc = numbers(n);
         
         % Data Fields
         % 1 'iTrial'        
@@ -69,18 +55,17 @@ function [subjEEG, subjNoise1, subjNoise2, info] = ...
         % 8 'N1r'   
         % 9 'N1i'  
         % 10 'N2r'   
-        % 11 'N2i'   
+        % 11 'N2i'
+        % 12 StdErr
         
         %% arrange data
         
         % filename is {DFT, RLS}_c0xx.txt 
         % grab condition number
-        tempName = filenames(nf).name;
-        condIdx = str2num(tempName(end - 6:end - 4)); 
-        
         info.channelsToUse = unique(data(:,  2));
-        info.freqLabels{condIdx} = uniqueFreqLabels;
-        info.binLabels{condIdx} = binsUnique;
+        info.freqLabels{nc} = freqCrnt;
+        info.binLabels{nc} = binLabelsCrnt;
+        info.trialLabels{nc} = trialCrnt;
        
         % numerical values for current processing 
         nFreqs = numel(freqCrnt);
@@ -88,7 +73,7 @@ function [subjEEG, subjNoise1, subjNoise2, info] = ...
         nChannels = numel(info.channelsToUse);
 
         if isempty(data)
-            warning('No data found in %s',filenames(nf).name)
+            warning('No data found in %s',filenames(nc).name)
             continue
         end
  
@@ -110,6 +95,7 @@ function [subjEEG, subjNoise1, subjNoise2, info] = ...
         eeg = nan(nFreqs*nBins*2, nChannels, nTrialsToKeep);
         noise1 = nan(nFreqs*nBins*2, nChannels, nTrialsToKeep);
         noise2 = nan(nFreqs*nBins*2, nChannels, nTrialsToKeep);
+        stderr = zeros(nFreqs*nBins, nChannels, nTrialsToKeep);
         
         for tr = 1:nTrialsToKeep
 
@@ -135,14 +121,18 @@ function [subjEEG, subjNoise1, subjNoise2, info] = ...
                 % noise 2
                 theseNoiseReals2 = trialData(thisTrialDataIncluded, 9);
                 theseNoiseImags2 = trialData(thisTrialDataIncluded, 10);
+                
+                % StdErr               
+                stderr(:, ch, tr) = trialData(thisTrialDataIncluded, 11);
 
                 eeg(:, ch, tr) = [theseReals; theseImags];
                 noise1(:, ch, tr) = [theseNoiseReals1; theseNoiseImags1];
                 noise2(:, ch, tr) = [theseNoiseReals2; theseNoiseImags2];
             end
         end
-        subjEEG{nf} = eeg;
-        subjNoise1{nf} = noise1;
-        subjNoise2{nf} = noise2;
+        subjEEG{nc} = eeg;
+        subjNoise1{nc} = noise1;
+        subjNoise2{nc} = noise2;
+        subjStdErr{nc} = stderr;
     end
 end

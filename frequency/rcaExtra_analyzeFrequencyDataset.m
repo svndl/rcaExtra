@@ -1,9 +1,10 @@
 function rcaExtra_analyzeFrequencyDataset(varargin)
 
     [curr_path, ~, ~] = fileparts(mfilename('fullpath'));
-    pathToFolder = varargin{1};
-    if(isempty(pathToFolder))
-        pathToFolder = uigetdir(curr_path, 'Select MAT data source results directory');        
+    if(isempty(varargin))
+        pathToFolder = uigetdir(curr_path, 'Select MAT data source results directory');
+    else
+        pathToFolder = varargin{1};
     end
     
     sourceData = pathToFolder;

@@ -15,23 +15,34 @@ function [subjEEG, subjNoise1, subjNoise2, info] = ...
             error('dataType must be ''RLS'' or ''DFT''');
     end
     % pre-allocate output
-    nConditions = length(filenames);
+    % change to account for # RLS_Cxx of conditions
+    fnames = {filenames.name};
+    numbers = str2double(extract(fnames, digitsPattern));
+    nConditions = numel(numbers);
+
+    
+    if (~nConditions)        
+        fprintf('Source exports not present at %s', datapath)
+    end
     subjEEG = cell(nConditions, 1);
     subjNoise1 = cell(nConditions, 1);
     subjNoise2 = cell(nConditions, 1);
+    subjStdErr = cell(nConditions, 1);
     info.freqLabels = cell(nConditions, 1);
     info.binLabels = cell(nConditions, 1);
     info.trialLabels = cell(nConditions, 1);
     
-    for nc = 1:nConditions
+    for n = 1:nConditions
         % check filename
-        if ~strcmp(filenames(nc).name(1:3),dataType)
-            error('inputfile %s is not datatype %s',filenames(nc).name, dataType);
+        if ~strcmp(filenames(n).name(1:3),dataType)
+            error('inputfile %s is not datatype %s',filenames(n).name, dataType);
         else
         end
 
         % load text data
-        [~, freqCrnt, binLabelsCrnt, trialCrnt, data] = readFrequencyDataTXT(fullfile(pathname, filenames(nc).name));
+        [~, freqCrnt, binLabelsCrnt, trialCrnt, data] = readFrequencyDataTXT(fullfile(pathname, filenames(n).name));
+        % save matching condition #
+        nc = numbers(n);
         
         % Data Fields
         % 1 'iTrial'        
@@ -44,7 +55,8 @@ function [subjEEG, subjNoise1, subjNoise2, info] = ...
         % 8 'N1r'   
         % 9 'N1i'  
         % 10 'N2r'   
-        % 11 'N2i'   
+        % 11 'N2i'
+        % 12 StdErr
         
         %% arrange data
         
@@ -83,6 +95,7 @@ function [subjEEG, subjNoise1, subjNoise2, info] = ...
         eeg = nan(nFreqs*nBins*2, nChannels, nTrialsToKeep);
         noise1 = nan(nFreqs*nBins*2, nChannels, nTrialsToKeep);
         noise2 = nan(nFreqs*nBins*2, nChannels, nTrialsToKeep);
+        stderr = zeros(nFreqs*nBins, nChannels, nTrialsToKeep);
         
         for tr = 1:nTrialsToKeep
 
@@ -108,6 +121,9 @@ function [subjEEG, subjNoise1, subjNoise2, info] = ...
                 % noise 2
                 theseNoiseReals2 = trialData(thisTrialDataIncluded, 9);
                 theseNoiseImags2 = trialData(thisTrialDataIncluded, 10);
+                
+                % StdErr               
+                stderr(:, ch, tr) = trialData(thisTrialDataIncluded, 11);
 
                 eeg(:, ch, tr) = [theseReals; theseImags];
                 noise1(:, ch, tr) = [theseNoiseReals1; theseNoiseImags1];
@@ -117,5 +133,6 @@ function [subjEEG, subjNoise1, subjNoise2, info] = ...
         subjEEG{nc} = eeg;
         subjNoise1{nc} = noise1;
         subjNoise2{nc} = noise2;
+        subjStdErr{nc} = stderr;
     end
 end

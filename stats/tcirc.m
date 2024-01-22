@@ -1,4 +1,4 @@
-function [pVal,stdDev, pT2, pChi] = tcirc(complexVector)
+function [pVal, stdErr, pT2, pChi] = tcirc(complexVector)
 % tcirc - Calculate the Test statistic from Victor and Mast
 %function [pVal stdErr pT2 pChi] = tcirc(complexVector)
 %
@@ -42,9 +42,11 @@ function [pVal,stdDev, pT2, pChi] = tcirc(complexVector)
     pVal = 1 - fcdf(T2Circ, 2, 2*vectorLength - 2);
     
     % added by AY on Feb 1 2022 when checking xDiva errors
-    stdDev = sqrt(Vindiv)/sqrt(vectorLength - 1);
+    % USING SE as error
+    %stdErr = sqrt(Vindiv)/sqrt(vectorLength - 1);
 
-
+    % for using SD as error 
+    stdErr = sqrt(Vindiv);
     %Should we return Hotelling values that don't assume equal variance.
     if nargout > 2
         realMatrix = [real(complexVector) imag(complexVector)];
